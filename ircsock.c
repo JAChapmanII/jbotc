@@ -148,10 +148,9 @@ int ircsock_join(IRCSock *ircsock) {
 	while(!foundPing) {
 		ircsock_read(ircsock);
 		while((str = cbuffer_pop(ircsock->cbuf)) != NULL) {
-			printf("%s\n", str);
-			if((str[0] == 'P') || (str[1] == 'I') ||
-				(str[2] == 'N') || (str[3] == 'G') ||
-				(str[4] == ' ') || (str[5] == ':')) {
+			if((str[0] == 'P') && (str[1] == 'I') &&
+				(str[2] == 'N') && (str[3] == 'G') &&
+				(str[4] == ' ') && (str[5] == ':')) {
 				str[1] = 'O';
 				printf(" -> %s\n", str);
 				ircsock_send(ircsock, str);
