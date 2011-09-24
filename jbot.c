@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include "ircsock.h"
 
-char *SERVER = ".slashnet.org";
+#define SERVER ".slashnet.org"
+
+IRCSock *ircSocket = NULL;
 
 int main(int argc, char **argv) {
-	char *serverPrefx = "irc";
+	char *prefix = "irc";
 	if(argc > 1)
-		serverPrefx = argv[1];
+		prefix = argv[1];
 
-	printf("Server: %s%s\n", serverPrefx, SERVER);
+	printf("Server: %s%s\n", prefix, SERVER);
 
 	return 0;
 }
