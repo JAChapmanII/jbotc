@@ -3,6 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <regex.h>
+#include <unistd.h>
 #include "ircsock.h"
 
 #define SERVER ".slashnet.org"
@@ -124,6 +125,7 @@ int main(int argc, char **argv) {
 			}
 			free(str);
 		}
+		sleep(1);
 	}
 
 	if(done == 77)
