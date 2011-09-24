@@ -1,4 +1,4 @@
-LDFLAGS=
+LDFLAGS=-pthread
 CFLAGS=-pedantic -Wall -Wextra
 
 ifndef RELEASE
