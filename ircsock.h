@@ -23,6 +23,8 @@ int ircsock_connect(IRCSock *ircsock);
 void ircsock_read(IRCSock *ircsock);
 void ircsock_send(IRCSock *ircsock, char *str);
 
+void ircsock_pmsg(IRCSock *ircsock, char *msg);
+
 int ircsock_join(IRCSock *ircsock);
 
 #endif /* IRCSOCK_H */
