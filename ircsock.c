@@ -6,9 +6,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
-
 #include <stdio.h>
-#include <errno.h>
 
 IRCSock *ircsock_create(char *host, int port, char *nick, char *chan) {
 	IRCSock *ircsock = malloc(sizeof(IRCSock));
@@ -63,18 +61,21 @@ void ircsock_free(IRCSock *ircsock) {
 
 struct addrinfo *ircsock_lookupDomain(IRCSock *ircsock) {
 	struct addrinfo *result;
+	char sport[64];
 	int error;
 
 	if(ircsock->socket == -1) {
-		printf("ircsock->socket == -1!\n");
+		fprintf(stderr, "Can't lookup domain: socket is nonexistant\n");
 		return NULL;
 	}
 
-	error = getaddrinfo(ircsock->host, "6667", NULL, &result);
+	snprintf(sport, 64, "%d", ircsock->port);
+	error = getaddrinfo(ircsock->host, sport, NULL, &result);
 	if(error) {
-		printf("could not getaddrinfo!\n");
+		fprintf(stderr, "Can't lookup domain: error!\n");
 		return NULL;
 	}
+
 	return result;
 }
 
@@ -83,21 +84,15 @@ int ircsock_connect(IRCSock *ircsock) {
 	int error;
 
 	ircsock->socket = socket(AF_INET, SOCK_STREAM, 0);
-	if(ircsock->socket == -1) {
-		printf("Could not create ircsock->socket!\n");
+	if(ircsock->socket == -1)
 		return 0;
-	}
 
 	result = ircsock_lookupDomain(ircsock);
-	if(!result) {
-		printf("Could not lookup domain!\n");
+	if(!result)
 		return 0;
-	}
 	error = connect(ircsock->socket, result->ai_addr, result->ai_addrlen);
-	if(error == -1) {
-		printf("connect call failed! %d\n", error);
+	if(error == -1)
 		return 0;
-	}
 	freeaddrinfo(result);
 
 	return 1;
