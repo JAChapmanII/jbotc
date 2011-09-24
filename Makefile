@@ -1,5 +1,5 @@
 LDFLAGS=
-CFLAGS=-pedantic -ansi -Wall -Wextra
+CFLAGS=-pedantic -Wall -Wextra
 
 ifndef RELEASE
 CFLAGS+=-g
