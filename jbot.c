@@ -26,7 +26,7 @@ char *getRegError(int errcode, regex_t *compiled) {
 
 int main(int argc, char **argv) {
 	char *nick = "jbotc", *chan = "#zebra";
-	char *prefix = "irc", *str, *sname, *tok, *cstart;
+	char *prefix = "irc", *str, *sname, *tok, *cstart, *msg;
 	int port = 6667;
 	pthread_t readThread;
 	regex_t *pmsgRegex = malloc(sizeof(regex_t));
@@ -90,8 +90,34 @@ int main(int argc, char **argv) {
 				tok = strtok(str + mptr[4].rm_so, " ");
 				if(!strcmp(tok, cstart)) {
 					tok = strtok(NULL, " ");
-					if(!strcmp(tok, "restart"))
+					if(!strcmp(tok, "restart")) {
 						done = 77;
+					} else if(!strcmp(tok, "markov")) {
+						tok = strtok(NULL, " ");
+						/*if(tok == NULL) {*/
+							msg = malloc(mptr[1].rm_eo - mptr[1].rm_so + 64);
+							strncpy(msg, str + mptr[1].rm_so,
+									mptr[1].rm_eo - mptr[1].rm_so);
+							msg[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
+							strcat(msg, ": Usage: markov <word>");
+							ircsock_pmsg(ircSocket, msg);
+							free(msg);
+						/*}*/
+					} else {
+						msg = malloc(mptr[1].rm_eo - mptr[1].rm_so +
+								mptr[4].rm_eo - mptr[4].rm_so + 1);
+						strncpy(msg, str + mptr[1].rm_so,
+								mptr[1].rm_eo - mptr[1].rm_so);
+						msg[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
+						strcat(msg, ": ");
+						while(tok != NULL) {
+							strcat(msg, tok);
+							strcat(msg, " ");
+							tok = strtok(NULL, " ");
+						}
+						ircsock_pmsg(ircSocket, msg);
+						free(msg);
+					}
 				}
 			} else {
 				printf("%s\n", str);
