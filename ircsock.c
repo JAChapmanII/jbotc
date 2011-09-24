@@ -123,3 +123,47 @@ void ircsock_send(IRCSock *ircsock, char *str) {
 	write(ircsock->socket, "\r\n", 2);
 }
 
+int ircsock_join(IRCSock *ircsock) {
+	int foundPing = 0;
+	char *nickc = malloc(16 + strlen(ircsock->nick));
+	char *userc = malloc(16 + strlen(ircsock->nick) * 2);
+	char *joinc = malloc(16 + strlen(ircsock->chan));
+	char *str = NULL;
+
+	strcpy(nickc, "NICK ");
+	strcat(nickc, ircsock->nick);
+
+	strcpy(userc, "USER ");
+	strcat(userc, ircsock->nick);
+	strcat(userc, " j j :");
+	strcat(userc, ircsock->nick);
+
+	strcpy(joinc, "JOIN ");
+	strcat(joinc, ircsock->chan);
+
+	ircsock_send(ircsock, nickc);
+	ircsock_send(ircsock, userc);
+	sleep(1);
+
+	while(!foundPing) {
+		ircsock_read(ircsock);
+		while((str = cbuffer_pop(ircsock->cbuf)) != NULL) {
+			printf("%s\n", str);
+			if((str[0] == 'P') || (str[1] == 'I') ||
+				(str[2] == 'N') || (str[3] == 'G') ||
+				(str[4] == ' ') || (str[5] == ':')) {
+				str[1] = 'O';
+				printf(" -> %s\n", str);
+				ircsock_send(ircsock, str);
+				free(str);
+
+				foundPing = 1;
+				break;
+			}
+		}
+	}
+
+	ircsock_send(ircsock, joinc);
+	return 0;
+}
+
