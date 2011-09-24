@@ -99,7 +99,7 @@ int ircsock_connect(IRCSock *ircsock) {
 }
 
 void ircsock_read(IRCSock *ircsock) {
-	char *buf = malloc(4096);
+	char buf[4096];
 	ssize_t ramount;
 	char *str, *tok;
 
@@ -116,7 +116,6 @@ void ircsock_read(IRCSock *ircsock) {
 			tok = strtok(NULL, "\r\n");
 		}
 	}
-	free(buf);
 }
 
 void ircsock_send(IRCSock *ircsock, char *str) {
