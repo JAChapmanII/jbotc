@@ -38,11 +38,10 @@ int main(int argc, char **argv) {
 	while(1) {
 		ircsock_read(ircSocket);
 		while((str = cbuffer_pop(ircSocket->cbuf)) != NULL) {
-			printf("%s\n", str);
-
-			if((str[0] == 'P') || (str[1] == 'I') ||
-				(str[2] == 'N') || (str[3] == 'G') ||
-				(str[4] == ' ') || (str[5] == ':')) {
+			if((str[0] == 'P') && (str[1] == 'I') &&
+				(str[2] == 'N') && (str[3] == 'G') &&
+				(str[4] == ' ') && (str[5] == ':')) {
+				printf(" <- %s\n", str);
 				str[1] = 'O';
 				printf(" -> %s\n", str);
 				ircsock_send(ircSocket, str);
