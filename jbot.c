@@ -26,15 +26,15 @@ char *getRegError(int errcode, regex_t *compiled) {
 
 int main(int argc, char **argv) {
 	char *nick = "jbotc", *chan = "#zebra";
-	char *prefix = "irc", *str, *sname;
+	char *prefix = "irc", *str, *sname, *tok, *cstart;
 	int port = 6667;
 	pthread_t readThread;
 	regex_t *pmsgRegex = malloc(sizeof(regex_t));
 	regmatch_t mptr[4];
-	int res;
+	int res, done = 0;
 
 	res = regcomp(pmsgRegex,
-			"([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG (#[A-Za-z0-9_]*) :(.*)",
+			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG (#[A-Za-z0-9_]*) :(.*)",
 			REG_EXTENDED);
 	if(res) {
 		fprintf(stderr, "Could not compile regex!\n");
@@ -49,6 +49,10 @@ int main(int argc, char **argv) {
 	strncpy(sname, prefix, strlen(prefix));
 	strcat(sname, SERVER);
 	printf("Server: %s\n", sname);
+
+	cstart = malloc(strlen(nick) + 2);
+	strcpy(cstart, nick);
+	strcat(cstart, ":");
 
 	printf("Creating ircSocket...\n");
 	ircSocket = ircsock_create(sname, port, nick, chan);
@@ -69,7 +73,7 @@ int main(int argc, char **argv) {
 	pthread_create(&readThread, NULL, readLoop, NULL);
 
 	printf("Main loop\n");
-	while(1) {
+	while(!done) {
 		while((str = cbuffer_pop(ircSocket->cbuf)) != NULL) {
 			if((str[0] == 'P') && (str[1] == 'I') &&
 				(str[2] == 'N') && (str[3] == 'G') &&
@@ -83,12 +87,21 @@ int main(int argc, char **argv) {
 						mptr[1].rm_eo - mptr[1].rm_so, str + mptr[1].rm_so,
 						mptr[3].rm_eo - mptr[3].rm_so, str + mptr[3].rm_so,
 						mptr[4].rm_eo - mptr[4].rm_so, str + mptr[4].rm_so);
+				tok = strtok(str + mptr[4].rm_so, " ");
+				if(!strcmp(tok, cstart)) {
+					tok = strtok(NULL, " ");
+					if(!strcmp(tok, "restart"))
+						done = 77;
+				}
 			} else {
 				printf("%s\n", str);
 			}
 			free(str);
 		}
 	}
+
+	if(done == 77)
+		return 77;
 
 	return 0;
 }
