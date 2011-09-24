@@ -7,7 +7,7 @@ typedef struct {
 	int push, pop;
 } CBuffer;
 
-CBuffer *cbuffer_construct(int size);
+CBuffer *cbuffer_create(int size);
 void cbuffer_free(CBuffer *cbuf);
 
 char *cbuffer_pop(CBuffer *cbuf);

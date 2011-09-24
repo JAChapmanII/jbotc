@@ -1,7 +1,7 @@
 #include "cbuffer.h"
 #include <stdlib.h>
 
-CBuffer *cbuffer_construct(int size) {
+CBuffer *cbuffer_create(int size) {
 	CBuffer *cbuf = malloc(sizeof(CBuffer));
 	if(!cbuf)
 		return NULL;
