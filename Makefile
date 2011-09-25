@@ -7,8 +7,12 @@ else
 CFLAGS+=-O3 -Os
 endif
 
+all: conbot jbot
+
 conbot: conbot.o cbuffer.o ircsock.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+jbot: jbot.o cbuffer.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f *.o conbot
+	rm -f *.o conbot jbot
