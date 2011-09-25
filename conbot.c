@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 		prefix = argv[1];
 
 	res = regcomp(pmsgRegex,
-			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG (#[A-Za-z0-9_]*) :(.*)",
+			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG ([#A-Za-z0-9_]*) :(.*)",
 			REG_EXTENDED);
 	if(res) {
 		fprintf(stderr, "Could not compile regex!\n");

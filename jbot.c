@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	int res, done = 0;
 
 	res = regcomp(&pmsgRegex,
-			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG (#[A-Za-z0-9_]*) :(.*)",
+			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG ([#A-Za-z0-9_]*) :(.*)",
 			REG_EXTENDED);
 	if(res) {
 		fprintf(stderr, "Could not compile regex!\n");
