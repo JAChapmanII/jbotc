@@ -106,10 +106,11 @@ int main(int argc, char **argv) {
 							ircsock_pmsg(ircSocket, msg);
 							free(msg);
 						} else {
-							msg = malloc(strlen(tok) +
+							msg = malloc(strlen(tok) + 2 +
 									mptr[1].rm_eo - mptr[1].rm_so + 1);
 							strncpy(msg, str + mptr[1].rm_so,
 									mptr[1].rm_eo - mptr[1].rm_so);
+							strcat(msg, ": ");
 							strcat(msg, tok);
 							ircsock_pmsg(ircSocket, msg);
 							free(msg);
@@ -135,7 +136,7 @@ int main(int argc, char **argv) {
 			}
 			free(str);
 		}
-		sleep(1);
+		usleep(5000);
 	}
 
 	if(done == 77)

@@ -153,7 +153,7 @@ int ircsock_join(IRCSock *ircsock) {
 
 	ircsock_send(ircsock, nickc);
 	ircsock_send(ircsock, userc);
-	sleep(1);
+	usleep(100000);
 
 	while(!foundPing) {
 		ircsock_read(ircsock);
