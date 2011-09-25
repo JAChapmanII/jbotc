@@ -99,7 +99,7 @@ int ircsock_connect(IRCSock *ircsock) {
 }
 
 void ircsock_read(IRCSock *ircsock) {
-	char buf[4096];
+	char buf[4098];
 	ssize_t ramount;
 	char *str, *tok;
 
