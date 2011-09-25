@@ -123,11 +123,10 @@ void ircsock_send(IRCSock *ircsock, char *str) {
 	write(ircsock->socket, "\r\n", 2);
 }
 
-void ircsock_pmsg(IRCSock *ircsock, char *msg) {
-	char *buf = malloc(
-			strlen(msg) + strlen("PRIVMSG ") + strlen(ircsock->chan) + 1);
+void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) {
+	char *buf = malloc(strlen(msg) + strlen("PRIVMSG ") + strlen(target) + 1);
 	strcpy(buf, "PRIVMSG ");
-	strcat(buf, ircsock->chan);
+	strcat(buf, target);
 	strcat(buf, " ");
 	strcat(buf, msg);
 	ircsock_send(ircsock, buf);
@@ -178,6 +177,11 @@ int ircsock_join(IRCSock *ircsock) {
 	}
 
 	ircsock_send(ircsock, joinc);
+	return 1;
+}
+
+int ircsock_quit(IRCSock *ircsock) {
+	ircsock_send(ircsock, "QUIT");
 	return 1;
 }
 

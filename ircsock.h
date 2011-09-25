@@ -20,11 +20,12 @@ IRCSock *ircsock_create(char *host, int port, char *nick, char *chan);
 void ircsock_free(IRCSock *ircsock);
 
 int ircsock_connect(IRCSock *ircsock);
+
 void ircsock_read(IRCSock *ircsock);
 void ircsock_send(IRCSock *ircsock, char *str);
-
-void ircsock_pmsg(IRCSock *ircsock, char *msg);
+void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg);
 
 int ircsock_join(IRCSock *ircsock);
+int ircsock_quit(IRCSock *ircsock);
 
 #endif /* IRCSOCK_H */
