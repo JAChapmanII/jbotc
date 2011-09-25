@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 	int port = 6667;
 	pthread_t readThread;
 	regex_t *pmsgRegex = malloc(sizeof(regex_t));
-	regmatch_t mptr[4];
+	regmatch_t mptr[16];
 	int res, done = 0;
 
 	res = regcomp(pmsgRegex,
