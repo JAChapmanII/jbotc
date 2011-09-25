@@ -68,7 +68,10 @@ int main(int argc, char **argv) {
 	}
 
 	printf("Joining %s as %s...\n", chan, nick);
-	ircsock_join(ircSocket);
+	if(!ircsock_join(ircSocket)) {
+		fprintf(stderr, "Couldn't join room!\n");
+		return 1;
+	}
 
 	printf("Creating read thread...\n");
 	pthread_create(&readThread, NULL, readLoop, NULL);
@@ -79,9 +82,8 @@ int main(int argc, char **argv) {
 			if((str[0] == 'P') && (str[1] == 'I') &&
 				(str[2] == 'N') && (str[3] == 'G') &&
 				(str[4] == ' ') && (str[5] == ':')) {
-				printf(" <- %s\n", str);
 				str[1] = 'O';
-				printf(" -> %s\n", str);
+				printf(" -- PING/%s\n", str);
 				ircsock_send(ircSocket, str);
 			} else if((res = regexec(pmsgRegex, str, pmsgRegex->re_nsub + 1, mptr, 0)) == 0) {
 				printf("PRIVMSG recieved from %.*s@%.*s: %.*s\n",
@@ -95,7 +97,7 @@ int main(int argc, char **argv) {
 						done = 77;
 					} else if(!strcmp(tok, "markov")) {
 						tok = strtok(NULL, " ");
-						/*if(tok == NULL) {*/
+						if(tok == NULL) {
 							msg = malloc(mptr[1].rm_eo - mptr[1].rm_so + 64);
 							strncpy(msg, str + mptr[1].rm_so,
 									mptr[1].rm_eo - mptr[1].rm_so);
@@ -103,7 +105,15 @@ int main(int argc, char **argv) {
 							strcat(msg, ": Usage: markov <word>");
 							ircsock_pmsg(ircSocket, msg);
 							free(msg);
-						/*}*/
+						} else {
+							msg = malloc(strlen(tok) +
+									mptr[1].rm_eo - mptr[1].rm_so + 1);
+							strncpy(msg, str + mptr[1].rm_so,
+									mptr[1].rm_eo - mptr[1].rm_so);
+							strcat(msg, tok);
+							ircsock_pmsg(ircSocket, msg);
+							free(msg);
+						}
 					} else {
 						msg = malloc(mptr[1].rm_eo - mptr[1].rm_so +
 								mptr[4].rm_eo - mptr[4].rm_so + 1);
