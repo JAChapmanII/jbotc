@@ -19,9 +19,11 @@ void pmsg(char *target, char *msg) {
 }
 
 int main(int argc, char **argv) {
-	char *nick = "jbotc", *chan = "#zebra", *owner = "jac";
+	char *nick = "jbotc", *chan = "#zebra", *owner = "jac", *lfname = "jbot.log";
 	char str[BSIZE], *tok, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], *msg;
+	FILE *lFile = NULL;
+
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
 	int res, done = 0;
@@ -35,6 +37,13 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	lFile = fopen(lfname, "a");
+	if(!lFile) {
+		fprintf(stderr, "Could not open log file!\n");
+		return 1;
+	}
+	fprintf(lFile, "------------------------------------\n");
+
 	cstart = malloc(strlen(nick) + 2);
 	strcpy(cstart, nick);
 	strcat(cstart, ":");
@@ -42,6 +51,8 @@ int main(int argc, char **argv) {
 	while(!feof(stdin) && !done) {
 		if(fgets(str, BSIZE - 1, stdin) == str) {
 			str[strlen(str) - 1] = '\0';
+
+			fprintf(lFile, " <- %s\n", str);
 			res = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
 			if(res == 0) {
 				strncpy(name, str + mptr[1].rm_so, mptr[1].rm_eo - mptr[1].rm_so);
@@ -55,7 +66,7 @@ int main(int argc, char **argv) {
 
 				msg = str + mptr[4].rm_so;
 
-				printf("PRIVMSG %s PRIVMSG recieved from %s@%s: %s\n",
+				fprintf(lFile, "PRIVMSG %s :PRIVMSG recieved from %s@%s: %s\n",
 						owner, name, cname, msg);
 				tok = strtok(msg, " ");
 				if(!strcmp(tok, cstart)) {
@@ -65,12 +76,12 @@ int main(int argc, char **argv) {
 					} else if(!strcmp(tok, "markov")) {
 						tok = strtok(NULL, " ");
 						if(tok == NULL) {
-							printf("PRIVMSG %s %s: Usage: markov <word>\n", chan, name);
+							printf("PRIVMSG %s :%s: Usage: markov <word>\n", chan, name);
 						} else {
-							printf("PRIVMSG %s %s: %s\n", chan, name, tok);
+							printf("PRIVMSG %s :%s: %s\n", chan, name, tok);
 						}
 					} else {
-						printf("PRIVMSG %s %s: ", chan, name);
+						printf("PRIVMSG %s :%s: ", chan, name);
 						while(tok != NULL) {
 							printf("%s ", tok);
 							tok = strtok(NULL, " ");
@@ -78,12 +89,13 @@ int main(int argc, char **argv) {
 						printf("\n");
 					}
 				}
-			} else {
-				printf("PRIVMSG %s %s\n", owner, str);
 			}
+			fflush(stdout);
+			fflush(lFile);
 		}
 	}
 
+	close(1);
 	return 0;
 }
 
