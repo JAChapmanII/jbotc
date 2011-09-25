@@ -158,6 +158,10 @@ int ircsock_join(IRCSock *ircsock) {
 	while(!foundPing) {
 		ircsock_read(ircsock);
 		while((str = cbuffer_pop(ircsock->cbuf)) != NULL) {
+			if(strstr(str, " 433 ")) {
+				fprintf(stderr, "Nickname in use!\n");
+				return 0;
+			}
 			if((str[0] == 'P') && (str[1] == 'I') &&
 				(str[2] == 'N') && (str[3] == 'G') &&
 				(str[4] == ' ') && (str[5] == ':')) {
@@ -169,10 +173,11 @@ int ircsock_join(IRCSock *ircsock) {
 				foundPing = 1;
 				break;
 			}
+			free(str);
 		}
 	}
 
 	ircsock_send(ircsock, joinc);
-	return 0;
+	return 1;
 }
 
