@@ -166,7 +166,7 @@ int ircsock_join(IRCSock *ircsock) {
 				(str[2] == 'N') && (str[3] == 'G') &&
 				(str[4] == ' ') && (str[5] == ':')) {
 				str[1] = 'O';
-				printf(" -> %s\n", str);
+				printf(" -- PING/%s\n", str);
 				ircsock_send(ircsock, str);
 				free(str);
 
