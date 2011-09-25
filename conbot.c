@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "ircsock.h"
 
+#define BSIZE 4096
 #define SERVER ".slashnet.org"
 
 IRCSock *ircSocket = NULL;
@@ -18,6 +19,20 @@ void *readLoop(void *args) {
 	}
 }
 
+void *transferLoop(void *args) {
+	if(args != NULL)
+		return NULL;
+	while(1) {
+		/*
+		while((str = cbuffer_pop(pSocket->cbuf)) != NULL) {
+			ircsock_send(ircSocket, str);
+			free(str);
+		}
+		*/
+		usleep(5000);
+	}
+}
+
 char *getRegError(int errcode, regex_t *compiled) {
 	size_t l = regerror(errcode, compiled, NULL, 0);
 	char *buffer = malloc(l + 1);
@@ -26,13 +41,16 @@ char *getRegError(int errcode, regex_t *compiled) {
 }
 
 int main(int argc, char **argv) {
-	char *nick = "jbotc", *chan = "#zebra";
-	char *prefix = "irc", *str, *sname, *tok, *cstart, *msg;
+	char *nick = "jbotc", *chan = "#zebra", *owner = "jac";
+	char *prefix = "irc", *str, *sname, *tok, *cstart;
 	int port = 6667;
-	pthread_t readThread;
+	pthread_t readThread, transferThread;
 	regex_t *pmsgRegex = malloc(sizeof(regex_t));
 	regmatch_t mptr[16];
 	int res, done = 0;
+
+	if(argc > 1)
+		prefix = argv[1];
 
 	res = regcomp(pmsgRegex,
 			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG (#[A-Za-z0-9_]*) :(.*)",
@@ -43,11 +61,9 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	if(argc > 1)
-		prefix = argv[1];
-
 	sname = malloc(strlen(SERVER) + strlen(prefix) + 1);
 	strncpy(sname, prefix, strlen(prefix));
+	sname[strlen(prefix)] = '\0';
 	strcat(sname, SERVER);
 	printf("Server: %s\n", sname);
 
@@ -74,9 +90,20 @@ int main(int argc, char **argv) {
 	}
 
 	printf("Creating read thread...\n");
-	pthread_create(&readThread, NULL, readLoop, NULL);
+	if(pthread_create(&readThread, NULL, readLoop, NULL) != 0) {
+		fprintf(stderr, "Could not create readThread!\n");
+		ircsock_quit(ircSocket);
+		return 1;
+	}
 
-	printf("Main loop\n");
+	printf("Creating transfer thread...\n");
+	if(pthread_create(&transferThread, NULL, transferLoop, NULL) != 0) {
+		fprintf(stderr, "Could not create readThread!\n");
+		ircsock_quit(ircSocket);
+		return 1;
+	}
+
+	printf("Entering output loop\n");
 	while(!done) {
 		while((str = cbuffer_pop(ircSocket->cbuf)) != NULL) {
 			if((str[0] == 'P') && (str[1] == 'I') &&
@@ -85,63 +112,27 @@ int main(int argc, char **argv) {
 				str[1] = 'O';
 				printf(" -- PING/%s\n", str);
 				ircsock_send(ircSocket, str);
-			} else if((res = regexec(pmsgRegex, str, pmsgRegex->re_nsub + 1, mptr, 0)) == 0) {
-				printf("PRIVMSG recieved from %.*s@%.*s: %.*s\n",
-						mptr[1].rm_eo - mptr[1].rm_so, str + mptr[1].rm_so,
-						mptr[3].rm_eo - mptr[3].rm_so, str + mptr[3].rm_so,
-						mptr[4].rm_eo - mptr[4].rm_so, str + mptr[4].rm_so);
-				tok = strtok(str + mptr[4].rm_so, " ");
-				if(!strcmp(tok, cstart)) {
-					tok = strtok(NULL, " ");
-					if(!strcmp(tok, "restart")) {
-						done = 77;
-					} else if(!strcmp(tok, "markov")) {
+			} else {
+				res = regexec(pmsgRegex, str, pmsgRegex->re_nsub + 1, mptr, 0);
+				if(res == 0) {
+					tok = strtok(str + mptr[4].rm_so, " ");
+					if(!strcmp(tok, cstart)) {
 						tok = strtok(NULL, " ");
-						if(tok == NULL) {
-							msg = malloc(mptr[1].rm_eo - mptr[1].rm_so + 64);
-							strncpy(msg, str + mptr[1].rm_so,
-									mptr[1].rm_eo - mptr[1].rm_so);
-							msg[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
-							strcat(msg, ": Usage: markov <word>");
-							ircsock_pmsg(ircSocket, msg);
-							free(msg);
-						} else {
-							msg = malloc(strlen(tok) + 2 +
-									mptr[1].rm_eo - mptr[1].rm_so + 1);
-							strncpy(msg, str + mptr[1].rm_so,
-									mptr[1].rm_eo - mptr[1].rm_so);
-							strcat(msg, ": ");
-							strcat(msg, tok);
-							ircsock_pmsg(ircSocket, msg);
-							free(msg);
+						if(!strcmp(tok, "restart")) {
+							done = 77;
 						}
-					} else {
-						msg = malloc(mptr[1].rm_eo - mptr[1].rm_so +
-								mptr[4].rm_eo - mptr[4].rm_so + 1);
-						strncpy(msg, str + mptr[1].rm_so,
-								mptr[1].rm_eo - mptr[1].rm_so);
-						msg[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
-						strcat(msg, ": ");
-						while(tok != NULL) {
-							strcat(msg, tok);
-							strcat(msg, " ");
-							tok = strtok(NULL, " ");
-						}
-						ircsock_pmsg(ircSocket, msg);
-						free(msg);
 					}
 				}
-			} else {
-				printf("%s\n", str);
 			}
 			free(str);
 		}
 		usleep(5000);
 	}
 
+	ircsock_quit(ircSocket);
+
 	if(done == 77)
 		return 77;
-
 	return 0;
 }
 
