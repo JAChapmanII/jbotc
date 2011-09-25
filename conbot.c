@@ -5,11 +5,20 @@
 #include <regex.h>
 #include <unistd.h>
 #include "ircsock.h"
+#include "cbuffer.h"
 
 #define BSIZE 4096
 #define SERVER ".slashnet.org"
 
 IRCSock *ircSocket = NULL;
+CBuffer *cbuf = NULL;
+
+char *jbotBinary = "jbot";
+int childReady = 0;
+int oPipe[2];
+FILE *ofpipe;
+int iPipe[2];
+FILE *ifpipe;
 
 void *readLoop(void *args) {
 	if(args != NULL)
@@ -20,16 +29,70 @@ void *readLoop(void *args) {
 }
 
 void *transferLoop(void *args) {
+	char str[BSIZE];
+	pid_t cpid;
 	if(args != NULL)
 		return NULL;
+	oPipe[0] = oPipe[1] = -1;
+	iPipe[0] = iPipe[1] = -1;
 	while(1) {
-		/*
-		while((str = cbuffer_pop(pSocket->cbuf)) != NULL) {
-			ircsock_send(ircSocket, str);
-			free(str);
+		childReady = 0;
+		if(((oPipe[0] == oPipe[1]) && (oPipe[0] == -1)) && pipe(oPipe)) {
+			fprintf(stderr, "Could not create out pipe...\n");
+			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
+			sleep(15);
+			continue;
 		}
-		*/
-		usleep(5000);
+		if(((iPipe[0] == iPipe[1]) && (iPipe[0] == -1)) && pipe(iPipe)) {
+			fprintf(stderr, "Could not create in pipe...\n");
+			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
+			sleep(15);
+			continue;
+		}
+		printf("Forking subprocess...\n");
+		cpid = fork();
+		if(cpid == -1) {
+			fprintf(stderr, "Could not fork!\n");
+			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
+			sleep(15);
+			continue;
+		}
+		if(cpid == 0) {
+			/* prepare subprocess input */
+			close(0);
+			dup(oPipe[0]);
+			close(oPipe[0]);
+			close(oPipe[1]);
+
+			/* prepare subprocess output */
+			close(1);
+			dup(iPipe[1]);
+			close(iPipe[0]);
+			close(iPipe[1]);
+
+			execv(jbotBinary, args);
+			return NULL;
+		}
+		printf("Forked...\n");
+		close(oPipe[0]);
+		ofpipe = fdopen(oPipe[1], "w");
+		close(iPipe[1]);
+		ifpipe = fdopen(iPipe[0], "r");
+		childReady = 1;
+		while(!feof(ifpipe)) {
+			if(fgets(str, BSIZE - 1, ifpipe) == str) {
+				str[strlen(str) - 1] = '\0';
+				ircsock_send(ircSocket, str);
+			}
+		}
+		printf("Child closed, restarting...\n");
+		childReady = 0;
+		close(oPipe[1]);
+		close(iPipe[0]);
+		oPipe[0] = oPipe[1] = -1;
+		iPipe[0] = iPipe[1] = -1;
+		ofpipe = NULL;
+		ifpipe = NULL;
 	}
 }
 
@@ -58,6 +121,12 @@ int main(int argc, char **argv) {
 	if(res) {
 		fprintf(stderr, "Could not compile regex!\n");
 		fprintf(stderr, "erromsg: %s\n", getRegError(res, pmsgRegex));
+		return 1;
+	}
+
+	cbuf = cbuffer_create(1024);
+	if(!cbuf) {
+		fprintf(stderr, "Could not create output buffer!\n");
 		return 1;
 	}
 
@@ -113,15 +182,26 @@ int main(int argc, char **argv) {
 				printf(" -- PING/%s\n", str);
 				ircsock_send(ircSocket, str);
 			} else {
+				tok = malloc(strlen(str) + 1);
+				strcpy(tok, str);
+				cbuffer_push(cbuf, tok);
+
 				res = regexec(pmsgRegex, str, pmsgRegex->re_nsub + 1, mptr, 0);
 				if(res == 0) {
 					tok = strtok(str + mptr[4].rm_so, " ");
 					if(!strcmp(tok, cstart)) {
 						tok = strtok(NULL, " ");
-						if(!strcmp(tok, "restart")) {
+						if(!strcmp(tok, "restart"))
 							done = 77;
-						}
 					}
+				}
+
+				if(childReady) {
+					while((tok = cbuffer_pop(cbuf)) != NULL) {
+						fprintf(ofpipe, "%s\n", tok);
+						free(tok);
+					}
+					fflush(ofpipe);
 				}
 			}
 			free(str);
