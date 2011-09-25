@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	char *nick = "jbotc", *chan = "#zebra", *owner = "jac", *lfname = "jbot.log";
 	char str[BSIZE], *tok, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], *msg;
-	FILE *lFile = NULL;
+	FILE *log = NULL;
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
@@ -37,12 +37,12 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	lFile = fopen(lfname, "a");
-	if(!lFile) {
+	log = fopen(lfname, "a");
+	if(!log) {
 		fprintf(stderr, "Could not open log file!\n");
 		return 1;
 	}
-	fprintf(lFile, "------------------------------------\n");
+	fprintf(log, "------------------------------------\n");
 
 	cstart = malloc(strlen(nick) + 2);
 	strcpy(cstart, nick);
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 		if(fgets(str, BSIZE - 1, stdin) == str) {
 			str[strlen(str) - 1] = '\0';
 
-			fprintf(lFile, " <- %s\n", str);
+			fprintf(log, " <- %s\n", str);
 			res = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
 			if(res == 0) {
 				strncpy(name, str + mptr[1].rm_so, mptr[1].rm_eo - mptr[1].rm_so);
@@ -66,35 +66,43 @@ int main(int argc, char **argv) {
 
 				msg = str + mptr[4].rm_so;
 
-				fprintf(lFile, "PRIVMSG %s :PRIVMSG recieved from %s@%s: %s\n",
+				fprintf(log, "PRIVMSG %s :PRIVMSG recieved from %s@%s: %s\n",
 						owner, name, cname, msg);
 				tok = strtok(msg, " ");
 				if(!strcmp(tok, cstart)) {
 					tok = strtok(NULL, " ");
 					if(!strcmp(tok, "reload")) {
+						fprintf(log, "Got message to restart...\n");
 						done = 1;
 					} else if(!strcmp(tok, "markov")) {
 						tok = strtok(NULL, " ");
 						if(tok == NULL) {
 							printf("PRIVMSG %s :%s: Usage: markov <word>\n", chan, name);
+							fprintf(log, " -> PRIVMSG %s :%s: Usage: markov <word>\n",
+									chan, name);
 						} else {
 							printf("PRIVMSG %s :%s: %s\n", chan, name, tok);
+							fprintf(log, " -> PRIVMSG %s :%s: %s\n", chan, name, tok);
 						}
 					} else {
 						printf("PRIVMSG %s :%s: ", chan, name);
+						fprintf(log, " -> PRIVMSG %s :%s: ", chan, name);
 						while(tok != NULL) {
 							printf("%s ", tok);
+							fprintf(log, "%s ", tok);
 							tok = strtok(NULL, " ");
 						}
 						printf("\n");
+						fprintf(log, "\n");
 					}
 				}
 			}
 			fflush(stdout);
-			fflush(lFile);
+			fflush(log);
 		}
 	}
 
+	close(0);
 	close(1);
 	return 0;
 }
