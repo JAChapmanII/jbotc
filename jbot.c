@@ -134,6 +134,26 @@ int main(int argc, char **argv) {
 							printf("PRIVMSG %s :%s: %s\n", chan, name, tok);
 							fprintf(log, " -> PRIVMSG %s :%s: %s\n", chan, name, tok);
 						}
+					/* CodeBlock wants a fish... */
+					} else if(!strcmp(tok, "fish")) {
+						printf("PRIVMSG %s :%s: ", chan, name);
+						fprintf(log, " -> PRIVMSG %s :%s: ", chan, name);
+						r = rand() % 2;
+						if(r == 0) {
+							printf("><>");
+							fprintf(log, "><>");
+						} else {
+							printf("<><");
+							fprintf(log, "<><");
+						}
+						printf("\n");
+						fprintf(log, "\n");
+					/* CodeBlock wants multiple species of fish */
+					} else if(!strcmp(tok, "fishes")) {
+						printf("PRIVMSG %s :%s: ><> <>< <><   ><> ><>\n",
+								chan, name);
+						fprintf(log, " -> PRIVMSG %s :%s: ><> <>< <><   ><> ><>\n",
+								chan, name);
 					/* token after cstart does not match command */
 					} else {
 						/* msg ends with question mark, guess an answer */
@@ -144,7 +164,7 @@ int main(int argc, char **argv) {
 							if(r == 0) {
 								printf("Yes");
 								fprintf(log, "Yes");
-							} else
+							} else {
 								printf("No");
 								fprintf(log, "No");
 							}
