@@ -10,6 +10,7 @@
 #include <string.h>
 #include <regex.h>
 #include <unistd.h>
+#include <time.h>
 
 #define BSIZE 4096
 #define PBSIZE 256
@@ -45,7 +46,10 @@ int main(int argc, char **argv) {
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
-	int res, done = 0;
+	int res, done = 0, r;
+
+	/* seed random number generator with current time */
+	srand(time(NULL));
 
 	/* If we fail to compile the PRIVMSG regex, abort */
 	res = regcomp(&pmsgRegex,
@@ -130,14 +134,23 @@ int main(int argc, char **argv) {
 							printf("PRIVMSG %s :%s: %s\n", chan, name, tok);
 							fprintf(log, " -> PRIVMSG %s :%s: %s\n", chan, name, tok);
 						}
-					/* token after cstart does not match command, print input back
-					 * to them as simple echo command */
+					/* token after cstart does not match command */
 					} else {
-						/* msg currently still has cstart, so we skip it here */
-						printf("PRIVMSG %s :%s: %s\n",
-								chan, name, msg + strlen(cstart));
-						fprintf(log, " -> PRIVMSG %s :%s: %s\n",
-								chan, name, msg + strlen(cstart));
+						/* msg ends with question mark, guess an answer */
+						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
+							printf("PRIVMSG %s :%s: ", chan, name);
+							fprintf(log, " -> PRIVMSG %s :%s: ", chan, name);
+							r = rand() % 2;
+							if(r == 0) {
+								printf("Yes");
+								fprintf(log, "Yes");
+							} else
+								printf("No");
+								fprintf(log, "No");
+							}
+							printf("\n");
+							fprintf(log, "\n");
+						}
 					}
 				}
 			}
