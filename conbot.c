@@ -17,7 +17,13 @@
 #include "ircsock.h"
 #include "cbuffer.h"
 
+/* size of character buffers */
 #define BSIZE 4096
+/* Size of line buffers */
+#define BLSIZE 1024
+
+/* Name of server to connect to */
+/* TODO: make not hard coded */
 #define SERVER ".slashnet.org"
 
 IRCSock *ircSocket = NULL;
@@ -154,33 +160,52 @@ char *getRegError(int errcode, regex_t *compiled) {
 }
 
 int main(int argc, char **argv) {
+	/* nick: the nick that this bot should identify as
+	 * chan: the channel this bot should get on
+	 * owner: the nick of the owner of this bot
+	 * TODO: read in from config/default to these values
+	 */
 	char *nick = "jbotc", *chan = "#zebra", *owner = "jac";
-	char *prefix = "irc", *str, *sname, *tok, *cstart;
+	/* prefix: prefix to SERVER we should try to sign on to
+	 * port: port on the server we should connect to
+	 * TODO: read in from config/default to these values
+	 */
+	char *prefix = "irc";
 	int port = 6667;
+
+	char *str, *sname, *tok, *cstart;
 	pthread_t readThread, transferThread;
 	regex_t *pmsgRegex = malloc(sizeof(regex_t));
 	regmatch_t mptr[16];
 	int res, done = 0;
 
+	/* If we recieve an argument, use it as the server prefix */
 	if(argc > 1)
 		prefix = argv[1];
 
+	/* Compile the PRIVMSG regex, abort on failure. Since this should be
+	 * tested, failure should NEVER happen */
 	res = regcomp(pmsgRegex,
 			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG ([#A-Za-z0-9_]*) :(.*)",
 			REG_EXTENDED);
-	if(res) {
+	if(res) { /*{{{*/
 		fprintf(stderr, "Could not compile regex!\n");
 		fprintf(stderr, "erromsg: %s\n", getRegError(res, pmsgRegex));
 		return 1;
-	}
+	} /*}}}*/
 
-	cbuf = cbuffer_create(1024);
-	if(!cbuf) {
+	/* Create the output to jbot buffer, abort on failure */
+	cbuf = cbuffer_create(BLSIZE);
+	if(!cbuf) { /*{{{*/
 		fprintf(stderr, "Could not create output buffer!\n");
 		return 1;
-	}
+	} /*}}}*/
 
 	sname = malloc(strlen(SERVER) + strlen(prefix) + 1);
+	if(!sname) {
+		fprintf(stderr, "Could not malloc space for sname!\n");
+		return 1;
+	}
 	strncpy(sname, prefix, strlen(prefix));
 	sname[strlen(prefix)] = '\0';
 	strcat(sname, SERVER);
