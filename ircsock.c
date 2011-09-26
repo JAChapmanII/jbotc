@@ -159,12 +159,19 @@ void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) { /*{{{*/
 	return ircsock_send(ircsock, buf);
 } /*}}}*/
 
-int ircsock_join(IRCSock *ircsock) {
+int ircsock_join(IRCSock *ircsock) { /*{{{*/
 	int foundPing = 0;
+	/* these use 16 as it should cover needed space for 4 letter command, a
+	 * space, and extra arguments besides nick/chan */
 	char *nickc = malloc(16 + strlen(ircsock->nick));
 	char *userc = malloc(16 + strlen(ircsock->nick) * 2);
 	char *joinc = malloc(16 + strlen(ircsock->chan));
 	char *str = NULL;
+
+	if(!nickc || !userc || !joinc) {
+		fprintf(stderr, "Failed malloc in ircsock_join\n");
+		return IRCSOCK_MERROR;
+	}
 
 	strcpy(nickc, "NICK ");
 	strcat(nickc, ircsock->nick);
@@ -186,13 +193,12 @@ int ircsock_join(IRCSock *ircsock) {
 		while((str = cbuffer_pop(ircsock->cbuf)) != NULL) {
 			if(strstr(str, " 433 ")) {
 				fprintf(stderr, "Nickname in use!\n");
-				return 0;
+				return 433;
 			}
 			if((str[0] == 'P') && (str[1] == 'I') &&
 				(str[2] == 'N') && (str[3] == 'G') &&
 				(str[4] == ' ') && (str[5] == ':')) {
 				str[1] = 'O';
-				printf(" -- PING/%s\n", str);
 				ircsock_send(ircsock, str);
 				free(str);
 
@@ -204,8 +210,8 @@ int ircsock_join(IRCSock *ircsock) {
 	}
 
 	ircsock_send(ircsock, joinc);
-	return 1;
-}
+	return 0;
+} /*}}}*/
 
 int ircsock_quit(IRCSock *ircsock) {
 	ircsock_send(ircsock, "QUIT");
