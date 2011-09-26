@@ -45,6 +45,10 @@ IRCSock *ircsock_create(char *host, int port, char *nick, char *chan) {
 	ircsock->socket = -1;
 
 	ircsock->cbuf = cbuffer_create(4096);
+	if(!ircsock->cbuf) {
+		ircsock_free(ircsock);
+		return NULL;
+	}
 
 	return ircsock;
 }
