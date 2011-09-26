@@ -26,6 +26,9 @@
 /* TODO: make not hard coded */
 #define SERVER ".slashnet.org"
 
+/* Magic value we return if we want to be restarted */
+#define RESTARTV 77
+
 IRCSock *ircSocket = NULL;
 CBuffer *cbuf = NULL;
 
@@ -201,93 +204,114 @@ int main(int argc, char **argv) {
 		return 1;
 	} /*}}}*/
 
+	/* Construct the full server name, abort on error */
 	sname = malloc(strlen(SERVER) + strlen(prefix) + 1);
-	if(!sname) {
+	if(!sname) { /*{{{*/
 		fprintf(stderr, "Could not malloc space for sname!\n");
 		return 1;
-	}
+	} /*}}}*/
 	strncpy(sname, prefix, strlen(prefix));
 	sname[strlen(prefix)] = '\0';
 	strcat(sname, SERVER);
 	printf("Server: %s\n", sname);
 
+	/* Construct command start string, abort on error */
 	cstart = malloc(strlen(nick) + 2);
+	if(!cstart) { /*{{{*/
+		fprintf(stderr, "Could not malloc space for command start!\n");
+		return 1;
+	} /*}}}*/
 	strcpy(cstart, nick);
 	strcat(cstart, ":");
 
+	/* Create socket, connect to remote server and join proper channel,
+	 * aborting on any errors */
 	printf("Creating ircSocket...\n");
 	ircSocket = ircsock_create(sname, port, nick, chan);
-	if(!ircSocket) {
+	if(!ircSocket) { /*{{{*/
 		fprintf(stderr, "Could not create ircSocket!\n");
 		return 1;
-	}
+	} /*}}}*/
 	printf("Connecting...\n");
-	if(ircsock_connect(ircSocket) != 0) {
+	if(ircsock_connect(ircSocket) != 0) { /*{{{*/
 		fprintf(stderr, "Couldn't connect!\n");
 		return 1;
-	}
-
+	} /*}}}*/
 	printf("Joining %s as %s...\n", chan, nick);
-	if(ircsock_join(ircSocket) != 0) {
+	if(ircsock_join(ircSocket) != 0) { /*{{{*/
 		fprintf(stderr, "Couldn't join room!\n");
 		return 1;
-	}
+	} /*}}}*/
 
+	/* Create worker threads readThread and transferThread, abort on error */
 	printf("Creating read thread...\n");
-	if(pthread_create(&readThread, NULL, readLoop, NULL) != 0) {
+	if(pthread_create(&readThread, NULL, readLoop, NULL) != 0) { /*{{{*/
 		fprintf(stderr, "Could not create readThread!\n");
 		ircsock_quit(ircSocket);
 		return 1;
-	}
-
+	} /*}}}*/
 	printf("Creating transfer thread...\n");
-	if(pthread_create(&transferThread, NULL, transferLoop, NULL) != 0) {
+	if(pthread_create(&transferThread, NULL, transferLoop, NULL) != 0) { /*{{{*/
 		fprintf(stderr, "Could not create readThread!\n");
 		ircsock_quit(ircSocket);
 		return 1;
-	}
+	} /*}}}*/
 
+	/* Main loop to keep connection alive/send data to subprocess */
 	printf("Entering output loop\n");
 	while(!done) {
 		while((str = cbuffer_pop(ircSocket->cbuf)) != NULL) {
+			/* If we get a ping, reply to it, do not pass to subprocess */
 			if((str[0] == 'P') && (str[1] == 'I') &&
 				(str[2] == 'N') && (str[3] == 'G') &&
 				(str[4] == ' ') && (str[5] == ':')) {
 				str[1] = 'O';
-				printf(" -- PING/%s\n", str);
 				ircsock_send(ircSocket, str);
 			} else {
+				/* push anything else onto cbuf for output to subprocess */
 				tok = malloc(strlen(str) + 1);
 				strcpy(tok, str);
 				cbuffer_push(cbuf, tok);
 
 				res = regexec(pmsgRegex, str, pmsgRegex->re_nsub + 1, mptr, 0);
+				/* if message is PRIVMSG broad cast... */
 				if(res == 0) {
 					tok = strtok(str + mptr[4].rm_so, " ");
+					/* and it is a command to us... */
 					if(!strcmp(tok, cstart)) {
 						tok = strtok(NULL, " ");
-						if(!strcmp(tok, "restart"))
-							done = 77;
+						/* and it is "restart"... */
+						if(!strcmp(tok, "restart") &&
+								/* from our owner */
+								!strncmp(str + mptr[1].rm_so, owner, strlen(owner)))
+							/* break main loop and restart */
+							done = RESTARTV;
 					}
 				}
 
+				/* If the child process is ready for input */
 				if(childReady) {
+					/* dump all the output to it */
 					while((tok = cbuffer_pop(cbuf)) != NULL) {
 						fprintf(ofpipe, "%s\n", tok);
 						free(tok);
 					}
+					/* flush the outbound pipe */
 					fflush(ofpipe);
 				}
 			}
 			free(str);
 		}
+		/* sleep 5ms so we don't just sit here spinning wasting a bunch of CPU
+		 * time when other processes/threads could use it */
 		usleep(5000);
 	}
 
 	ircsock_quit(ircSocket);
 
-	if(done == 77)
-		return 77;
+	/* If we should restart, return the magic restart value */
+	if(done == RESTARTV)
+		return RESTARTV;
 	return 0;
 }
 
