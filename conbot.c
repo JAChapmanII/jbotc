@@ -139,16 +139,16 @@ void *transferLoop(void *args) { /*{{{*/
 		childReady = 0;
 
 		printf("Child closed, restarting...\n");
+		/* Close FILE * associated with ends of {o,i}Pipe */
+		fclose(ofpipe);
+		fclose(ifpipe);
 		/* close remaining ends of {o,i}Pipe */
 		close(oPipe[1]);
 		close(iPipe[0]);
-		/* reset pipes to invalid file descriptors */
+		/* reset pipes and FILE * for next iteration */
 		oPipe[0] = oPipe[1] = -1;
 		iPipe[0] = iPipe[1] = -1;
-		/* TODO: since we close() the actual pipe, do we still need to fclose()
-		 * these that we opened with fdopen()? */
-		ofpipe = NULL;
-		ifpipe = NULL;
+		ofpipe = ifpipe = NULL;
 	}
 } /*}}}*/
 
