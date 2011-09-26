@@ -8,7 +8,12 @@
 #include <unistd.h>
 #include <stdio.h>
 
-IRCSock *ircsock_create(char *host, int port, char *nick, char *chan) {
+/* Size of character buffers */
+#define BCSIZE 4096
+/* Size of line buffers */
+#define BLSIZE 4096
+
+IRCSock *ircsock_create(char *host, int port, char *nick, char *chan) { /*{{{*/
 	IRCSock *ircsock = malloc(sizeof(IRCSock));
 	if(!ircsock)
 		return NULL;
@@ -44,16 +49,17 @@ IRCSock *ircsock_create(char *host, int port, char *nick, char *chan) {
 
 	ircsock->socket = -1;
 
-	ircsock->cbuf = cbuffer_create(4096);
+	ircsock->cbuf = cbuffer_create(BLSIZE);
 	if(!ircsock->cbuf) {
 		ircsock_free(ircsock);
 		return NULL;
 	}
 
 	return ircsock;
-}
+} /*}}}*/
 
-void ircsock_free(IRCSock *ircsock) {
+/* TODO: handle disconnecting */
+void ircsock_free(IRCSock *ircsock) { /*{{{*/
 	if(!ircsock)
 		return;
 	cbuffer_free(ircsock->cbuf);
@@ -61,11 +67,15 @@ void ircsock_free(IRCSock *ircsock) {
 	free(ircsock->nick);
 	free(ircsock->chan);
 	free(ircsock);
-}
+} /*}}}*/
 
-struct addrinfo *ircsock_lookupDomain(IRCSock *ircsock) {
+/* Function used to get address information from a domain and port
+ *
+ * Returns NULL on failure, prints error to stderr
+ */
+struct addrinfo *ircsock_lookupDomain(IRCSock *ircsock) { /*{{{*/
 	struct addrinfo *result;
-	char sport[64];
+	char sport[BCSIZE];
 	int error;
 
 	if(ircsock->socket == -1) {
@@ -73,7 +83,7 @@ struct addrinfo *ircsock_lookupDomain(IRCSock *ircsock) {
 		return NULL;
 	}
 
-	snprintf(sport, 64, "%d", ircsock->port);
+	snprintf(sport, BCSIZE, "%d", ircsock->port);
 	error = getaddrinfo(ircsock->host, sport, NULL, &result);
 	if(error) {
 		fprintf(stderr, "Can't lookup domain: error!\n");
@@ -81,26 +91,26 @@ struct addrinfo *ircsock_lookupDomain(IRCSock *ircsock) {
 	}
 
 	return result;
-}
+} /*}}}*/
 
-int ircsock_connect(IRCSock *ircsock) {
+int ircsock_connect(IRCSock *ircsock) { /*{{{*/
 	struct addrinfo *result;
 	int error;
 
 	ircsock->socket = socket(AF_INET, SOCK_STREAM, 0);
 	if(ircsock->socket == -1)
-		return 0;
+		return 1;
 
 	result = ircsock_lookupDomain(ircsock);
 	if(!result)
-		return 0;
+		return 2;
 	error = connect(ircsock->socket, result->ai_addr, result->ai_addrlen);
 	if(error == -1)
-		return 0;
+		return 3;
 	freeaddrinfo(result);
 
-	return 1;
-}
+	return 0;
+} /*}}}*/
 
 void ircsock_read(IRCSock *ircsock) {
 	char buf[4098];
