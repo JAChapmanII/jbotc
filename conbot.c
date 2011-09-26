@@ -1,3 +1,13 @@
+/* conbot's purpose is to handle connecting to an IRC network and joining a
+ * room. It then stays connected, and only handles enough of the IRC protocol
+ * to remain connected.
+ *
+ * To handle user input and output, it has transferLoop. Essentially, it sets
+ * up read/write pipes to an invocation of the jbot progrom (jbot can be
+ * anything that handles stdin and writes to stdout). If jbot dies, we restart
+ * it. We send all non-connection related messages to it, and send its output
+ * back to our IRCSock socket. See transferLoop for more details
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,51 +23,77 @@
 IRCSock *ircSocket = NULL;
 CBuffer *cbuf = NULL;
 
+/* name of binary to be invoked as subprocess */
 char *jbotBinary = "jbot";
+/* true if we can write to output pipe, false otherwise */
 int childReady = 0;
+/* oPipe is used in the pipe() call to create the pipe going out of conbot,
+ * iPipe is used for the incoming pipe */
 int oPipe[2];
-FILE *ofpipe;
 int iPipe[2];
+/* These are standard FILE * which we set up using fdopen() from the write end
+ * of oPipe and the read end of iPipe */
+FILE *ofpipe;
 FILE *ifpipe;
 
-void *readLoop(void *args) {
+/* readLoop is a function to be invoked as its own pthread. Since ircsock_read
+ * blocks, this sits in its own thread an simply continuously dumps read input
+ * into ircSocket->cbuf
+ */
+void *readLoop(void *args) { /*{{{*/
 	if(args != NULL)
 		return NULL;
 	while(1) {
 		ircsock_read(ircSocket);
 	}
-}
+} /*}}}*/
 
-void *transferLoop(void *args) {
+/* Spawns subprocess and sets up ofpipe and ifpipe for reading and writing to
+ * it. Sits in a loop in its own pthread until main process ends
+ */
+void *transferLoop(void *args) { /*{{{*/
 	char str[BSIZE];
 	pid_t cpid;
 	if(args != NULL)
 		return NULL;
+	/* initialize pipes to invalid file descriptors */
 	oPipe[0] = oPipe[1] = -1;
 	iPipe[0] = iPipe[1] = -1;
+	/* each loop through either opens up a new subproccess and reads/writes to
+	 * it, or aborts early and tries again if there was a problem in setting up
+	 * the required pipes/subprocess.
+	 */
 	while(1) {
 		childReady = 0;
-		if(((oPipe[0] == oPipe[1]) && (oPipe[0] == -1)) && pipe(oPipe)) {
+		/* If oPipe needs setup, attempt to create it. If we fail, print error
+		 * message, try again in 15 seconds */
+		if(((oPipe[0] == oPipe[1]) && (oPipe[0] == -1)) && pipe(oPipe)) { /*{{{*/
 			fprintf(stderr, "Could not create out pipe...\n");
 			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
 			sleep(15);
 			continue;
-		}
-		if(((iPipe[0] == iPipe[1]) && (iPipe[0] == -1)) && pipe(iPipe)) {
+		} /*}}}*/
+		/* Follow the same process with iPipe */
+		if(((iPipe[0] == iPipe[1]) && (iPipe[0] == -1)) && pipe(iPipe)) { /*{{{*/
 			fprintf(stderr, "Could not create in pipe...\n");
 			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
 			sleep(15);
 			continue;
-		}
+		} /*}}}*/
+
 		printf("Forking subprocess...\n");
+		/* Fork so that we can exec the subprocess, if we fail, try again in 15
+		 * seconds */
 		cpid = fork();
-		if(cpid == -1) {
+		if(cpid == -1) { /*{{{*/
 			fprintf(stderr, "Could not fork!\n");
 			fprintf(stderr, "Sleeping for 15 seconds and trying again...\n");
 			sleep(15);
 			continue;
-		}
-		if(cpid == 0) {
+		} /*}}}*/
+
+		/* If we are the fork, setup stdin/stdout, exec jbot */
+		if(cpid == 0) { /*{{{*/
 			/* prepare subprocess input */
 			close(0);
 			dup(oPipe[0]);
@@ -70,31 +106,45 @@ void *transferLoop(void *args) {
 			close(iPipe[0]);
 			close(iPipe[1]);
 
+			/* replace the fork image with the jbot binary */
 			execv(jbotBinary, args);
+			/* shouldn't ever get here */
 			return NULL;
-		}
-		printf("Forked...\n");
+		} /*}}}*/
+
+		/* If we are still a thread in the main process... */
+
+		/* Close not-needed ends of {o,i}Pipe */
 		close(oPipe[0]);
-		ofpipe = fdopen(oPipe[1], "w");
 		close(iPipe[1]);
+		/* Setup {o,i}fipe FILE *s for writing/reading respectively */
+		ofpipe = fdopen(oPipe[1], "w");
 		ifpipe = fdopen(iPipe[0], "r");
+
+		printf("Child is ready, entering read loop...\n");
 		childReady = 1;
-		while(!feof(ifpipe)) {
+		/* send all read data from subprocess to IRC server */
+		while(!feof(ifpipe)) { /*{{{*/
 			if(fgets(str, BSIZE - 1, ifpipe) == str) {
 				str[strlen(str) - 1] = '\0';
 				ircsock_send(ircSocket, str);
 			}
-		}
-		printf("Child closed, restarting...\n");
+		} /*}}}*/
 		childReady = 0;
+
+		printf("Child closed, restarting...\n");
+		/* close remaining ends of {o,i}Pipe */
 		close(oPipe[1]);
 		close(iPipe[0]);
+		/* reset pipes to invalid file descriptors */
 		oPipe[0] = oPipe[1] = -1;
 		iPipe[0] = iPipe[1] = -1;
+		/* TODO: since we close() the actual pipe, do we still need to fclose()
+		 * these that we opened with fdopen()? */
 		ofpipe = NULL;
 		ifpipe = NULL;
 	}
-}
+} /*}}}*/
 
 char *getRegError(int errcode, regex_t *compiled) {
 	size_t l = regerror(errcode, compiled, NULL, 0);
