@@ -147,13 +147,13 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	printf("Connecting...\n");
-	if(!ircsock_connect(ircSocket)) {
+	if(ircsock_connect(ircSocket) != 0) {
 		fprintf(stderr, "Couldn't connect!\n");
 		return 1;
 	}
 
 	printf("Joining %s as %s...\n", chan, nick);
-	if(!ircsock_join(ircSocket)) {
+	if(ircsock_join(ircSocket) != 0) {
 		fprintf(stderr, "Couldn't join room!\n");
 		return 1;
 	}
