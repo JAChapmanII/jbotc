@@ -146,7 +146,7 @@ ssize_t ircsock_send(IRCSock *ircsock, char *str) { /*{{{*/
 	return wamount;
 } /*}}}*/
 
-void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) { /*{{{*/
+ssize_t ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) { /*{{{*/
 	char *buf = malloc(strlen(msg) + strlen("PRIVMSG ") + strlen(target) + 1);
 	if(!buf) {
 		fprintf(stderr, "Failed to malloc in irsock_pmsg!\n");
@@ -213,8 +213,7 @@ int ircsock_join(IRCSock *ircsock) { /*{{{*/
 	return 0;
 } /*}}}*/
 
-int ircsock_quit(IRCSock *ircsock) {
-	ircsock_send(ircsock, "QUIT");
-	return 1;
-}
+int ircsock_quit(IRCSock *ircsock) { /*{{{*/
+	return ircsock_send(ircsock, "QUIT");
+} /*}}}*/
 
