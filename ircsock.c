@@ -112,39 +112,52 @@ int ircsock_connect(IRCSock *ircsock) { /*{{{*/
 	return 0;
 } /*}}}*/
 
-void ircsock_read(IRCSock *ircsock) {
-	char buf[4098];
+ssize_t ircsock_read(IRCSock *ircsock) { /*{{{*/
+	/* We must have enough space for the newline and null character */
+	char buf[BCSIZE + 2];
 	ssize_t ramount;
 	char *str, *tok;
 
-	ramount = read(ircsock->socket, buf, 4096);
+	ramount = read(ircsock->socket, buf, BCSIZE);
 	if(ramount > 0) {
 		buf[ramount] = '\n';
 		buf[ramount + 1] = '\0';
 		tok = strtok(buf, "\r\n");
 		while(tok != NULL) {
 			str = malloc(strlen(tok) + 1);
+			if(!str) {
+				fprintf(stderr, "Failed to allocate memory in ircsock_read!\n");
+				return IRCSOCK_MERROR;
+			}
 			strcpy(str, tok);
 
 			cbuffer_push(ircsock->cbuf, str);
 			tok = strtok(NULL, "\r\n");
 		}
 	}
-}
+	return ramount;
+} /*}}}*/
 
-void ircsock_send(IRCSock *ircsock, char *str) {
-	write(ircsock->socket, str, strlen(str));
-	write(ircsock->socket, "\r\n", 2);
-}
+ssize_t ircsock_send(IRCSock *ircsock, char *str) { /*{{{*/
+	ssize_t wamount = write(ircsock->socket, str, strlen(str));
+	if(wamount < 0)
+		return wamount;
+	wamount += write(ircsock->socket, "\r\n", 2);
+	return wamount;
+} /*}}}*/
 
-void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) {
+void ircsock_pmsg(IRCSock *ircsock, char *target, char *msg) { /*{{{*/
 	char *buf = malloc(strlen(msg) + strlen("PRIVMSG ") + strlen(target) + 1);
+	if(!buf) {
+		fprintf(stderr, "Failed to malloc in irsock_pmsg!\n");
+		return IRCSOCK_MERROR;
+	}
 	strcpy(buf, "PRIVMSG ");
 	strcat(buf, target);
 	strcat(buf, " ");
 	strcat(buf, msg);
-	ircsock_send(ircsock, buf);
-}
+	return ircsock_send(ircsock, buf);
+} /*}}}*/
 
 int ircsock_join(IRCSock *ircsock) {
 	int foundPing = 0;
