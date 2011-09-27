@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <regex.h>
 #include <unistd.h>
@@ -28,21 +29,35 @@ char *getRegError(int errcode, regex_t *compiled) { /*{{{*/
 	return buffer;
 } /*}}}*/
 
-/* main runs through a loop getting input and sending output. We log
+FILE *logFile = NULL;
+/* Small wrapper to allow printing to a logFile and stdout at the same time {{{ */
+void send(char *target, char *format, ...) {
+	va_list args;
+	char buf[BSIZE];
+
+	va_start(args, format);
+	vsnprintf(buf, BSIZE, format, args);
+
+	printf("PRIVMSG %s :%s\n", target, buf);
+	fprintf(logFile, " -> @%s :%s\n", target, buf);
+
+	va_end(args);
+} /*}}}*/
+
+/* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
 	/* nick: the nick of the bot we are running as
 	 * chan: the channel we should be in and handling input from
 	 * owner: the nick of our owner, may be used for special commands/output
-	 * lfname: the name of the log file we should write to
+	 * lfname: the name of the logFile file we should write to
 	 * TODO: have these be read in or default to these constants
 	 */
 	char *nick = "jbotc", *chan = "#zebra", *owner = "jac", *lfname = "jbot.log";
 
 	char str[BSIZE], *tok, *tmsg, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
-	FILE *log = NULL;
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
@@ -61,15 +76,15 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	/* If we fail to open the log in append mode, abort */
-	log = fopen(lfname, "a");
-	if(!log) {
-		fprintf(stderr, "Could not open log file!\n");
+	/* If we fail to open the logFile in append mode, abort */
+	logFile = fopen(lfname, "a");
+	if(!logFile) {
+		fprintf(stderr, "Could not open logFile file!\n");
 		return 1;
 	}
 
-	/* print separator to log */
-	fprintf(log, "------------------------------------\n");
+	/* print separator to logFile */
+	fprintf(logFile, "------------------------------------\n");
 
 	/* Setup the command start string, abort on failure */
 	cstart = malloc(strlen(nick) + 2);
@@ -86,8 +101,8 @@ int main(int argc, char **argv) {
 			/* replace newline with null */
 			str[strlen(str) - 1] = '\0';
 
-			/* log input */
-			fprintf(log, " <- %s\n", str);
+			/* logFile input */
+			fprintf(logFile, " <- %s\n", str);
 			res = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
 			/* if a PRIVMSG was broadcast to us */
 			if(res == 0) {
@@ -108,7 +123,7 @@ int main(int argc, char **argv) {
 				/* setup tmsg to point to the msg in str */
 				tmsg = str + mptr[4].rm_so;
 
-				fprintf(log, "PRIVMSG %s :PRIVMSG recieved from %s@%s: %s\n",
+				fprintf(logFile, "PRIVMSG %s :PRIVMSG recieved from %s@%s: %s\n",
 						owner, name, cname, msg);
 				tok = strtok(tmsg, " ");
 				/* if this is targeted at us */
@@ -116,7 +131,7 @@ int main(int argc, char **argv) {
 					tok = strtok(NULL, " ");
 					/* reload stops this instance, parent conbot starts new one */
 					if(!strcmp(tok, "reload")) {
-						fprintf(log, "Got message to restart...\n");
+						fprintf(logFile, "Got message to restart...\n");
 						done = 1;
 					/* markov will eventually print markov chains generated from
 					 * previous input. TODO: implement */
@@ -124,63 +139,36 @@ int main(int argc, char **argv) {
 						tok = strtok(NULL, " ");
 						if(tok == NULL) {
 							/* if we didn't recieve an argument, print usage */
-							printf("PRIVMSG %s :%s: Usage: markov <word>\n",
-									chan, name);
-							fprintf(log, " -> PRIVMSG %s :%s: Usage: markov <word>\n",
-									chan, name);
+							send(chan, "%s: Usage: markov <word>", name);
 						} else {
 							/* we recieved an argument, print it back to them for
 							 * now. TODO: implement properly */
-							printf("PRIVMSG %s :%s: %s\n", chan, name, tok);
-							fprintf(log, " -> PRIVMSG %s :%s: %s\n", chan, name, tok);
+							send(chan, "%s: %s", name, tok);
 						}
 					/* CodeBlock wants a fish... */
 					} else if(!strcmp(tok, "fish")) {
-						printf("PRIVMSG %s :%s: ", chan, name);
-						fprintf(log, " -> PRIVMSG %s :%s: ", chan, name);
-						r = rand() % 2;
-						if(r == 0) {
-							printf("><>");
-							fprintf(log, "><>");
-						} else {
-							printf("<><");
-							fprintf(log, "<><");
-						}
-						printf("\n");
-						fprintf(log, "\n");
+						r = rand();
+						send(chan, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
 					/* CodeBlock wants multiple species of fish */
 					} else if(!strcmp(tok, "fishes")) {
-						printf("PRIVMSG %s :%s: ><> <>< <><   ><> ><>\n",
-								chan, name);
-						fprintf(log, " -> PRIVMSG %s :%s: ><> <>< <><   ><> ><>\n",
-								chan, name);
+						send(chan, "%s: ><> <>< <><   ><> ><>", name);
 					/* token after cstart does not match command */
 					} else {
 						/* msg ends with question mark, guess an answer */
 						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
-							printf("PRIVMSG %s :%s: ", chan, name);
-							fprintf(log, " -> PRIVMSG %s :%s: ", chan, name);
-							r = rand() % 2;
-							if(r == 0) {
-								printf("Yes");
-								fprintf(log, "Yes");
-							} else {
-								printf("No");
-								fprintf(log, "No");
-							}
-							printf("\n");
-							fprintf(log, "\n");
+							r = rand();
+							send(chan, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
 						}
 					}
 				}
 			}
 			/* flush everything so output goes out immediately */
 			fflush(stdout);
-			fflush(log);
+			fflush(logFile);
 		/* fgets failed, handle printing error message */
 		} else {
 			fprintf(stderr, "fgets failed in main jbot loop!\n");
-			fprintf(log, "fgets failed in main jbot loop!\n");
+			fprintf(logFile, "fgets failed in main jbot loop!\n");
 		}
 	}
 
