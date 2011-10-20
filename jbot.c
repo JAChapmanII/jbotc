@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "bmap.h"
+
 #define BSIZE 4096
 #define PBSIZE 256
 
@@ -58,6 +60,8 @@ int main(int argc, char **argv) {
 
 	char str[BSIZE], *tok, *tmsg, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
+
+	bMap *constantMap = NULL;
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
