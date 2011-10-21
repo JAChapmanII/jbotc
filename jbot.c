@@ -18,6 +18,13 @@
 #define BSIZE 4096
 #define PBSIZE 256
 
+#define GREETING_COUNT 4
+char *greetings[GREETING_COUNT] = { "Ahoy!", "Howdy!", "Goodday!", "Hello!" };
+/* Returns a random greeting from greetings array */
+char *obtainGreeting() {
+	return greetings[rand() % GREETING_COUNT];
+}
+
 /* Returns a pointer to the string representation of a regular expression
  * error. Since this should be tested, this function should never be called in
  * production.
@@ -64,7 +71,7 @@ int main(int argc, char **argv) {
 	BMap *constantMap = NULL;
 	BMap_Node *tmpn = NULL;
 
-	regex_t pmsgRegex;
+	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
 	int res, done = 0, r, tmp;
 
@@ -76,8 +83,18 @@ int main(int argc, char **argv) {
 			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG ([#A-Za-z0-9_]*) :(.*)",
 			REG_EXTENDED);
 	if(res) {
-		fprintf(stderr, "Could not compile regex!\n");
+		fprintf(stderr, "Could not compile privmsg regex!\n");
 		fprintf(stderr, "erromsg: %s\n", getRegError(res, &pmsgRegex));
+		return 1;
+	}
+
+	/* If we fail to compile the JOIN regex, abort */
+	res = regcomp(&joinRegex,
+			"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) JOIN :([#A-Za-z0-9_]*)",
+			REG_EXTENDED);
+	if(res) {
+		fprintf(stderr, "Could not compile join regex!\n");
+		fprintf(stderr, "erromsg: %s\n", getRegError(res, &joinRegex));
 		return 1;
 	}
 
@@ -106,7 +123,7 @@ int main(int argc, char **argv) {
 	strcpy(cstart, nick);
 	strcat(cstart, ":");
 
-	send(chan, "Ahoy!");
+	send(chan, "%s", obtainGreeting());
 
 	/* main loop, go until we say we are done or parent is dead/closes us off */
 	while(!feof(stdin) && !done) {
@@ -231,7 +248,6 @@ int main(int argc, char **argv) {
 							tmp--;
 							snprintf(tmps, PBSIZE, "%d", tmp);
 							bmap_add(constantMap, tok, tmps);
-							/* TODO: actually change variable XD */
 							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 						}
 					/* token after cstart does not match command */
@@ -243,6 +259,23 @@ int main(int argc, char **argv) {
 						}
 					}
 				}
+			}
+			res = regexec(&joinRegex, str, joinRegex.re_nsub + 1, mptr, 0);
+			/* if a JOIN was broadcast to us */
+			if(res == 0) {
+				/* copy nick of sender into name */
+				strncpy(name, str + mptr[1].rm_so, mptr[1].rm_eo - mptr[1].rm_so);
+				name[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
+
+				/* copy host mask of sender into hmask */
+				strncpy(hmask, str + mptr[2].rm_so, mptr[2].rm_eo - mptr[2].rm_so);
+				hmask[mptr[2].rm_eo - mptr[2].rm_so] = '\0';
+
+				/* copy target of PRIVMSG into cname */
+				strncpy(cname, str + mptr[3].rm_so, mptr[3].rm_eo - mptr[3].rm_so);
+				cname[mptr[3].rm_eo - mptr[3].rm_so] = '\0';
+
+				send(chan, "%s: %s", name, obtainGreeting());
 			}
 			/* flush everything so output goes out immediately */
 			fflush(stdout);
