@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
-	int res, done = 0, r, tmp;
+	int res, done = 0, r, tmp, toUs;
 
 	/* seed random number generator with current time */
 	srand(time(NULL));
@@ -157,10 +157,12 @@ int main(int argc, char **argv) {
 						owner, name, cname, msg);
 				tok = strtok(tmsg, " ");
 
+				toUs = 0;
 				/* if this is targeted at us */
 				if(!strcmp(tok, cstart)) {
 					/* ignore it */
 					tok = strtok(NULL, " ");
+					toUs = 1;
 				}
 
 				/* reload stops this instance, parent conbot starts new one */
@@ -256,10 +258,12 @@ int main(int argc, char **argv) {
 					}
 				/* token after cstart does not match command */
 				} else {
-					/* msg ends with question mark, guess an answer */
-					if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
-						r = rand();
-						send(chan, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
+					if(toUs) {
+						/* msg ends with question mark, guess an answer */
+						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
+							r = rand();
+							send(chan, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
+						}
 					}
 				}
 			}
