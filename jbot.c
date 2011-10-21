@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
 				}
 
 				/* reload stops this instance, parent conbot starts new one */
-				if(!strcmp(tok, "reload")) {
+				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
 					fprintf(logFile, "Got message to restart...\n");
 					done = 1;
 				/* markov will eventually print markov chains generated from
@@ -282,7 +282,8 @@ int main(int argc, char **argv) {
 				strncpy(cname, str + mptr[3].rm_so, mptr[3].rm_eo - mptr[3].rm_so);
 				cname[mptr[3].rm_eo - mptr[3].rm_so] = '\0';
 
-				send(chan, "%s: %s", name, obtainGreeting());
+				if(strcmp(name, "ajanata"))
+					send(chan, "%s: %s", name, obtainGreeting());
 			}
 			/* flush everything so output goes out immediately */
 			fflush(stdout);
