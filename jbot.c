@@ -61,7 +61,8 @@ int main(int argc, char **argv) {
 	char str[BSIZE], *tok, *tmsg, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
-	bMap *constantMap = NULL, *tmpNode = NULL;
+	BMap *constantMap = NULL;
+	BMap_Node *tmpn = NULL;
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
@@ -81,7 +82,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* If we fail to create a basic map, abort */
-	if((constantMap = consBMap("zero", "0")) == NULL) {
+	if((constantMap = bmap_create()) == NULL) {
 		fprintf(stderr, "Could not create contstant map!\n");
 		return 1;
 	}
@@ -104,6 +105,8 @@ int main(int argc, char **argv) {
 	}
 	strcpy(cstart, nick);
 	strcat(cstart, ":");
+
+	send(chan, "Ahoy!");
 
 	/* main loop, go until we say we are done or parent is dead/closes us off */
 	while(!feof(stdin) && !done) {
@@ -165,64 +168,53 @@ int main(int argc, char **argv) {
 					/* declaring a variable */
 					} else if(!strcmp(tok, "declare")) {
 						tok = strtok(NULL, " ");
-						tmpNode = findNode(constantMap, tok);
-						if(tmpNode == NULL) {
-							if(bMapSize(constantMap) >= 256) {
+						tmpn = bmap_find(constantMap, tok);
+						if(tmpn == NULL) {
+							if(bmap_size(constantMap) >= 256) {
 								send(chan, "%s: 256 variables exist already, sorry!", name);
 							} else {
-								constantMap = addNode(constantMap, tok, "0");
+								bmap_add(constantMap, tok, "0");
 								send(chan, "%s: set \"%s\" to 0", name, tok);
 							}
 						} else {
-							send(chan, "%s: \"%s\" is %d", name, tmpNode->val);
+							send(chan, "%s: \"%s\" is %d", name, tok, tmpn->val);
 						}
 					/* incrementing a variable (or declaring it) */
 					} else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
 							!strcmp(tok, "++")) {
 						tok = strtok(NULL, " ");
-						tmpNode = findNode(constantMap, tok);
-						if(tmpNode == NULL) {
-							if(bMapSize(constantMap) >= 256) {
+						tmpn = bmap_find(constantMap, tok);
+						if(tmpn == NULL) {
+							if(bmap_size(constantMap) >= 256) {
 								send(chan, "%s: 256 variables exist already, sorry!", name);
 							} else {
-								constantMap = addNode(constantMap, tok, "0");
+								bmap_add(constantMap, tok, "0");
 								send(chan, "%s: set \"%s\" to 0", name, tok);
 							}
 						} else {
-							tmp = atoi(tmpNode->val);
+							tmp = atoi(tmpn->val);
 							tmp++;
 							snprintf(tmps, PBSIZE, "%d", tmp);
-							free(tmpNode->val);
-							tmpNode->val = malloc(strlen(tmps) + 1);
-							/* break horribly */
-							if(!tmpNode->val)
-								return 0;
-							strcpy(tmpNode->val, tmps);
-							/* TODO: actually change variable XD */
+							bmap_add(constantMap, tok, tmps);
 							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 						}
 					/* decrementing a variable (or declaring it) */
 					} else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
 							!strcmp(tok, "--")) {
 						tok = strtok(NULL, " ");
-						tmpNode = findNode(constantMap, tok);
-						if(tmpNode == NULL) {
-							if(bMapSize(constantMap) >= 256) {
+						tmpn = bmap_find(constantMap, tok);
+						if(tmpn == NULL) {
+							if(bmap_size(constantMap) >= 256) {
 								send(chan, "%s: 256 variables exist already, sorry!", name);
 							} else {
-								constantMap = addNode(constantMap, tok, "0");
+								bmap_add(constantMap, tok, "0");
 								send(chan, "%s: set \"%s\" to 0", name, tok);
 							}
 						} else {
-							tmp = atoi(tmpNode->val);
+							tmp = atoi(tmpn->val);
 							tmp--;
 							snprintf(tmps, PBSIZE, "%d", tmp);
-							free(tmpNode->val);
-							tmpNode->val = malloc(strlen(tmps) + 1);
-							/* break horribly */
-							if(!tmpNode->val)
-								return 0;
-							strcpy(tmpNode->val, tmps);
+							bmap_add(constantMap, tok, tmps);
 							/* TODO: actually change variable XD */
 							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 						}
