@@ -56,16 +56,16 @@ int main(int argc, char **argv) {
 	 * lfname: the name of the logFile file we should write to
 	 * TODO: have these be read in or default to these constants
 	 */
-	char *nick = "jbotc", *chan = "#zebra", *owner = "jac", *lfname = "jbot.log";
+	char *nick = "jbotc", *chan = "#uakroncs", *owner = "jac", *lfname = "jbot.log";
 
 	char str[BSIZE], *tok, *tmsg, *cstart;
-	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
+	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
-	bMap *constantMap = NULL;
+	bMap *constantMap = NULL, *tmpNode = NULL;
 
 	regex_t pmsgRegex;
 	regmatch_t mptr[16];
-	int res, done = 0, r;
+	int res, done = 0, r, tmp;
 
 	/* seed random number generator with current time */
 	srand(time(NULL));
@@ -77,6 +77,12 @@ int main(int argc, char **argv) {
 	if(res) {
 		fprintf(stderr, "Could not compile regex!\n");
 		fprintf(stderr, "erromsg: %s\n", getRegError(res, &pmsgRegex));
+		return 1;
+	}
+
+	/* If we fail to create a basic map, abort */
+	if((constantMap = consBMap("zero", "0")) == NULL) {
+		fprintf(stderr, "Could not create contstant map!\n");
 		return 1;
 	}
 
@@ -156,6 +162,44 @@ int main(int argc, char **argv) {
 					/* CodeBlock wants multiple species of fish */
 					} else if(!strcmp(tok, "fishes")) {
 						send(chan, "%s: ><> <>< <><   ><> ><>", name);
+					/* declaring a variable */
+					} else if(!strcmp(tok, "declare")) {
+						tok = strtok(NULL, " ");
+						tmpNode = findNode(constantMap, tok);
+						if(tmpNode == NULL) {
+							constantMap = addNode(constantMap, tok, "0");
+							send(chan, "%s: set \"%s\" to 0", name, tok);
+						} else {
+							send(chan, "%s: \"%s\" is %d", name, tmpNode->val);
+						}
+					/* incrementing a variable (or declaring it) */
+					} else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
+							!strcmp(tok, "++")) {
+						tok = strtok(NULL, " ");
+						tmpNode = findNode(constantMap, tok);
+						if(tmpNode == NULL) {
+							constantMap = addNode(constantMap, tok, "0");
+							send(chan, "%s: set \"%s\" to 0", name, tok);
+						} else {
+							tmp = atoi(tmpNode->val);
+							tmp++;
+							/* TODO: actually change variable XD */
+							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+						}
+					/* decrementing a variable (or declaring it) */
+					} else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
+							!strcmp(tok, "--")) {
+						tok = strtok(NULL, " ");
+						tmpNode = findNode(constantMap, tok);
+						if(tmpNode == NULL) {
+							constantMap = addNode(constantMap, tok, "0");
+							send(chan, "%s: set \"%s\" to 0", name, tok);
+						} else {
+							tmp = atoi(tmpNode->val);
+							tmp--;
+							/* TODO: actually change variable XD */
+							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+						}
 					/* token after cstart does not match command */
 					} else {
 						/* msg ends with question mark, guess an answer */

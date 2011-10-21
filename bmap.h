@@ -1,5 +1,5 @@
-#ifndef CMAP_H
-#define CMAP_H
+#ifndef BMAP_H
+#define BMAP_H
 
 typedef struct bMapNode
 {
@@ -27,4 +27,4 @@ bMap *findNode(bMap *bm, char *k);
 int bMapDepth(bMap *bm);
 int bMapSize(bMap *bm);
 
-#endif /* CMAP_H */
+#endif /* BMAP_H */

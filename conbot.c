@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 	 * owner: the nick of the owner of this bot
 	 * TODO: read in from config/default to these values
 	 */
-	char *nick = "jbotc", *chan = "#zebra", *owner = "jac";
+	char *nick = "jbotc", *chan = "#uakroncs", *owner = "jac";
 	/* prefix: prefix to SERVER we should try to sign on to
 	 * port: port on the server we should connect to
 	 * TODO: read in from config/default to these values

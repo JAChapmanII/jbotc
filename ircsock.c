@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 /* Size of character buffers */
-#define BCSIZE 4096
+#define BCSIZE 1024
 /* Size of line buffers */
 #define BLSIZE 4096
 
