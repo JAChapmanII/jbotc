@@ -183,6 +183,13 @@ int main(int argc, char **argv) {
 						} else {
 							tmp = atoi(tmpNode->val);
 							tmp++;
+							snprintf(tmps, PBSIZE, "%d", tmp);
+							free(tmpNode->val);
+							tmpNode->val = malloc(strlen(tmps) + 1);
+							/* break horribly */
+							if(!tmpNode->val)
+								return 0;
+							strcpy(tmpNode->val, tmps);
 							/* TODO: actually change variable XD */
 							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 						}
@@ -197,6 +204,13 @@ int main(int argc, char **argv) {
 						} else {
 							tmp = atoi(tmpNode->val);
 							tmp--;
+							snprintf(tmps, PBSIZE, "%d", tmp);
+							free(tmpNode->val);
+							tmpNode->val = malloc(strlen(tmps) + 1);
+							/* break horribly */
+							if(!tmpNode->val)
+								return 0;
+							strcpy(tmpNode->val, tmps);
 							/* TODO: actually change variable XD */
 							send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 						}
