@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 	 */
 	char *nick = "jbotc", *chan = "#uakroncs", *owner = "jac", *lfname = "jbot.log";
 
-	char str[BSIZE], *tok, *tmsg, *cstart;
+	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
 	BMap *constantMap = NULL;
@@ -177,7 +177,23 @@ int main(int argc, char **argv) {
 								send(chan, "%s: set \"%s\" to 0", name, tok);
 							}
 						} else {
-							send(chan, "%s: \"%s\" is %d", name, tok, tmpn->val);
+							send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
+						}
+					/* setting a variable */
+					} else if(!strcmp(tok, "set")) {
+						tok = strtok(NULL, " ");
+						tmpsp = tok;
+						tok = strtok(NULL, " ");
+						if(!tok || !tmpsp) {
+							send(chan, "%s: You must specify a variable and value", name);
+						} else {
+							bmap_add(constantMap, tmpsp, tok);
+							tmpn = bmap_find(constantMap, tmpsp);
+							if(!tmpn) {
+								send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
+							} else {
+								send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
+							}
 						}
 					/* incrementing a variable (or declaring it) */
 					} else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
