@@ -1,30 +1,33 @@
 #ifndef BMAP_H
 #define BMAP_H
 
-typedef struct bMapNode
-{
+typedef struct BMap_Node {
 	char *key;
 	char *val;
-	struct bMapNode *left;
-	struct bMapNode *right;
-} bMap;
+	struct BMap_Node *left;
+	struct BMap_Node *right;
+} BMap_Node;
 
 typedef struct {
 	char *k, *v;
-} entry;
+} BMap_Entry;
 
-bMap *consBMap(char *k, char *v);
-void deconsBMap(bMap *bm);
+typedef struct {
+	BMap_Node *root;
+} BMap;
 
-bMap *addNode(bMap *bm, char *k, char *v);
-bMap *addNodes(bMap *bm, entry nodes[]);
+BMap *bmap_create(void);
+void bmap_free(BMap *bmap);
 
-bMap *rightRotation(bMap *n);
-bMap *leftRotation(bMap *n);
+BMap_Node *bmapn_create(char *key, char *val);
+void bmapn_free(BMap_Node *bmn);
 
-bMap *findNode(bMap *bm, char *k);
+int bmap_add(BMap *bmap, char *k, char *v);
+int bmap_set(BMap *bmap, char *k, char *v);
 
-int bMapDepth(bMap *bm);
-int bMapSize(bMap *bm);
+BMap_Node *bmap_find(BMap *bmap, char *k);
+
+int bmap_depth(BMap *bmap);
+int bmap_size(BMap *bmap);
 
 #endif /* BMAP_H */

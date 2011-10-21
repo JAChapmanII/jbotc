@@ -3,90 +3,126 @@
 
 #include "bmap.h"
 
-bMap *consBMap(char *k, char *v) { /* {{{ */
-	bMap *bm;
-	if(!k || !v) return NULL;
-	bm = malloc(sizeof(bMap));
-	if(bm) {
-		bm->left = NULL; bm->right = NULL;
-		bm->key = malloc(strlen(k) + 1);
-		strcpy(bm->key, k);
-		bm->val = malloc(strlen(v) + 1);
-		strcpy(bm->val, v);
+BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
+BMap_Node *bmapn_rightRotation(BMap_Node *n);
+BMap_Node *bmapn_leftRotation(BMap_Node *n);
+BMap_Node *bmapn_find(BMap_Node *bmn, char *k);
+
+int bmapn_depth(BMap_Node *bmn);
+int bmapn_size(BMap_Node *bmn);
+
+BMap *bmap_create(void) { /* {{{ */
+	BMap *bmap;
+	bmap = malloc(sizeof(BMap));
+	if(!bmap)
+		return NULL;
+	bmap->root = NULL;
+	return bmap;
+} /* }}} */
+void bmap_free(BMap *bmap) { /* {{{ */
+	if(!bmap)
+		return;
+	if(bmap->root)
+		bmapn_free(bmap->root);
+	free(bmap);
+} /* }}} */
+
+BMap_Node *bmapn_create(char *key, char *val) { /* {{{ */
+	BMap_Node *bmn;
+	if(!key || !val)
+		return NULL;
+	bmn = malloc(sizeof(BMap_Node));
+	if(!bmn)
+		return NULL;
+	bmn->left = bmn->right = NULL;
+	bmn->key = malloc(strlen(key) + 1);
+	bmn->val = malloc(strlen(val) + 1);
+	if(!bmn->key || !bmn->val) {
+		bmapn_free(bmn);
+		return NULL;
 	}
-	return bm;
+	strcpy(bmn->key, key);
+	strcpy(bmn->val, val);
+	return bmn;
+} /* }}} */
+void bmapn_free(BMap_Node *bmn) { /* {{{ */
+	if(!bmn)
+		return;
+	if(bmn->left)
+		bmapn_free(bmn->left);
+	if(bmn->right)
+		bmapn_free(bmn->right);
+	free(bmn->key);
+	free(bmn->val);
+	free(bmn);
 } /* }}} */
 
-void deconsBMap(bMap *bm) { /* {{{ */
-	if(!bm) return;
-	deconsBMap(bm->left);
-	deconsBMap(bm->right);
-	free(bm->key);
-	free(bm->val);
-} /* }}} */
-
-bMap *findNode(bMap *bm, char *k) { /* {{{ */
-	int cmp;
-	if(!bm || !k) return NULL;
-	cmp = strcmp(bm->key, k);
-	if(!cmp)
-		return bm;
-	if(cmp < 0)
-		return findNode(bm->left, k);
-	return findNode(bm->right, k);
-} /* }}} */
-
-bMap *addNode(bMap *bm, char *k, char *v) { /* {{{ */
+/* TODO: error handling */
+int bmap_add(BMap *bmap, char *k, char *v) {
+	if(!k || !v)
+		return 1;
+	if(!bmap->root) {
+		bmap->root = bmapn_create(k, v);
+		if(!bmap->root)
+			return 1;
+		return 0;
+	}
+	bmap->root = bmapn_add(bmap->root, k, v);
+	return 0;
+}
+BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 	int cmp, ld, rd;
-	bMap **child;
-	if(!bm || !k || !v) return bm; /* TODO: this was just return; .... */
-	cmp = strcmp(bm->key, k);
+	BMap_Node **child;
+	if(!bmn || !k || !v) return bmn; /* TODO: this was just return; .... */
+	cmp = strcmp(bmn->key, k);
 	if(!cmp) {
-		if(strcmp(bm->val, v)) {
-			free(bm->val);
-			bm->val = malloc(strlen(k) + 1);
-			strcpy(bm->val, v);
+		if(strcmp(bmn->val, v)) {
+			free(bmn->val);
+			bmn->val = malloc(strlen(k) + 1);
+			strcpy(bmn->val, v);
 		}
 	}
 
 	if(cmp < 0)
-		child = &bm->left;
+		child = &bmn->left;
 	else
-		child = &bm->right;
+		child = &bmn->right;
 
 	if(!*child)
-		*child = consBMap(k, v);
+		*child = bmapn_create(k, v);
 	else
-		*child = addNode(*child, k, v);
+		*child = bmapn_add(*child, k, v);
 
-	ld = bMapDepth(bm->left);
-	rd = bMapDepth(bm->right);
+	ld = bmapn_depth(bmn->left);
+	rd = bmapn_depth(bmn->right);
 	if(rd - ld > 1) {
-		int r_ld = bMapDepth(bm->right->left), r_rd = bMapDepth(bm->right->right);
+		int r_ld = bmapn_depth(bmn->right->left), r_rd = bmapn_depth(bmn->right->right);
 		if(r_ld > r_rd)
-			bm->right = rightRotation(bm->right);
-		bm = leftRotation(bm);
+			bmn->right = bmapn_rightRotation(bmn->right);
+		bmn = bmapn_leftRotation(bmn);
 	} else if(ld - rd > 1) {
-		int l_ld = bMapDepth(bm->left->left), l_rd = bMapDepth(bm->left->right);
+		int l_ld = bmapn_depth(bmn->left->left), l_rd = bmapn_depth(bmn->left->right);
 		if(l_rd > l_ld)
-			bm->left = leftRotation(bm->left);
-		bm = rightRotation(bm);
+			bmn->left = bmapn_leftRotation(bmn->left);
+		bmn = bmapn_rightRotation(bmn);
 	}
 
-	return bm;
+	return bmn;
 } /* }}} */
 
-bMap *rightRotation(bMap *n) { /* {{{ */
-	bMap *nr = n->left, *c = n->left->right;
+/* TODO: implement */
+int bmap_set(BMap *bmap, char *k, char *v);
+
+BMap_Node *bmapn_rightRotation(BMap_Node *n) { /* {{{ */
+	BMap_Node *nr = n->left, *c = n->left->right;
 
 	nr->right = n;
 	n->left = c;
 
 	return nr;
 } /* }}} */
-
-bMap *leftRotation(bMap *n) { /* {{{ */
-	bMap *nr = n->right, *b = n->right->left;
+BMap_Node *bmapn_leftRotation(BMap_Node *n) { /* {{{ */
+	BMap_Node *nr = n->right, *b = n->right->left;
 
 	nr->left = n;
 	n->right = b;
@@ -94,25 +130,57 @@ bMap *leftRotation(bMap *n) { /* {{{ */
 	return nr;
 } /* }}} */
 
-int bMapSize(bMap *bm) { /* {{{ */
-	if(!bm) return 0;
-	return bMapSize(bm->left) + bMapSize(bm->right) + 1;
+BMap_Node *bmap_find(BMap *bmap, char *k) { /* {{{ */
+	if(!bmap->root || !k)
+		return NULL;
+	return bmapn_find(bmap->root, k);
+} /* }}} */
+BMap_Node *bmapn_find(BMap_Node *bmn, char *k) { /* {{{ */
+	int cmp;
+	if(!bmn || !k) return NULL;
+	cmp = strcmp(bmn->key, k);
+	if(!cmp)
+		return bmn;
+	if(cmp < 0)
+		return bmapn_find(bmn->left, k);
+	return bmapn_find(bmn->right, k);
 } /* }}} */
 
-bMap *addNodes(bMap *bm, entry nodes[]) { /* {{{ */
+int bmap_depth(BMap *bmap) { /* {{{ */
+	if(!bmap->root)
+		return 0;
+	return bmapn_depth(bmap->root);
+} /* }}} */
+int bmapn_depth(BMap_Node *bmn) { /* {{{ */
+	int ld, rd;
+	if(!bmn)
+		return 0;
+
+	/* if children are NULL, above check handles it */
+	ld = bmapn_depth(bmn->left);
+	rd = bmapn_depth(bmn->right);
+
+	return ((ld > rd) ? ld : rd) + 1;
+} /* }}} */
+
+int bmap_size(BMap *bmap) { /* {{{ */
+	if(!bmap->root)
+		return 0;
+	return bmapn_size(bmap->root);
+} /* }}} */
+int bmapn_size(BMap_Node *bmn) { /* {{{ */
+	if(!bmn)
+		return 0;
+	/* NULL childrne are handled above */
+	return bmapn_size(bmn->left) + bmapn_size(bmn->right) + 1;
+} /* }}} */
+
+
+/* TODO: scrap?
+bMap *addNodes(bMap *bm, entry nodes[]) {
 	while(nodes->k)
 		bm = addNode(bm, nodes->k, nodes->v), ++nodes;
 	return bm;
-} /* }}} */
-
-int bMapDepth(bMap *bm) { /* {{{ */
-	int ld, rd;
-	if(!bm) return 0;
-	ld = bMapDepth(bm->left);
-	rd = bMapDepth(bm->right);
-	if(ld > rd)
-		return ld + 1;
-	else
-		return rd + 1;
-} /* }}} */
+}
+*/
 
