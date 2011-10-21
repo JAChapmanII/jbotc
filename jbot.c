@@ -167,8 +167,12 @@ int main(int argc, char **argv) {
 						tok = strtok(NULL, " ");
 						tmpNode = findNode(constantMap, tok);
 						if(tmpNode == NULL) {
-							constantMap = addNode(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							if(bMapSize(constantMap) >= 256) {
+								send(chan, "%s: 256 variables exist already, sorry!", name);
+							} else {
+								constantMap = addNode(constantMap, tok, "0");
+								send(chan, "%s: set \"%s\" to 0", name, tok);
+							}
 						} else {
 							send(chan, "%s: \"%s\" is %d", name, tmpNode->val);
 						}
@@ -178,8 +182,12 @@ int main(int argc, char **argv) {
 						tok = strtok(NULL, " ");
 						tmpNode = findNode(constantMap, tok);
 						if(tmpNode == NULL) {
-							constantMap = addNode(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							if(bMapSize(constantMap) >= 256) {
+								send(chan, "%s: 256 variables exist already, sorry!", name);
+							} else {
+								constantMap = addNode(constantMap, tok, "0");
+								send(chan, "%s: set \"%s\" to 0", name, tok);
+							}
 						} else {
 							tmp = atoi(tmpNode->val);
 							tmp++;
@@ -199,8 +207,12 @@ int main(int argc, char **argv) {
 						tok = strtok(NULL, " ");
 						tmpNode = findNode(constantMap, tok);
 						if(tmpNode == NULL) {
-							constantMap = addNode(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							if(bMapSize(constantMap) >= 256) {
+								send(chan, "%s: 256 variables exist already, sorry!", name);
+							} else {
+								constantMap = addNode(constantMap, tok, "0");
+								send(chan, "%s: set \"%s\" to 0", name, tok);
+							}
 						} else {
 							tmp = atoi(tmpNode->val);
 							tmp--;
