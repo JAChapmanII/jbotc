@@ -106,13 +106,35 @@ void declareVariable(const char* name, char* tok) {
 	    send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
 	}
 }
+/* Set a variable to remember things. */
+void setVariable(const char* name, char* tok) {
+	BMap_Node *tmpn = NULL;
+	char* tmpsp;
+	
+	tok = strtok(NULL, " ");
+	tmpsp = tok;
+	tok = strtok(NULL, " ");
+	if(!tok || !tmpsp) {
+		send(chan, "%s: You must specify a variable and value", name);
+	} 
+	else {
+		bmap_add(variableMap, tmpsp, tok);
+		tmpn = bmap_find(variableMap, tmpsp);
+		if(!tmpn) {
+			send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
+		} 
+		else {
+			send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
+		}
+	}	
+}
 
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
 
-	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
+	char str[BSIZE], *tok, *tmsg, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
 	BMap_Node *tmpn = NULL;
@@ -232,28 +254,17 @@ int main(int argc, char **argv) {
                 else if(!strcmp(tok, "fishes")) {
 					send(chan, "%s: ><> <>< <><   ><> ><>", name);
 				} 
+				/* WUB WUB WUB WUB WUB */
+                else if(!strcmp(tok, "dubstep")) {
+					send(chan, "%s: WUB WUB WUB", name);
+				} 
 				/* declaring a variable */
                 else if(!strcmp(tok, "declare")) {
 					declareVariable(name, tok);
 				} 
 				/* setting a variable */
                 else if(!strcmp(tok, "set")) {
-					tok = strtok(NULL, " ");
-					tmpsp = tok;
-					tok = strtok(NULL, " ");
-					if(!tok || !tmpsp) {
-						send(chan, "%s: You must specify a variable and value", name);
-					} 
-                    else {
-						bmap_add(variableMap, tmpsp, tok);
-						tmpn = bmap_find(variableMap, tmpsp);
-						if(!tmpn) {
-							send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
-						} 
-                        else {
-							send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
-						}
-					}
+					setVariable(name, tok);
 				} 
 				/* incrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
