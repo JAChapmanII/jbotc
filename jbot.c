@@ -33,8 +33,11 @@ const char* chan = "#uakroncs";
 const char* owner = "Nybbles"; 
 const char* lfname = "octet.log";
 
+
 FILE *logFile = NULL;
 
+/* Container for all of the variables. */
+BMap *variableMap = NULL;
 
 char *greetings[GREETING_COUNT] = { "Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."};
 /* Returns a random greeting from greetings array */
@@ -84,6 +87,26 @@ void markov(const char* name, char* tok) {
 	}
 }
 
+/* Declares variables to remember things. */
+void declareVariable(const char* name, char* tok) {
+	BMap_Node *tmpn = NULL;
+    
+	tok = strtok(NULL, " ");
+    tmpn = bmap_find(variableMap, tok);
+	if(tmpn == NULL) {
+		if(bmap_size(variableMap) >= 256) {
+			send(chan, "%s: 256 variables exist already, sorry!", name);
+		} 
+        else {
+			bmap_add(variableMap, tok, "0");
+			send(chan, "%s: set \"%s\" to 0", name, tok);
+		}
+	} 
+    else {
+	    send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
+	}
+}
+
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
@@ -92,9 +115,8 @@ int main(int argc, char **argv) {
 	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
-	BMap *constantMap = NULL;
 	BMap_Node *tmpn = NULL;
-
+	
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
 	int res, done = 0, r, tmp, toUs;
@@ -123,7 +145,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* If we fail to create a basic map, abort */
-	if((constantMap = bmap_create()) == NULL) {
+	if((variableMap = bmap_create()) == NULL) {
 		fprintf(stderr, "Could not create contstant map!\n");
 		return 1;
 	}
@@ -195,39 +217,26 @@ int main(int argc, char **argv) {
 				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
 					fprintf(logFile, "Got message to restart...\n");
 					done = 1;
+				} 
 				/* markov will eventually print markov chains generated from
 				 * previous input. TODO: implement */
-				} 
                 else if(!strcmp(tok, "markov")) {
                     markov(name, tok);
-				/* CodeBlock wants a fish... */
 				} 
+				/* CodeBlock wants a fish... */
                 else if(!strcmp(tok, "fish")) {
 					r = rand();
 					send(chan, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
-				/* CodeBlock wants multiple species of fish */
 				} 
+				/* CodeBlock wants multiple species of fish */
                 else if(!strcmp(tok, "fishes")) {
 					send(chan, "%s: ><> <>< <><   ><> ><>", name);
+				} 
 				/* declaring a variable */
-				} 
                 else if(!strcmp(tok, "declare")) {
-					tok = strtok(NULL, " ");
-					tmpn = bmap_find(constantMap, tok);
-					if(tmpn == NULL) {
-						if(bmap_size(constantMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
-						} 
-                        else {
-							bmap_add(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
-						}
-					} 
-                    else {
-						send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
-					}
-				/* setting a variable */
+					declareVariable(name, tok);
 				} 
+				/* setting a variable */
                 else if(!strcmp(tok, "set")) {
 					tok = strtok(NULL, " ");
 					tmpsp = tok;
@@ -236,8 +245,8 @@ int main(int argc, char **argv) {
 						send(chan, "%s: You must specify a variable and value", name);
 					} 
                     else {
-						bmap_add(constantMap, tmpsp, tok);
-						tmpn = bmap_find(constantMap, tmpsp);
+						bmap_add(variableMap, tmpsp, tok);
+						tmpn = bmap_find(variableMap, tmpsp);
 						if(!tmpn) {
 							send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
 						} 
@@ -245,18 +254,18 @@ int main(int argc, char **argv) {
 							send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
 						}
 					}
-				/* incrementing a variable (or declaring it) */
 				} 
+				/* incrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
 						!strcmp(tok, "++")) {
 					tok = strtok(NULL, " ");
-					tmpn = bmap_find(constantMap, tok);
+					tmpn = bmap_find(variableMap, tok);
 					if(tmpn == NULL) {
-						if(bmap_size(constantMap) >= 256) {
+						if(bmap_size(variableMap) >= 256) {
 							send(chan, "%s: 256 variables exist already, sorry!", name);
 						} 
                         else {
-							bmap_add(constantMap, tok, "0");
+							bmap_add(variableMap, tok, "0");
 							send(chan, "%s: set \"%s\" to 0", name, tok);
 						}
 					} 
@@ -264,21 +273,21 @@ int main(int argc, char **argv) {
 						tmp = atoi(tmpn->val);
 						tmp++;
 						snprintf(tmps, PBSIZE, "%d", tmp);
-						bmap_add(constantMap, tok, tmps);
+						bmap_add(variableMap, tok, tmps);
 						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 					}
-				/* decrementing a variable (or declaring it) */
 				} 
+				/* decrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
 						!strcmp(tok, "--")) {
 					tok = strtok(NULL, " ");
-					tmpn = bmap_find(constantMap, tok);
+					tmpn = bmap_find(variableMap, tok);
 					if(tmpn == NULL) {
-						if(bmap_size(constantMap) >= 256) {
+						if(bmap_size(variableMap) >= 256) {
 							send(chan, "%s: 256 variables exist already, sorry!", name);
 						}
                         else {
-							bmap_add(constantMap, tok, "0");
+							bmap_add(variableMap, tok, "0");
 							send(chan, "%s: set \"%s\" to 0", name, tok);
 						}
 					} 
@@ -286,11 +295,11 @@ int main(int argc, char **argv) {
 						tmp = atoi(tmpn->val);
 						tmp--;
 						snprintf(tmps, PBSIZE, "%d", tmp);
-						bmap_add(constantMap, tok, tmps);
+						bmap_add(variableMap, tok, tmps);
 						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 					}
-				/* token after cstart does not match command */
 				} 
+				/* token after cstart does not match command */
                 else {
 					if(toUs) {
 						/* msg ends with question mark, guess an answer */
@@ -324,8 +333,8 @@ int main(int argc, char **argv) {
 			/* flush everything so output goes out immediately */
 			fflush(stdout);
 			fflush(logFile);
-		/* fgets failed, handle printing error message */
 		} 
+		/* fgets failed, handle printing error message */
         else {
 			fprintf(stderr, "fgets failed in main jbot loop!\n");
 			fprintf(logFile, "fgets failed in main jbot loop!\n");
