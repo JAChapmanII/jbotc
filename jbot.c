@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 	 */
 	char *nick = "jbotc", *chan = "#uakroncs", *owner = "jac", *lfname = "jbot.log";
 
-	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
+	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp, *target;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
 
 	BMap *constantMap = NULL;
@@ -167,6 +167,9 @@ int main(int argc, char **argv) {
 					toUs = 1;
 				}
 
+				/* Determine if we send this to the chan, or a specific user */
+				target = (!strcmp(cname, nick)) ? name : chan;
+
 				/* reload stops this instance, parent conbot starts new one */
 				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
 					fprintf(logFile, "Got message to restart...\n");
@@ -177,32 +180,32 @@ int main(int argc, char **argv) {
 					tok = strtok(NULL, " ");
 					if(tok == NULL) {
 						/* if we didn't recieve an argument, print usage */
-						send(chan, "%s: Usage: markov <word>", name);
+						send(target, "%s: Usage: markov <word>", name);
 					} else {
 						/* we recieved an argument, print it back to them for
 						 * now. TODO: implement properly */
-						send(chan, "%s: %s", name, tok);
+						send(target, "%s: %s", name, tok);
 					}
 				/* CodeBlock wants a fish... */
 				} else if(!strcmp(tok, "fish")) {
 					r = rand();
-					send(chan, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
+					send(target, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
 				/* CodeBlock wants multiple species of fish */
 				} else if(!strcmp(tok, "fishes")) {
-					send(chan, "%s: ><> <>< <><   ><> ><>", name);
+					send(target, "%s: ><> <>< <><   ><> ><>", name);
 				/* declaring a variable */
 				} else if(!strcmp(tok, "declare")) {
 					tok = strtok(NULL, " ");
 					tmpn = bmap_find(constantMap, tok);
 					if(tmpn == NULL) {
 						if(bmap_size(constantMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
+							send(target, "%s: 256 variables exist already, sorry!", name);
 						} else {
 							bmap_add(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							send(target, "%s: set \"%s\" to 0", name, tok);
 						}
 					} else {
-						send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
+						send(target, "%s: \"%s\" is %s", name, tok, tmpn->val);
 					}
 				/* setting a variable */
 				} else if(!strcmp(tok, "set")) {
@@ -210,14 +213,14 @@ int main(int argc, char **argv) {
 					tmpsp = tok;
 					tok = strtok(NULL, " ");
 					if(!tok || !tmpsp) {
-						send(chan, "%s: You must specify a variable and value", name);
+						send(target, "%s: You must specify a variable and value", name);
 					} else {
 						bmap_add(constantMap, tmpsp, tok);
 						tmpn = bmap_find(constantMap, tmpsp);
 						if(!tmpn) {
-							send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
+							send(target, "%s: \"%s\" was not found!?", name, tmpsp);
 						} else {
-							send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
+							send(target, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
 						}
 					}
 				/* incrementing a variable (or declaring it) */
@@ -227,17 +230,17 @@ int main(int argc, char **argv) {
 					tmpn = bmap_find(constantMap, tok);
 					if(tmpn == NULL) {
 						if(bmap_size(constantMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
+							send(target, "%s: 256 variables exist already, sorry!", name);
 						} else {
 							bmap_add(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							send(target, "%s: set \"%s\" to 0", name, tok);
 						}
 					} else {
 						tmp = atoi(tmpn->val);
 						tmp++;
 						snprintf(tmps, PBSIZE, "%d", tmp);
 						bmap_add(constantMap, tok, tmps);
-						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+						send(target, "%s: \"%s\" is %d", name, tok, tmp);
 					}
 				/* decrementing a variable (or declaring it) */
 				} else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
@@ -246,17 +249,17 @@ int main(int argc, char **argv) {
 					tmpn = bmap_find(constantMap, tok);
 					if(tmpn == NULL) {
 						if(bmap_size(constantMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
+							send(target, "%s: 256 variables exist already, sorry!", name);
 						} else {
 							bmap_add(constantMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
+							send(target, "%s: set \"%s\" to 0", name, tok);
 						}
 					} else {
 						tmp = atoi(tmpn->val);
 						tmp--;
 						snprintf(tmps, PBSIZE, "%d", tmp);
 						bmap_add(constantMap, tok, tmps);
-						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+						send(target, "%s: \"%s\" is %d", name, tok, tmp);
 					}
 				/* token after cstart does not match command */
 				} else {
@@ -264,7 +267,7 @@ int main(int argc, char **argv) {
 						/* msg ends with question mark, guess an answer */
 						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
 							r = rand();
-							send(chan, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
+							send(target, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
 						}
 					}
 				}
