@@ -123,7 +123,9 @@ int main(int argc, char **argv) {
 	strcpy(cstart, nick);
 	strcat(cstart, ":");
 
-	send(chan, "%s", obtainGreeting());
+	send(owner, "%s", obtainGreeting());
+	fflush(stdout);
+	fflush(logFile);
 
 	/* main loop, go until we say we are done or parent is dead/closes us off */
 	while(!feof(stdin) && !done) {
@@ -282,8 +284,10 @@ int main(int argc, char **argv) {
 				strncpy(cname, str + mptr[3].rm_so, mptr[3].rm_eo - mptr[3].rm_so);
 				cname[mptr[3].rm_eo - mptr[3].rm_so] = '\0';
 
+				/*
 				if(strcmp(name, "ajanata"))
 					send(chan, "%s: %s", name, obtainGreeting());
+					*/
 			}
 			/* flush everything so output goes out immediately */
 			fflush(stdout);
