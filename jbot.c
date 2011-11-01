@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 	 * lfname: the name of the logFile file we should write to
 	 * TODO: have these be read in or default to these constants
 	 */
-	char *nick = "jbotc", *chan = "#uakroncs", *owner = "jac", *lfname = "jbot.log";
+	char *nick = "Octet", *chan = "#uakroncs", *owner = "Nybbles", *lfname = "octet.log";
 
 	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
