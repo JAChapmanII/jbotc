@@ -106,6 +106,7 @@ void declareVariable(const char* name, char* tok) {
 	    send(chan, "%s: \"%s\" is %s", name, tok, tmpn->val);
 	}
 }
+
 /* Set a variable to remember things. */
 void setVariable(const char* name, char* tok) {
 	BMap_Node *tmpn = NULL;
@@ -127,6 +128,33 @@ void setVariable(const char* name, char* tok) {
 			send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
 		}
 	}	
+}
+
+/* Increment a variable and create it if it doesn't exist. */
+void incrementVariable(const char* name, char* tok) {
+	BMap_Node *tmpn = NULL;
+	
+	tok = strtok(NULL, " ");
+	tmpn = bmap_find(variableMap, tok);
+	if(tmpn == NULL) {
+		if(bmap_size(variableMap) >= 256) {
+			send(chan, "%s: 256 variables exist already, sorry!", name);
+		} 
+        else {
+			bmap_add(variableMap, tok, "0");
+			send(chan, "%s: set \"%s\" to 0", name, tok);
+		}
+	} 
+	else {
+		int tmp;
+		char tmps[PBSIZE];
+		
+		tmp = atoi(tmpn->val);
+		++tmp;
+		snprintf(tmps, PBSIZE, "%d", tmp);
+		bmap_add(variableMap, tok, tmps);
+		send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+	}
 }
 
 /* main runs through a loop getting input and sending output. We logFile
@@ -269,24 +297,7 @@ int main(int argc, char **argv) {
 				/* incrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
 						!strcmp(tok, "++")) {
-					tok = strtok(NULL, " ");
-					tmpn = bmap_find(variableMap, tok);
-					if(tmpn == NULL) {
-						if(bmap_size(variableMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
-						} 
-                        else {
-							bmap_add(variableMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
-						}
-					} 
-                    else {
-						tmp = atoi(tmpn->val);
-						tmp++;
-						snprintf(tmps, PBSIZE, "%d", tmp);
-						bmap_add(variableMap, tok, tmps);
-						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
-					}
+					incrementVariable(name, tok);
 				} 
 				/* decrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
