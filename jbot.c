@@ -157,19 +157,44 @@ void incrementVariable(const char* name, char* tok) {
 	}
 }
 
+/* Decrement a variable and create it if it doesn't exist. */
+void decrementVariable(const char* name, char* tok) {
+	BMap_Node *tmpn = NULL;
+	
+	tok = strtok(NULL, " ");
+	tmpn = bmap_find(variableMap, tok);
+	if(tmpn == NULL) {
+		if(bmap_size(variableMap) >= 256) {
+			send(chan, "%s: 256 variables exist already, sorry!", name);
+		}
+		else {
+			bmap_add(variableMap, tok, "0");
+			send(chan, "%s: set \"%s\" to 0", name, tok);
+		}
+	} 
+	else {
+		int tmp;
+		char tmps[PBSIZE];
+		
+		tmp = atoi(tmpn->val);
+		tmp--;
+		snprintf(tmps, PBSIZE, "%d", tmp);
+		bmap_add(variableMap, tok, tmps);
+		send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+	}
+}
+
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
 
 	char str[BSIZE], *tok, *tmsg, *cstart;
-	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];
-
-	BMap_Node *tmpn = NULL;
+	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
 	
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
-	int res, done = 0, r, tmp, toUs;
+	int res, done = 0, r, toUs;
 
 	/* seed random number generator with current time */
 	srand(time(NULL));
@@ -302,24 +327,7 @@ int main(int argc, char **argv) {
 				/* decrementing a variable (or declaring it) */
                 else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
 						!strcmp(tok, "--")) {
-					tok = strtok(NULL, " ");
-					tmpn = bmap_find(variableMap, tok);
-					if(tmpn == NULL) {
-						if(bmap_size(variableMap) >= 256) {
-							send(chan, "%s: 256 variables exist already, sorry!", name);
-						}
-                        else {
-							bmap_add(variableMap, tok, "0");
-							send(chan, "%s: set \"%s\" to 0", name, tok);
-						}
-					} 
-                    else {
-						tmp = atoi(tmpn->val);
-						tmp--;
-						snprintf(tmps, PBSIZE, "%d", tmp);
-						bmap_add(variableMap, tok, tmps);
-						send(chan, "%s: \"%s\" is %d", name, tok, tmp);
-					}
+					decrementVariable(name, tok);
 				} 
 				/* token after cstart does not match command */
                 else {
