@@ -5,6 +5,8 @@
  * Since jbotc reads from stdin and writes to stdout, it can be run in a
  * terminal and fed made up input for testing purposes
  */
+#include "bmap.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -13,13 +15,28 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "bmap.h"
-
 #define BSIZE 4096
 #define PBSIZE 256
 
-#define GREETING_COUNT 4
-char *greetings[GREETING_COUNT] = { "Ahoy!", "Howdy!", "Goodday!", "Hello!" };
+#define GREETING_COUNT 5
+
+/* Variables used by the main pertaining to nick, channel, owner, and
+ * log file. 
+ *
+ * nick: the nick of the bot we are running as
+ * chan: the channel we should be in and handling input from
+ * owner: the nick of our owner, may be used for special commands/output
+ * lfname: the name of the logFile file we should write to
+ */
+const char* nick = "Octet"; 
+const char* chan = "#uakroncs";
+const char* owner = "Nybbles"; 
+const char* lfname = "octet.log";
+
+FILE *logFile = NULL;
+
+
+char *greetings[GREETING_COUNT] = { "Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."};
 /* Returns a random greeting from greetings array */
 char *obtainGreeting() {
 	return greetings[rand() % GREETING_COUNT];
@@ -38,9 +55,8 @@ char *getRegError(int errcode, regex_t *compiled) { /*{{{*/
 	return buffer;
 } /*}}}*/
 
-FILE *logFile = NULL;
 /* Small wrapper to allow printing to a logFile and stdout at the same time {{{ */
-void send(char *target, char *format, ...) {
+void send(const char *target, char *format, ...) {
 	va_list args;
 	char buf[BSIZE];
 
@@ -57,13 +73,6 @@ void send(char *target, char *format, ...) {
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
-	/* nick: the nick of the bot we are running as
-	 * chan: the channel we should be in and handling input from
-	 * owner: the nick of our owner, may be used for special commands/output
-	 * lfname: the name of the logFile file we should write to
-	 * TODO: have these be read in or default to these constants
-	 */
-	char *nick = "Octet", *chan = "#uakroncs", *owner = "Nybbles", *lfname = "octet.log";
 
 	char str[BSIZE], *tok, *tmsg, *cstart, *tmpsp;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE], tmps[PBSIZE];

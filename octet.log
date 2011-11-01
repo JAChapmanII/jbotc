@@ -1,0 +1,587 @@
+------------------------------------
+ -> @#uakroncs :Ahoy!
+ <- :moo.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :moo.slashnet.org 002 Octet :Your host is moo.slashnet.org, running version Unreal3.2.7
+ <- :moo.slashnet.org 003 Octet :This server was created Tue Mar 9 2010 at 03:18:32 PST
+ <- :moo.slashnet.org 004 Octet moo.slashnet.org Unreal3.2.7 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :moo.slashnet.org 005 Octet NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 MAXTARGETS=20 WALLCHOPS :are supported by this server
+ <- :moo.slashnet.org 005 Octet WATCH=128 SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :moo.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP :are supported by this server
+ <- :moo.slashnet.org 251 Octet :There are 843 users and 856 invisible on 6 se
+ <- rvers
+ <- :moo.slashnet.org 252 Octet 6 :operator(s) online
+ <- :moo.slashnet.org 254 Octet 535 :channels formed
+ <- :moo.slashnet.org 255 Octet :I have 785 clients and 1 servers
+ <- :moo.slashnet.org 265 Octet :Current Local Users: 785  Max: 951
+ <- :moo.slashnet.org 266 Octet :Current Global Users: 1699  Max: 2718
+ <- :moo.slashnet.org 375 Octet :- moo.slashnet.org Message of the Day - 
+ <- :moo.slashnet.org 372 Octet :- 6/6/2004 23:08
+ <- :moo.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :moo.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :moo.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :moo.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :-                          moo.slashnet.org
+ <- :moo.slashnet.org 372 Octet :-             The San Francisco 'Moo' SlashNET Server
+ <- :moo.slashnet.org 372 Octet :-                      Ports 500
+ <- 0, 6666-6669, 7000
+ <- :moo.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :moo.slashnet.org 372 Octet :- | o Use of SlashNET is a privilege, not a right.                       |
+ <- :
+ <- moo.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :moo.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :moo.slashnet.org 372 Octet :- | o A single user may not have more than 3 simultaneous connections to |
+ <- :moo.slashnet.org 372 Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :moo.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :moo.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                                   |
+ <- :moo.slashnet.org 372 Octet :- | o Treat users with respect.                                          |
+ <- :moo.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :moo.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :- This server supp
+ <- orts hostname cloaking to
+ <- :moo.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :moo.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :moo.slashnet.org 372 Octet :- is your current nickname.
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :-     Server admin: Sin <"a(*#.3mooadmi
+ <- n,29]:"@vmdaemon.org>
+ <- :moo.slashnet.org 372 Octet :-         co-admin: Silaron <"a(*#.3moocoadmin,29]:"@addled.org>
+ <- :moo.slashnet.org 372 Octet :-   Watchbird oper: MrFalcon <mrfalcon@slashnet.org>
+ <- :moo.slashnet.org 372 Octet :-         Services: ChanServ, NickServ, MemoServ
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :- If you have any questions or comments regarding
+ <- :moo.slashnet.org 372 Octet :- this server, contact the server administrator(s).
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP JOIN :#uakroncs
+ -> @#uakroncs :Octet: Hello!
+ <- :moo.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :moo.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :moo.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X
+ <-  CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :moo.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :LOL
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: LOL
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: Hiya?
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: Hiya?
+ -> @#uakroncs :Nybbles: Yes
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :^.^
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: ^.^
+ <- :ajanata!~ajanata@cloak-6CBB4E7B.com PRIVMSG #uakroncs :Nybbles: hey, we never SIGCONT'd you
+PRIVMSG Nybbles :PRIVMSG recieved from ajanata@#uakroncs: Nybbles: hey, we never SIGCONT'd you
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Octet: ?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Octet: ?
+ -> @#uakroncs :jac: No
+ <- :ajanata!~ajanata@cloak-6CBB4E7B.com PRIVMSG #uakroncs :Octet: Maybe
+PRIVMSG Nybbles :PRIVMSG recieved from ajanata@#uakroncs: Octet: Maybe
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG Octet :What?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@Octet: What?
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG Octet :Octet: What?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@Octet: Octet: What?
+ -> @#uakroncs :jac: No
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :haha
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: haha
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Breaking your bot? :P
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Breaking your bot? :P
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :I guess so :P
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: I guess so :P
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP MODE #uakroncs +v Octet
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :I wasn't sure it was mine. What was wth the Octect: Hello! thing?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: I wasn't sure it was mine. What was wth the Octect: Hello! thing?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP MODE #uakroncs +o Octet
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs ::D
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: :D
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Not sure.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Not sure.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :I don't thin....
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: I don't thin....
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Oh, did you set it to be its own owner?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Oh, did you set it to be its own owner?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :I don't think so.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: I don't think so.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :DIE.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: DIE.
+------------------------------------
+ -> @#uakroncs :Howdy!
+ <- :zoklet.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :zoklet.slashnet.org 002 Octet :Your host is zoklet.slashnet.org, running version Unreal3.2.8.1
+ <- :zoklet.slashnet.org 003 Octet :This server was created Sat Jun 12 2010 at 17:44:23 UTC
+ <- :zoklet.slashnet.org 004 Octet zoklet.slashnet.org Unreal3.2.8.1 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :zoklet.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :zoklet.slashnet.org 2
+ <- 51 Octet :There are 849 users and 857 invisible on 6 servers
+ <- :zoklet.slashnet.org 252 Octet 6 :operator(s) online
+ <- :zoklet.slashnet.org 254 Octet 536 :channels formed
+ <- :zoklet.slashnet.org 255 Octet :I have 905 clients and 1 servers
+ <- :zoklet.slashnet.org 265 Octet :Current Local Users: 905  Max: 1000
+ <- :zoklet.slashnet.org 266 Octet :Current Global Users: 1706  Max: 2718
+ <- :zoklet.slashnet.org 375 Octet :- zoklet.slashnet.org Message of the Day - 
+ <- :zoklet.slashnet.org 372 Octet :- 9/11/2010 19:46
+ <- :zoklet.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :zoklet.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :zoklet.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :zoklet.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                        ______     _    _      _   
+ <- :zoklet.slashnet.org 372 Octet :-                       |___  /    | |  | |    | |  
+ <- :zoklet.
+ <- slashnet.org 372 Octet :-                          / / ___ | | _| | ___| |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                         / / / _ \| |/ / |/ _ \ __|
+ <- :zoklet.slashnet.org 372 Octet :-                        / /_| (_) |   <| |  __/ |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                       /_____\___/|_|\_\_|\___|\__|
+ <- :zoklet.
+ <- slashnet.org 372 Octet :-                             
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                          zoklet.slashnet.org
+ <- :zoklet.slashnet.org 372 Octet :-                 London England uplink for SlashNET.org
+ <- :zoklet.slashnet.org 372 Octet :-                            Ports 6667-6669
+ <- :zoklet.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :zoklet.slashnet.org 372 Octet :- | o Use of SlashNET is a privilege, not a right.                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :zoklet.slashnet.org 372 Octet :- | o A single user may not have more than 3 simultaneous connections to |
+ <- :zoklet.slashnet.org 372 
+ <- Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :zoklet.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                                   |
+ <- :zoklet.slashnet.org 372 Octet :- | o Treat u
+ <- sers with respect.                                          |
+ <- :zoklet.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :zoklet.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server supports hostname cloaking to
+ <- :zoklet.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :zoklet.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :zoklet.slashnet.org 372 Octet :- is your current nickname.
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-     Server admin: Zok <zok@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: Trueborn <trueborn@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: O_RLY <o_rly@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server is paid for and hosted by Zok of Zoklet.net. Sl
+ <- ashNET is
+ <- :zoklet.slashnet.org 372 Octet :- not affiliated with Zoklet.net and the views and opinions expressed at
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net are not those of SlashNET. For issues and concerns about
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net, please email Zok (ATTN: Zoklet.net).
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zok
+ <- let.slashnet.org 372 Octet :- If you have any questions or comments regarding this irc server,
+ <- :zoklet.slashnet.org 372 Octet :- contact the server administrator(s).
+ <- :zoklet.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP JOIN :#uakroncs
+ -> @#uakroncs :Octet: Hello!
+ <- :zoklet.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :zoklet.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :zoklet.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :zoklet.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs ::|
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: :|
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Oh god why XD
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Oh god why XD
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :ACTION slaps Octet.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: ACTION slaps Octet.
+------------------------------------
+ -> @#uakroncs :Ahoy!
+ <- :zoklet.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :zoklet.slashnet.org 002 Octet :Your host is zoklet.slashnet.org, running version Unreal3.2.8.1
+ <- :zoklet.slashnet.org 003 Octet :This server was created Sat Jun 12 2010 at 17:44:23 UTC
+ <- :zoklet.slashnet.org 004 Octet zoklet.slashnet.org Unreal3.2.8.1 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :zoklet.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :zoklet.slashnet.org 2
+ <- 51 Octet :There are 850 users and 856 invisible on 6 servers
+ <- :zoklet.slashnet.org 252 Octet 6 :operator(s) online
+ <- :zoklet.slashnet.org 254 Octet 534 :channels formed
+ <- :zoklet.slashnet.org 255 Octet :I have 904 clients and 1 servers
+ <- :zoklet.slashnet.org 265 Octet :Current Local Users: 904  Max: 1000
+ <- :zoklet.slashnet.org 266 Octet :Current Global Users: 1706  Max: 2718
+ <- :zoklet.slashnet.org 375 Octet :- zoklet.slashnet.org Message of the Day - 
+ <- :zoklet.slashnet.org 372 Octet :- 9/11/2010 19:46
+ <- :zoklet.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :zoklet.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :zoklet.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :zoklet.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                        ______     _    _      _   
+ <- :zoklet.slashnet.org 372 Octet :
+ <- -                       |___  /    | |  | |    | |  
+ <- :zoklet.slashnet.org 372 Octet :-                          / / ___ | | _| | ___| |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                         / / / _ \| |/ / |/ _ \ __|
+ <- :zoklet.slashnet.org 372 Octet :-                        / /_| (_) |   <| |  __/ |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                       /_____\___/|_|\_\_|\___|\__|
+ <- :zoklet.
+ <- slashnet.org 372 Octet :-                             
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                          zoklet.slashnet.org
+ <- :zoklet.slashnet.org 372 Octet :-                 London England uplink for SlashNET.org
+ <- :zoklet.slashnet.org 372 Octet :-                            Ports 6667-6669
+ <- :zoklet.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :zoklet.slashnet.org 372 Octet :- | o Use of SlashNET is a privilege, not a right.                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :zoklet.slashnet.org 372 Octet :- | o A single user may not have more than 3 simultaneous connections to |
+ <- :zoklet.slashnet.org 372 
+ <- Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :zoklet.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                                   |
+ <- :zoklet.slashnet.org 372 Octet :- | o Treat users with respect.                                          |
+ <- :zoklet.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :zoklet.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server supports hostname cloaking to
+ <- :zoklet.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :zoklet.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :zoklet.slashnet.org 372 Octet :- is your current nickname.
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Oc
+ <- tet :-     Server admin: Zok <zok@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: Trueborn <trueborn@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: O_RLY <o_rly@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server is paid for and hosted by Zok of Zoklet.net. SlashNET is
+ <- :zoklet.slashnet.org 372 Octet :- not affiliated with Zoklet.net and the views and opinions expressed at
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net are not those of SlashNET. For issues and concerns about
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net, please email Zok (ATTN: Zoklet.net).
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zok
+ <- let.slashnet.org 372 Octet :- If you have any questions or comments regarding this irc server,
+ <- :zoklet.slashnet.org 372 Octet :- contact the server administrator(s).
+ <- :zoklet.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP JOIN :#uakroncs
+ -> @#uakroncs :Octet: Ahoy!
+ <- :zoklet.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :zoklet.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :zoklet.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :zoklet.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: <3
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: <3
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :jbotc (the one running) only greets the owner in a PRIVMSG, nobody else
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: jbotc (the one running) only greets the owner in a PRIVMSG, nobody else
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :I'm going to hack on it.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: I'm going to hack on it.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Nybbles: Please do!
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Nybbles: Please do!
+------------------------------------
+ -> @Nybbles :Goodday!
+ <- :moo.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :moo.slashnet.org 002 Octet :Your host is moo.slashnet.org, running version Unreal3.2.7
+ <- :moo.slashnet.org 003 Octet :This server was created Tue Mar 9 2010 at 03:18:32 PST
+ <- :moo.slashnet.org 004 Octet moo.slashnet.org Unreal3.2.7 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :moo.slashnet.org 005 Octet NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 MAXTARGETS=20 WALLCHOPS :are supported by this server
+ <- :moo.slashnet.org 005 Octet WATCH=128 SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :moo.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP :are supported by this server
+ <- :moo.slashnet.org 251 Octet :There are 841 users and 852 invisible on 6 se
+ <- rvers
+ <- :moo.slashnet.org 252 Octet 6 :operator(s) online
+ <- :moo.slashnet.org 253 Octet 1 :unknown connection(s)
+ <- :moo.slashnet.org 254 Octet 535 :channels formed
+ <- :moo.slashnet.org 255 Octet :I have 788 clients and 1 servers
+ <- :moo.slashnet.org 265 Octet :Current Local Users: 788  Max: 951
+ <- :moo.slashnet.org 266 Octet :Current Global Users: 1693  Max: 2718
+ <- :moo.slashnet.org 375 Octet :- moo.slashnet.org Message of the Day - 
+ <- :moo.slashnet.org 372 Octet :- 6/6/2004 23:08
+ <- :moo.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :moo.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :moo.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :moo.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :-                          moo.slashnet.org
+ <- :moo.slashnet.org 372 Octet :-             The San Francisco 'Moo' SlashNET Server
+ <- :moo.slashnet.org 372 Octet :-                      Ports 5000, 6666-6669, 7000
+ <- :moo.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :moo.slashnet.org 372 Octet :- | o Use of SlashNET i
+ <- s a privilege, not a right.                       |
+ <- :moo.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :moo.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :moo.slashnet.org 372 Octet :- | o A single user may not have more than 3 simultaneous connections to |
+ <- :moo.slashnet.org 372 Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :moo.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :moo.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                                   |
+ <- :moo.slashnet.org 372 Octet :- | o Treat users with respect.                                          |
+ <- :moo.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :moo.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :moo.slashnet.org 372 Octe
+ <- t :- 
+ <- :moo.slashnet.org 372 Octet :- This server supports hostname cloaking to
+ <- :moo.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :moo.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :moo.slashnet.org 372 Octet :- is your current nickname.
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :-     Server admin: Sin <"a(*#.3mooadmin,29]:"@vmdaemon.org>
+ <- :moo.slashnet.org 372 Octet :-         co-admin: Silaron <"a(*#.3moocoadmin,29]:"@addled.org>
+ <- :moo.slashnet.org 372 Octet :-   Watchbird oper: MrFalcon <mrfalcon@slashnet.org>
+ <- :moo.slashnet.org 372 Octet :-         Services: ChanServ, NickServ, MemoServ
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 372 Octet :- If you have any questions or comments regarding
+ <- :moo.slashnet.org 372 Octet :- this server, contact the server administrator(s).
+ <- :moo.slashnet.org 372 Octet :- 
+ <- :moo.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP
+ <-  JOIN :#uakroncs
+ <- :moo.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :moo.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :moo.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :moo.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :ajanata!~ajanata@cloak-6CBB4E7B.com PRIVMSG #uakroncs :but mergetool puts up a 3-way diff
+PRIVMSG Nybbles :PRIVMSG recieved from ajanata@#uakroncs: but mergetool puts up a 3-way diff
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG Octet :Goodday!
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@Octet: Goodday!
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :If I ever pulled that would probably help
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: If I ever pulled that would probably help
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG Octet :How are you?
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@Octet: How are you?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: Hi?
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: Hi?
+ -> @#uakroncs :Nybbles: Yes
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :^.^
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: ^.^
+ <- :ajanata!~ajanata@cloak-6CBB4E7B.com PRIVMSG #uakroncs :Octet: Maybe?
+PRIVMSG Nybbles :PRIVMSG recieved from ajanata@#uakroncs: Octet: Maybe?
+ -> @#uakroncs :ajanata: Yes
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Nybbles: What'd you change?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Nybbles: What'd you change?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Nothing, just my local naming stuffs.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Nothing, just my local naming stuffs.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Ah, I see
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Ah, I see
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Nybbles: If you want to do something really helpful, get it to respond to private messages privately
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Nybbles: If you want to do something really helpful, get it to respond to private messages privately
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Basically, if target (if I remember the variable name) is the bot name, change the first argument of send to be the sender... 
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Basically, if target (if I remember the variable name) is the bot name, change the first argument of send to be the sender... 
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Otherwise I'll get to it sometime XD
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Otherwise I'll get to it sometime XD
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :jbotc: reload
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: jbotc: reload
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :... needs more logic in other places, but it works in the basic sense
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: ... needs more logic in other places, but it works in the basic sense
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :jbotc: set inthatcase 3
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: jbotc: set inthatcase 3
+ <- :jbotc!~jbotc@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :jac: "inthatcase" is 3
+PRIVMSG Nybbles :PRIVMSG recieved from jbotc@#uakroncs: jac: "inthatcase" is 3
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: fish
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: fish
+ -> @#uakroncs :Nybbles: <><
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: fishes
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: fishes
+ -> @#uakroncs :Nybbles: ><> <>< <><   ><> ><>
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :What happened in UNIX today? His news thing has been empty for a while now
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: What happened in UNIX today? His news thing has been empty for a while now
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Moar on file I/O
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Moar on file I/O
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Okaly dokaly, thanks
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Okaly dokaly, thanks
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: Batadase Class?
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: Batadase Class?
+ -> @#uakroncs :Nybbles: Yes
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: Baladase Class?
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: Baladase Class?
+ -> @#uakroncs :Nybbles: No
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Thanks Octet.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Thanks Octet.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :I think I'm going to extract some methods out in this.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: I think I'm going to extract some methods out in this.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Er.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Er.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :"Functions"
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: "Functions"
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Damnit, Java.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Damnit, Java.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Nybbles: Huh? You mean after it matches, call a function?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Nybbles: Huh? You mean after it matches, call a function?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Yea.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Yea.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :That needs to be sometime, yeah :D
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: That needs to be sometime, yeah :D
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Well. >.< I don't know.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Well. >.< I don't know.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :I never worked with C before.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: I never worked with C before.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Bah, you don't need not know much C specific stuff to make it into a function thing
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Bah, you don't need not know much C specific stuff to make it into a function thing
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Just pass like the four things I copy into strings to the functions, or something
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Just pass like the four things I copy into strings to the functions, or something
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :I guess unless they don't need it... then don't ;)
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: I guess unless they don't need it... then don't ;)
+------------------------------------
+ -> @Nybbles :Kill all humans.
+ <- :zoklet.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :zoklet.slashnet.org 002 Octet :Your host is zoklet.slashnet.org, running version Unreal3.2.8.1
+ <- :zoklet.slashnet.org 003 Octet :This server was created Sat Jun 12 2010 at 17:44:23 UTC
+ <- :zoklet.slashnet.org 004 Octet zoklet.slashnet.org Unreal3.2.8.1 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :zoklet.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :zoklet.slashnet.org 2
+ <- 51 Octet :There are 840 users and 848 invisible on 6 servers
+ <- :zoklet.slashnet.org 252 Octet 6 :operator(s) online
+ <- :zoklet.slashnet.org 253 Octet 1 :unknown connection(s)
+ <- :zoklet.slashnet.org 254 Octet 532 :channels formed
+ <- :zoklet.slashnet.org 255 Octet :I have 876 clients and 1 servers
+ <- :zoklet.slashnet.org 265 Octet :Current Local Users: 876  Max: 1000
+ <- :zoklet.slashnet.org 266 Octet :Current Global Users: 1688  Max: 2718
+ <- :zoklet.slashnet.org 375 Octet :- zoklet.slashnet.org Message of the Day - 
+ <- :zoklet.slashnet.org 372 Octet :- 9/11/2010 19:46
+ <- :zoklet.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :zoklet.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :zoklet.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :zoklet.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                        ______     _    _      _   
+ <- :zoklet.slashnet.org 372 Octet :-    
+ <-                    |___  /    | |  | |    | |  
+ <- :zoklet.slashnet.org 372 Octet :-                          / / ___ | | _| | ___| |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                         / / / _ \| |/ / |/ _ \ __|
+ <- :zoklet.slashnet.org 372 Octet :-                        / /_| (_) |   <| |  __/ |_ 
+ <- :zoklet.slashnet.org 372 Octet :-    
+ <-                    /_____\___/|_|\_\_|\___|\__|
+ <- :zoklet.slashnet.org 372 Octet :-                             
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                          zoklet.slashnet.org
+ <- :zoklet.slashnet.org 372 Octet :-                 London England uplink for SlashNET.org
+ <- :zoklet.slashnet.org 372 Octet :-                            Ports 6667-6669
+ <- :zoklet.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :zoklet.slashnet.org 372 Octet :- | o Use of SlashNET is a privilege, not a right.                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :zoklet.slashnet.org 372 Octet :- | o A single user may not have more than 3
+ <-  simultaneous connections to |
+ <- :zoklet.slashnet.org 372 Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :zoklet.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                          
+ <-          |
+ <- :zoklet.slashnet.org 372 Octet :- | o Treat users with respect.                                          |
+ <- :zoklet.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :zoklet.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server supports hostname cloaking to
+ <- :zoklet.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :zoklet.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :zoklet.slashnet.org 372 Octet :- is your current nickname.
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-     Server admin: Zok <zok@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: Trueborn <trueborn@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: O_RLY <o_rly@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- Th
+ <- is server is paid for and hosted by Zok of Zoklet.net. SlashNET is
+ <- :zoklet.slashnet.org 372 Octet :- not affiliated with Zoklet.net and the views and opinions expressed at
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net are not those of SlashNET. For issues and concerns about
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net, please email Zok (ATT
+ <- N: Zoklet.net).
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- If you have any questions or comments regarding this irc server,
+ <- :zoklet.slashnet.org 372 Octet :- contact the server administrator(s).
+ <- :zoklet.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP JOIN :#uakroncs
+ <- :zoklet.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :zoklet.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :zoklet.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :zoklet.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Octet: Hello!
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Octet: Hello!
+------------------------------------
+ -> @Nybbles :Ahoy!
+ <- :zoklet.slashnet.org 001 Octet :Welcome to the SlashNET IRC Network Octet!~Octet@130.101.20.201
+ <- :zoklet.slashnet.org 002 Octet :Your host is zoklet.slashnet.org, running version Unreal3.2.8.1
+ <- :zoklet.slashnet.org 003 Octet :This server was created Sat Jun 12 2010 at 17:44:23 UTC
+ <- :zoklet.slashnet.org 004 Octet zoklet.slashnet.org Unreal3.2.8.1 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+ <- :zoklet.slashnet.org 005 Octet CMDS=KNOCK,MAP,DCCALLOW,USERIP UHNAMES NAMESX SAFELIST HCN MAXCHANNELS=20 CHANLIMIT=#:20 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet MAXTARGETS=20 WALLCHOPS WATCH=128 WATCHOPTS=A SILENCE=15 MODES=12 CHANTYPES=# PREFIX=(ohv)@%+ CHANMODES=beIqa,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=SlashNET CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT :are supported by this server
+ <- :zoklet.slashnet.org 005 Octet STATUSMSG=@%+ EXCEPTS INVEX :are supported by this server
+ <- :zoklet.slashnet.org 2
+ <- 51 Octet :There are 838 users and 849 invisible on 6 servers
+ <- :zoklet.slashnet.org 252 Octet 6 :operator(s) online
+ <- :zoklet.slashnet.org 254 Octet 533 :channels formed
+ <- :zoklet.slashnet.org 255 Octet :I have 876 clients and 1 servers
+ <- :zoklet.slashnet.org 265 Octet :Current Local Users: 876  Max: 1000
+ <- :zoklet.slashnet.org 266 Octet :Current Global Users: 1687  Max: 2718
+ <- :zoklet.slashnet.org 375 Octet :- zoklet.slashnet.org Message of the Day - 
+ <- :zoklet.slashnet.org 372 Octet :- 9/11/2010 19:46
+ <- :zoklet.slashnet.org 372 Octet :-                 ___  _            _     _  _  ___  _____
+ <- :zoklet.slashnet.org 372 Octet :-                / __|| | __ _  ___| |_  | \| || __||_   _|
+ <- :zoklet.slashnet.org 372 Octet :-                \__ \| |/ _` |(_-<| ' \ | .` || _|   | |
+ <- :zoklet.slashnet.org 372 Octet :-                |___/|_|\__,_|/__/|_||_||_|\_||___|  |_|
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                        ______     _    _      _   
+ <- :zoklet.slashnet.org 372 Octet :-                       |___  /    | |  | |    | |  
+ <- :zoklet.
+ <- slashnet.org 372 Octet :-                          / / ___ | | _| | ___| |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                         / / / _ \| |/ / |/ _ \ __|
+ <- :zoklet.slashnet.org 372 Octet :-                        / /_| (_) |   <| |  __/ |_ 
+ <- :zoklet.slashnet.org 372 Octet :-                       /_____\___/|_|\_\_|\___|\__|
+ <- :zoklet.
+ <- slashnet.org 372 Octet :-                             
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-                          zoklet.slashnet.org
+ <- :zoklet.slashnet.org 372 Octet :-                 London England uplink for SlashNET.org
+ <- :zoklet.slashnet.org 372 Octet :-                            Ports 6667-6669
+ <- :zoklet.slashnet.org 372 Octet :-                       IRC over SSL on port 6697
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- .--------------------------[SlashNET Rules]----------------------------.
+ <- :zoklet.slashnet.org 372 Octet :- | o Use of SlashNET is a privilege, not a right.                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harassment of users and/or IRC Operators is not permitted.         |
+ <- :zoklet.slashnet.org 372 Octet :- | o Harmful bots are not permitted.                                    |
+ <- :zoklet.slashnet.org 372 Octet :- | o A single user may not have more than 3 simultaneous connections to |
+ <- :zoklet.slashnet.org 372 
+ <- Octet :- |   SlashNET (even if from different hostmasks).                       |
+ <- :zoklet.slashnet.org 372 Octet :- | o No flooding, spamming, or nuking of any kind.                      |
+ <- :zoklet.slashnet.org 372 Octet :- | o No link-looking scripts or bots.                                   |
+ <- :zoklet.slashnet.org 372 Octet :- | o Treat u
+ <- sers with respect.                                          |
+ <- :zoklet.slashnet.org 372 Octet :- | o Do not abuse network services.                                     |
+ <- :zoklet.slashnet.org 372 Octet :- `----------------------------------------------------------------------'
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server supports hostname cloaking to
+ <- :zoklet.slashnet.org 372 Octet :- prevent denial-of-service attacks. To activate
+ <- :zoklet.slashnet.org 372 Octet :- it, type /mode <nickname> +x, where <nickname>
+ <- :zoklet.slashnet.org 372 Octet :- is your current nickname.
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :-     Server admin: Zok <zok@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: Trueborn <trueborn@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :-             Oper: O_RLY <o_rly@slashnet.org>
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zoklet.slashnet.org 372 Octet :- This server is paid for and hosted by Zok of Zoklet.net. Sl
+ <- ashNET is
+ <- :zoklet.slashnet.org 372 Octet :- not affiliated with Zoklet.net and the views and opinions expressed at
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net are not those of SlashNET. For issues and concerns about
+ <- :zoklet.slashnet.org 372 Octet :- Zoklet.net, please email Zok (ATTN: Zoklet.net).
+ <- :zoklet.slashnet.org 372 Octet :- 
+ <- :zok
+ <- let.slashnet.org 372 Octet :- If you have any questions or comments regarding this irc server,
+ <- :zoklet.slashnet.org 372 Octet :- contact the server administrator(s).
+ <- :zoklet.slashnet.org 376 Octet :End of /MOTD command.
+ <- :Octet MODE Octet :+x
+ <- :Octet!~Octet@A79284FD.BF0E35BB.7EB0AD55.IP JOIN :#uakroncs
+ <- :zoklet.slashnet.org 332 Octet #uakroncs :UA ACM! http://acm.cs.uakron.edu/ | WWCD? | Unix &   OOP Hideout | Collard: "Interwebs!" | In That Case: 2 | Congrats to ICPC Teams!  1st and 3rd at YSU, 13th and 28th in the Region!  Partay!
+ <- :zoklet.slashnet.org 333 Octet #uakroncs ChadV 1319327000
+ <- :zoklet.slashnet.org 353 Octet @ #uakroncs :Octet @Nybbles jbotc @ChadV codex tm258_ Sarten-X CIA-1 @CodeBlock ajanata @jac phuzion 
+ <- :zoklet.slashnet.org 366 Octet #uakroncs :End of /NAMES list.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :Nybbles: Right ;) Also, it means anything that reads stdin and outputs to stdout can be used for jbot, including bash scripts or what not
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: Nybbles: Right ;) Also, it means anything that reads stdin and outputs to stdout can be used for jbot, including bash scripts or what not
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs ::q
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: :q
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :vim?
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: vim?
+ <- :Nybbles!~Nybbles@1110D8E.4A8C36B9.7EB0AD55.IP PRIVMSG #uakroncs :Yes.
+PRIVMSG Nybbles :PRIVMSG recieved from Nybbles@#uakroncs: Yes.
+ <- :jac!~jac@cloak-192F811B.clients.your-server.de PRIVMSG #uakroncs :lol
+PRIVMSG Nybbles :PRIVMSG recieved from jac@#uakroncs: lol
