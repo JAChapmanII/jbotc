@@ -159,6 +159,9 @@ int main(int argc, char **argv) {
 						owner, name, cname, msg);
 				tok = strtok(tmsg, " ");
 
+				/* Determine if we send this to the chan, or a specific user */
+				target = (!strcmp(cname, nick)) ? name : chan;
+
 				toUs = 0;
 				/* if this is targeted at us */
 				if(!strcmp(tok, cstart)) {
@@ -166,9 +169,8 @@ int main(int argc, char **argv) {
 					tok = strtok(NULL, " ");
 					toUs = 1;
 				}
-
-				/* Determine if we send this to the chan, or a specific user */
-				target = (!strcmp(cname, nick)) ? name : chan;
+				if(target == name)
+					toUs = 1;
 
 				/* reload stops this instance, parent conbot starts new one */
 				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
@@ -286,6 +288,9 @@ int main(int argc, char **argv) {
 				/* copy target of PRIVMSG into cname */
 				strncpy(cname, str + mptr[3].rm_so, mptr[3].rm_eo - mptr[3].rm_so);
 				cname[mptr[3].rm_eo - mptr[3].rm_so] = '\0';
+
+				/* Determine if we send this to the chan, or a specific user */
+				target = (!strcmp(cname, nick)) ? name : chan;
 
 				/*
 				if(strcmp(name, "ajanata"))
