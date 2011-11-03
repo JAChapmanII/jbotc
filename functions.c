@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa) { // {{{
@@ -54,6 +55,31 @@ void sl(FunctionArgs *fa) { // {{{
 	strcat(buf, "{. .}");
 
 	send(fa->target, "%s: %s", fa->name, buf);
+} // }}}
+
+/* Wave if we haven't recently */
+void wave(FunctionArgs *fa) { // {{{
+	BMap_Node *tmpn = NULL;
+
+	int doWave = 0;
+	long curTime = time(NULL);
+	tmpn = bmap_find(fa->vars, "__last_wave_time");
+	if(tmpn == NULL) {
+		doWave = 1;
+		bmap_add(fa->vars, "__last_wave_time", "0");
+	} else {
+		int tmp = atoi(tmpn->val);
+		if(curTime - tmp > 15)
+			doWave = 1;
+	}
+
+	if(doWave) {
+		char buf[PBSIZE];
+
+		snprintf(buf, PBSIZE, "%ld", curTime);
+		bmap_add(fa->vars, "__last_wave_time", buf);
+		send(fa->target, "%s: %s", fa->name, ((rand() % 2) ? "o/" : "\\o"));
+	}
 } // }}}
 
 /* Declares variables to remember things. */

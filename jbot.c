@@ -25,6 +25,7 @@ FuncStruct functions[] = {
 	FUNCTION(sl), FUNCTION(declare), FUNCTION(set),
 	FUNCTION(increment), { "++", &increment },
 	FUNCTION(decrement), { "--", &decrement },
+	FUNCTION(wave), { "o/", &wave }, { "\\o", &wave },
 	{ NULL, NULL },
 };
 

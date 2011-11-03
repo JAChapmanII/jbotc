@@ -36,6 +36,9 @@ void dubstep(FunctionArgs *fa);
 /* Sidein wants a train! */
 void sl(FunctionArgs *fa);
 
+/* Wave if we haven't recently */
+void wave(FunctionArgs *fa);
+
 /* Declares variables to remember things. */
 void declare(FunctionArgs *fa);
 
