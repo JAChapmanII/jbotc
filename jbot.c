@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 	// TODO: abuse macros? stringification/concatenation?
 	const char *privmsgRegexExp =
 		"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) PRIVMSG ([#A-Za-z0-9_]*) :(.*)";
-	const char *joinRegexExp = 
+	const char *joinRegexExp =
 		"^:([A-Za-z0-9_]*)!([-@~A-Za-z0-9_\\.]*) JOIN :([#A-Za-z0-9_]*)";
 
 	// seed random number generator with current time
@@ -269,38 +269,38 @@ int main(int argc, char **argv) {
 				// markov prints markov chains generated from previous input
 				} else if(!strcmp(tok, "markov")) {
 					markov(name, tok);
-				} 
+				}
 				// CodeBlock wants a fish...
                 else if(!strcmp(tok, "fish")) {
 					r = rand();
 					send(chan, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
-				} 
+				}
 				// CodeBlock wants multiple species of fish
                 else if(!strcmp(tok, "fishes")) {
 					send(chan, "%s: ><> <>< <><   ><> ><>", name);
-				} 
+				}
 				// WUB WUB WUB WUB WUB
                 else if(!strcmp(tok, "dubstep")) {
 					send(chan, "%s: WUB WUB WUB", name);
-				} 
+				}
 				// declaring a variable
                 else if(!strcmp(tok, "declare")) {
 					declareVariable(name, tok);
-				} 
+				}
 				// setting a variable
                 else if(!strcmp(tok, "set")) {
 					setVariable(name, tok);
-				} 
+				}
 				// incrementing a variable (or declaring it)
                 else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
 						!strcmp(tok, "++")) {
 					incrementVariable(name, tok);
-				} 
+				}
 				// decrementing a variable (or declaring it)
                 else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
 						!strcmp(tok, "--")) {
 					decrementVariable(name, tok);
-				} 
+				}
 				// token after cstart does not match command
                 else {
 					if(toUs) {
@@ -335,7 +335,7 @@ int main(int argc, char **argv) {
 			// flush everything so output goes out immediately
 			fflush(stdout);
 			fflush(logFile);
-		} 
+		}
 		// fgets failed, handle printing error message
         else {
 			fprintf(stderr, "fgets failed in main jbot loop!\n");
