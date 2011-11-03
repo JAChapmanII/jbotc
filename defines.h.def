@@ -6,17 +6,14 @@ char *greetings[GREETING_COUNT] = {
 	"Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."
 };
 
-/* Variables used by the main pertaining to user nick, channel, owner's nick,
- * and log file name.
- *
- * nick: the nick of the bot we are running as
- * chan: the channel we should be in and handling input from
- * owner: the nick of our owner, may be used for special commands/output
- * lfname: the name of the logFile file we should write to
- */
+// the nick of the bot we are running as
 const char *nick = "jbotc"; 
+// the channel we should be in and handling input from
 const char *chan = "#zebra";
+// the nick of our owner, may be used for special commands/output
 const char *owner = "jac"; 
+
+// lfname: the name of the logFile file we should write to
 const char *lfname = "jbotc.log";
 
 #endif // DEFINES_H
