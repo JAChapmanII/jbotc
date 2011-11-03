@@ -7,20 +7,24 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
 #include <regex.h>
 #include <unistd.h>
 #include <time.h>
 
 #include "functions.h"
-#include "util.h"
+#include "defines.h"
 
-#define BSIZE 4096
-#define PBSIZE 256
+// Container for all of the variables and configuration settings
+BMap *varsMap = NULL;
+BMap *confMap = NULL;
 
-// Container for all of the variables.
-BMap *variableMap = NULL;
+#define FUNCTION(x) { #x, &x }
+FuncStruct functions[] = {
+	FUNCTION(markov), FUNCTION(declareVariable), FUNCTION(setVariable),
+	FUNCTION(incrementVariable), FUNCTION(decrementVariable),
+	{ NULL, NULL },
+};
 
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
@@ -59,8 +63,13 @@ int main(int argc, char **argv) {
 	}
 
 	// If we fail to create a basic map, abort
-	if((variableMap = bmap_create()) == NULL) {
+	if((varsMap = bmap_create()) == NULL) {
 		fprintf(stderr, "Could not create contstant map!\n");
+		return 1;
+	}
+	// If we fail to create a basic map, abort
+	if((confMap = bmap_create()) == NULL) {
+		fprintf(stderr, "Could not create configuration map!\n");
 		return 1;
 	}
 
@@ -69,7 +78,7 @@ int main(int argc, char **argv) {
 		return 1;
 
 	// print separator to logFile
-	fprintf(logFile, "------------------------------------\n");
+	lprintf("------------------------------------\n");
 
 	// Setup the command start string, abort on failure
 	cstart = malloc(strlen(nick) + 2);
@@ -81,8 +90,9 @@ int main(int argc, char **argv) {
 	strcat(cstart, ":");
 
 	send(owner, "%s", obtainGreeting());
+
 	fflush(stdout);
-	fflush(logFile);
+	lflush();
 
 	// main loop, go until we say we are done or parent is dead/closes us off
 	while(!feof(stdin) && !done) {
@@ -90,8 +100,9 @@ int main(int argc, char **argv) {
 			// replace newline with null
 			str[strlen(str) - 1] = '\0';
 
-			// logFile input
-			fprintf(logFile, " <- %s\n", str);
+			// log all incoming data
+			lprintf(" <- %s\n", str);
+
 			res = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
 			// if a PRIVMSG was broadcast to us
 			if(res == 0) {
@@ -112,7 +123,7 @@ int main(int argc, char **argv) {
 				// setup tmsg to point to the msg in str
 				tmsg = str + mptr[4].rm_so;
 
-				fprintf(logFile, "PRIVMSG from %s to %s: %s\n", name, cname, msg);
+				lprintf("PRIVMSG from %s to %s: %s\n", name, cname, msg);
 				tok = strtok(tmsg, " ");
 
 				toUs = 0;
@@ -123,48 +134,29 @@ int main(int argc, char **argv) {
 					toUs = 1;
 				}
 
-				// reload stops this instance, parent conbot starts new one
-				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
-					fprintf(logFile, "Got message to restart...\n");
-					done = 1;
+				FunctionArgs fargs = {
+					name, hmask, (!strcmp(cname, nick)) ? name : chan, tok,
+					varsMap, confMap
+				};
 
-				// markov prints markov chains generated from previous input
-				} else if(!strcmp(tok, "markov")) {
-					markov(name, tok);
+				int matched = 0;
+				for(int i = 0; functions[i].name && functions[i].f; ++i) {
+					if(!strcmp(tok, functions[i].name)) {
+						matched = 1;
+						functions[i].f(&fargs);
+					}
+				}
 
-				// CodeBlock wants a fish...
-				} else if(!strcmp(tok, "fish")) {
-					send(chan, "%s: %s", name, ((rand() % 2) ? "><>" : "<><"));
-
-				// CodeBlock wants multiple species of fish
-				} else if(!strcmp(tok, "fishes")) {
-					send(chan, "%s: ><> <>< <><   ><> ><>", name);
-
-				// WUB WUB WUB WUB WUB
-				} else if(!strcmp(tok, "dubstep")) {
-					send(chan, "%s: WUB WUB WUB", name);
-
-				// declaring a variable
-				} else if(!strcmp(tok, "declare")) {
-					declareVariable(name, tok);
-
-				// setting a variable
-				} else if(!strcmp(tok, "set")) {
-					setVariable(name, tok);
-
-				// incrementing a variable (or declaring it)
-				} else if(!strcmp(tok, "inc") || !strcmp(tok, "++")) {
-					incrementVariable(name, tok);
-
-				// decrementing a variable (or declaring it)
-				} else if(!strcmp(tok, "dec") || !strcmp(tok, "--")) {
-					decrementVariable(name, tok);
-
-				// token after cstart does not match command
-				} else {
-					if(toUs) {
+				// none of the standard functions matched
+				if(!matched) {
+					// reload stops this instance, parent conbot starts new one
+					if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
+						lprintf("Got message to restart...\n");
+						done = 1;
+					// token after cstart does not match any command
+					} else {
 						// msg ends with question mark, guess an answer
-						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
+						if(toUs && (strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
 							send(chan, "%s: %s", name, ((rand() % 2) ? "Yes" : "No"));
 						}
 					}
@@ -192,11 +184,11 @@ int main(int argc, char **argv) {
 			}
 			// flush everything so output goes out immediately
 			fflush(stdout);
-			fflush(logFile);
+			lflush();
 		} else {
 			// fgets failed, handle printing error message
 			fprintf(stderr, "fgets failed in main jbot loop!\n");
-			fprintf(logFile, "fgets failed in main jbot loop!\n");
+			lprintf("fgets failed in main jbot loop!\n");
 		}
 	}
 
