@@ -128,9 +128,6 @@ int main(int argc, char **argv) {
 				lprintf("PRIVMSG from %s to %s: %s\n", name, cname, msg);
 				tok = strtok(tmsg, " ");
 
-				/* Determine if we send this to the chan, or a specific user */
-				target = (!strcmp(cname, nick)) ? name : chan;
-
 				toUs = 0;
 				// if this is targeted at us
 				if(!strcmp(tok, cstart)) {
@@ -138,11 +135,11 @@ int main(int argc, char **argv) {
 					tok = strtok(NULL, " ");
 					toUs = 1;
 				}
-				if(target == name)
+				if(!strcmp(cname ,nick))
 					toUs = 1;
 
 				FunctionArgs fargs = {
-					name, hmask, (!strcmp(cname, nick)) ? name : chan, tok,
+					name, hmask, ((!strcmp(cname, nick)) ? name : chan), tok,
 					varsMap, confMap
 				};
 
@@ -183,9 +180,6 @@ int main(int argc, char **argv) {
 				// copy target of PRIVMSG into cname
 				strncpy(cname, str + mptr[3].rm_so, mptr[3].rm_eo - mptr[3].rm_so);
 				cname[mptr[3].rm_eo - mptr[3].rm_so] = '\0';
-
-				/* Determine if we send this to the chan, or a specific user */
-				target = (!strcmp(cname, nick)) ? name : chan;
 
 				/*
 				if(strcmp(name, "ajanata"))
