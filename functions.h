@@ -24,30 +24,25 @@ typedef struct {
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa);
 
-/*
-// CodeBlock wants a fish...
-} else if(!strcmp(tok, "fish")) {
-	send(chan, "%s: %s", name, ((rand() % 2) ? "><>" : "<><"));
+/* CodeBlock wants a fish... */
+void fish(FunctionArgs *fa);
 
-// CodeBlock wants multiple species of fish
-} else if(!strcmp(tok, "fishes")) {
-	send(chan, "%s: ><> <>< <><   ><> ><>", name);
+/* CodeBlock wants multiple species of fish */
+void fishes(FunctionArgs *fa);
 
-// WUB WUB WUB WUB WUB
-} else if(!strcmp(tok, "dubstep")) {
-	send(chan, "%s: WUB WUB WUB", name);
-*/
+/* WUB WUB WUB WUB WUB */
+void dubstep(FunctionArgs *fa);
 
 /* Declares variables to remember things. */
-void declareVariable(FunctionArgs *fa);
+void declare(FunctionArgs *fa);
 
 /* Set a variable to remember things. */
-void setVariable(FunctionArgs *fa);
+void set(FunctionArgs *fa);
 
 /* Increment a variable and create it if it doesn't exist. */
-void incrementVariable(FunctionArgs *fa);
+void increment(FunctionArgs *fa);
 
 /* Decrement a variable and create it if it doesn't exist. */
-void decrementVariable(FunctionArgs *fa);
+void decrement(FunctionArgs *fa);
 
 #endif // FUNCTIONS_H

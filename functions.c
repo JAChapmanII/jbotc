@@ -16,8 +16,23 @@ void markov(FunctionArgs *fa) { // {{{
 	}
 } // }}}
 
+/* CodeBlock wants a fish... */
+void fish(FunctionArgs *fa) { // {{{
+	send(fa->target, "%s: %s", fa->name, ((rand() % 2) ? "><>" : "<><"));
+} // }}}
+
+/* CodeBlock wants multiple species of fish */
+void fishes(FunctionArgs *fa) { // {{{
+	send(fa->target, "%s: ><> <>< <><   ><> ><>", fa->name);
+} // }}}
+
+/* WUB WUB WUB WUB WUB */
+void dubstep(FunctionArgs *fa) { // {{{
+	send(fa->target, "%s: WUB WUB WUB", fa->name);
+} // }}}
+
 /* Declares variables to remember things. */
-void declareVariable(FunctionArgs *fa) { // {{{
+void declare(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 
 	char *tok = strtok(fa->args, " ");
@@ -35,7 +50,7 @@ void declareVariable(FunctionArgs *fa) { // {{{
 } // }}}
 
 /* Set a variable to remember things. */
-void setVariable(FunctionArgs *fa) { // {{{
+void set(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 	char *tmpsp;
 
@@ -56,7 +71,7 @@ void setVariable(FunctionArgs *fa) { // {{{
 } // }}}
 
 /* Increment a variable and create it if it doesn't exist. */
-void incrementVariable(FunctionArgs *fa) { // {{{
+void increment(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 
 	char *tok = strtok(NULL, " ");
@@ -81,7 +96,7 @@ void incrementVariable(FunctionArgs *fa) { // {{{
 } // }}}
 
 /* Decrement a variable and create it if it doesn't exist. */
-void decrementVariable(FunctionArgs *fa) { // {{{
+void decrement(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 
 	char *tok = strtok(NULL, " ");
