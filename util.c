@@ -1,11 +1,13 @@
 #include "util.h"
-#include "define.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+// lfname: the name of the logFile file we should write to
+const char *lfname = "jbotc.log";
 
 FILE *logFile = NULL;
-
-const char *obtainGreeting() {
-	return greetings[rand() % GREETING_COUNT];
-}
 
 char *getRegError(int errcode, regex_t *compiled) {
 	size_t l = regerror(errcode, compiled, NULL, 0);
@@ -38,5 +40,18 @@ void send(const char *target, char *format, ...) {
 	fprintf(logFile, " -> @%s :%s\n", target, buf);
 
 	va_end(args);
+}
+
+void lprintf(char *format, ...) {
+	if(!logFile)
+		return;
+	va_list args;
+	va_start(args, format);
+	vfprintf(logFile, format, args);
+	va_end(args);
+}
+
+void lflush() {
+	fflush(logFile);
 }
 
