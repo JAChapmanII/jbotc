@@ -1,3 +1,5 @@
 *.o
 jbot
 conbot
+
+defines.h

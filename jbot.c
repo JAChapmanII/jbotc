@@ -15,31 +15,16 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "defines.h"
+
 #define BSIZE 4096
 #define PBSIZE 256
-
-#define GREETING_COUNT 5
-
-/* Variables used by the main pertaining to nick, channel, owner, and
- * log file. 
- *
- * nick: the nick of the bot we are running as
- * chan: the channel we should be in and handling input from
- * owner: the nick of our owner, may be used for special commands/output
- * lfname: the name of the logFile file we should write to
- */
-const char* nick = "Octet"; 
-const char* chan = "#uakroncs";
-const char* owner = "Nybbles"; 
-const char* lfname = "octet.log";
-
 
 FILE *logFile = NULL;
 
 /* Container for all of the variables. */
 BMap *variableMap = NULL;
 
-char *greetings[GREETING_COUNT] = { "Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."};
 /* Returns a random greeting from greetings array */
 char *obtainGreeting() {
 	return greetings[rand() % GREETING_COUNT];

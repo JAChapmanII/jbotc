@@ -1,0 +1,22 @@
+#ifndef DEFINES_H
+#define DEFINES_H
+
+#define GREETING_COUNT 5
+char *greetings[GREETING_COUNT] = {
+	"Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."
+};
+
+/* Variables used by the main pertaining to user nick, channel, owner's nick,
+ * and log file name.
+ *
+ * nick: the nick of the bot we are running as
+ * chan: the channel we should be in and handling input from
+ * owner: the nick of our owner, may be used for special commands/output
+ * lfname: the name of the logFile file we should write to
+ */
+const char *nick = "jbotc"; 
+const char *chan = "#zebra";
+const char *owner = "jac"; 
+const char *lfname = "jbotc.log";
+
+#endif // DEFINES_H
