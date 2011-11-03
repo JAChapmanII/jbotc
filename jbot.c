@@ -167,7 +167,7 @@ int main(int argc, char **argv) {
 
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
-	int res, done = 0, r, toUs;
+	int res, done = 0, toUs;
 
 	// TODO: abuse macros? stringification/concatenation?
 	const char *privmsgRegexExp =
@@ -266,48 +266,45 @@ int main(int argc, char **argv) {
 				if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
 					fprintf(logFile, "Got message to restart...\n");
 					done = 1;
+
 				// markov prints markov chains generated from previous input
 				} else if(!strcmp(tok, "markov")) {
 					markov(name, tok);
-				}
+
 				// CodeBlock wants a fish...
-                else if(!strcmp(tok, "fish")) {
-					r = rand();
-					send(chan, "%s: %s", name, ((r % 2) ? "><>" : "<><"));
-				}
+				} else if(!strcmp(tok, "fish")) {
+					send(chan, "%s: %s", name, ((rand() % 2) ? "><>" : "<><"));
+
 				// CodeBlock wants multiple species of fish
-                else if(!strcmp(tok, "fishes")) {
+				} else if(!strcmp(tok, "fishes")) {
 					send(chan, "%s: ><> <>< <><   ><> ><>", name);
-				}
+
 				// WUB WUB WUB WUB WUB
-                else if(!strcmp(tok, "dubstep")) {
+				} else if(!strcmp(tok, "dubstep")) {
 					send(chan, "%s: WUB WUB WUB", name);
-				}
+
 				// declaring a variable
-                else if(!strcmp(tok, "declare")) {
+				} else if(!strcmp(tok, "declare")) {
 					declareVariable(name, tok);
-				}
+
 				// setting a variable
-                else if(!strcmp(tok, "set")) {
+				} else if(!strcmp(tok, "set")) {
 					setVariable(name, tok);
-				}
+
 				// incrementing a variable (or declaring it)
-                else if(!strcmp(tok, "inc") || !strcmp(tok, "increment") ||
-						!strcmp(tok, "++")) {
+				} else if(!strcmp(tok, "inc") || !strcmp(tok, "++")) {
 					incrementVariable(name, tok);
-				}
+
 				// decrementing a variable (or declaring it)
-                else if(!strcmp(tok, "dec") || !strcmp(tok, "decrement") ||
-						!strcmp(tok, "--")) {
+				} else if(!strcmp(tok, "dec") || !strcmp(tok, "--")) {
 					decrementVariable(name, tok);
-				}
+
 				// token after cstart does not match command
-                else {
+				} else {
 					if(toUs) {
 						// msg ends with question mark, guess an answer
 						if((strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
-							r = rand();
-							send(chan, "%s: %s", name, ((r % 2) ? "Yes" : "No"));
+							send(chan, "%s: %s", name, ((rand() % 2) ? "Yes" : "No"));
 						}
 					}
 				}
@@ -335,9 +332,8 @@ int main(int argc, char **argv) {
 			// flush everything so output goes out immediately
 			fflush(stdout);
 			fflush(logFile);
-		}
-		// fgets failed, handle printing error message
-        else {
+		} else {
+			// fgets failed, handle printing error message
 			fprintf(stderr, "fgets failed in main jbot loop!\n");
 			fprintf(logFile, "fgets failed in main jbot loop!\n");
 		}
