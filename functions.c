@@ -23,7 +23,19 @@ void fish(FunctionArgs *fa) { // {{{
 
 /* CodeBlock wants multiple species of fish */
 void fishes(FunctionArgs *fa) { // {{{
-	send(fa->target, "%s: ><> <>< <><   ><> ><>", fa->name);
+	char buf[80] = { 0 }, spaces[6] = "     ";
+	int fcount = rand() % 5, scount = (rand() % 5) + 1;
+
+	strcpy(buf, ((rand() % 2) ? "><>" : "<><"));
+	strncat(buf, spaces, scount);
+
+	for(int i = 0; i < fcount; ++i) {
+		strcat(buf, ((rand() % 2) ? "><>" : "<><"));
+		scount = (rand() % 5) + 1;
+		strncat(buf, spaces, scount);
+	}
+
+	send(fa->target, "%s: %s", fa->name, buf);
 } // }}}
 
 /* WUB WUB WUB WUB WUB */
