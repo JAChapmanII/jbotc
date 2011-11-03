@@ -43,6 +43,19 @@ void dubstep(FunctionArgs *fa) { // {{{
 	send(fa->target, "%s: WUB WUB WUB", fa->name);
 } // }}}
 
+/* Sidein wants a train! */
+void sl(FunctionArgs *fa) { // {{{
+	char buf[80] = { 0 };
+	int ccount = rand() % 8;
+
+	strcpy(buf, "/.==.]");
+	for(int i = 0; i < ccount; ++i)
+		strcat(buf, "[. .]");
+	strcat(buf, "{. .}");
+
+	send(fa->target, "%s: %s", fa->name, buf);
+} // }}}
+
 /* Declares variables to remember things. */
 void declare(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;

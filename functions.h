@@ -33,6 +33,9 @@ void fishes(FunctionArgs *fa);
 /* WUB WUB WUB WUB WUB */
 void dubstep(FunctionArgs *fa);
 
+/* Sidein wants a train! */
+void sl(FunctionArgs *fa);
+
 /* Declares variables to remember things. */
 void declare(FunctionArgs *fa);
 
