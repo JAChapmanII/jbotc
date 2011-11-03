@@ -69,7 +69,7 @@ void wave(FunctionArgs *fa) { // {{{
 		bmap_add(fa->vars, "__last_wave_time", "0");
 	} else {
 		int tmp = atoi(tmpn->val);
-		if(curTime - tmp > 15)
+		if(curTime - tmp > 60)
 			doWave = 1;
 	}
 
