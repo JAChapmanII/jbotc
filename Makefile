@@ -1,5 +1,5 @@
 LDFLAGS=-pthread
-CFLAGS=-pedantic -Wall -Wextra
+CFLAGS=-std=gnu99 -pedantic -Wall -Wextra
 
 ifndef RELEASE
 CFLAGS+=-g

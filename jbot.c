@@ -25,7 +25,7 @@ FILE *logFile = NULL;
 BMap *variableMap = NULL;
 
 /* Returns a random greeting from greetings array */
-char *obtainGreeting() {
+const char *obtainGreeting() {
 	return greetings[rand() % GREETING_COUNT];
 }
 
@@ -62,8 +62,7 @@ void markov(const char *name, char *tok) { // {{{
 	if(tok == NULL) {
 		// if we didn't recieve an argument, print usage
 		send(chan, "%s: Usage: markov <word>", name);
-	}
-	else {
+	} else {
 		// we recieved an argument, print it back to them for now.
 		// TODO: implement properly
 		send(chan, "%s: %s", name, tok);
@@ -73,14 +72,13 @@ void markov(const char *name, char *tok) { // {{{
 /* Declares variables to remember things. */
 void declareVariable(const char* name, char* tok) {
 	BMap_Node *tmpn = NULL;
-    
+
 	tok = strtok(NULL, " ");
-    tmpn = bmap_find(variableMap, tok);
+	tmpn = bmap_find(variableMap, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(variableMap) >= 256) {
 			send(chan, "%s: 256 variables exist already, sorry!", name);
-		} 
-        else {
+		} else {
 			bmap_add(variableMap, tok, "0");
 			send(chan, "%s: set \"%s\" to 0", name, tok);
 		}
