@@ -1,5 +1,8 @@
 #include "functions.h"
 
+#include <stdio.h>
+#include <string.h>
+
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa) { // {{{
 	char *tok = strtok(fa->args, " ");
@@ -36,18 +39,18 @@ void setVariable(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 	char *tmpsp;
 
-	tok = strtok(NULL, " ");
+	char *tok = strtok(NULL, " ");
 	tmpsp = tok;
 	tok = strtok(NULL, " ");
 	if(!tok || !tmpsp) {
-		send(chan, "%s: You must specify a variable and value", name);
+		send(fa->target, "%s: You must specify a variable and value", fa->name);
 	} else {
-		bmap_add(variableMap, tmpsp, tok);
-		tmpn = bmap_find(variableMap, tmpsp);
+		bmap_add(fa->vars, tmpsp, tok);
+		tmpn = bmap_find(fa->vars, tmpsp);
 		if(!tmpn) {
-			send(chan, "%s: \"%s\" was not found!?", name, tmpsp);
+			send(fa->target, "%s: \"%s\" was not found!?", fa->name, tmpsp);
 		} else {
-			send(chan, "%s: \"%s\" is %s", name, tmpsp, tmpn->val);
+			send(fa->target, "%s: \"%s\" is %s", fa->name, tmpsp, tmpn->val);
 		}
 	}
 } // }}}
@@ -56,14 +59,14 @@ void setVariable(FunctionArgs *fa) { // {{{
 void incrementVariable(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 
-	tok = strtok(NULL, " ");
-	tmpn = bmap_find(variableMap, tok);
+	char *tok = strtok(NULL, " ");
+	tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
-		if(bmap_size(variableMap) >= 256) {
-			send(chan, "%s: 256 variables exist already, sorry!", name);
+		if(bmap_size(fa->vars) >= 256) {
+			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
-			bmap_add(variableMap, tok, "0");
-			send(chan, "%s: set \"%s\" to 0", name, tok);
+			bmap_add(fa->vars, tok, "0");
+			send(fa->target, "%s: set \"%s\" to 0", fa->name, tok);
 		}
 	} else {
 		int tmp;
@@ -72,8 +75,8 @@ void incrementVariable(FunctionArgs *fa) { // {{{
 		tmp = atoi(tmpn->val);
 		++tmp;
 		snprintf(tmps, PBSIZE, "%d", tmp);
-		bmap_add(variableMap, tok, tmps);
-		send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+		bmap_add(fa->vars, tok, tmps);
+		send(fa->target, "%s: \"%s\" is %d", fa->name, tok, tmp);
 	}
 } // }}}
 
@@ -81,14 +84,14 @@ void incrementVariable(FunctionArgs *fa) { // {{{
 void decrementVariable(FunctionArgs *fa) { // {{{
 	BMap_Node *tmpn = NULL;
 
-	tok = strtok(NULL, " ");
-	tmpn = bmap_find(variableMap, tok);
+	char *tok = strtok(NULL, " ");
+	tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
-		if(bmap_size(variableMap) >= 256) {
-			send(chan, "%s: 256 variables exist already, sorry!", name);
+		if(bmap_size(fa->vars) >= 256) {
+			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
-			bmap_add(variableMap, tok, "0");
-			send(chan, "%s: set \"%s\" to 0", name, tok);
+			bmap_add(fa->vars, tok, "0");
+			send(fa->target, "%s: set \"%s\" to 0", fa->name, tok);
 		}
 	} else {
 		int tmp;
@@ -97,8 +100,8 @@ void decrementVariable(FunctionArgs *fa) { // {{{
 		tmp = atoi(tmpn->val);
 		tmp--;
 		snprintf(tmps, PBSIZE, "%d", tmp);
-		bmap_add(variableMap, tok, tmps);
-		send(chan, "%s: \"%s\" is %d", name, tok, tmp);
+		bmap_add(fa->vars, tok, tmps);
+		send(fa->target, "%s: \"%s\" is %d", fa->name, tok, tmp);
 	}
 } // }}}
 

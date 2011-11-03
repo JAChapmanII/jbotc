@@ -2,6 +2,8 @@
 #define FUNCTIONS_H
 
 #include "bmap.h"
+#include "util.h"
+#include <stdlib.h>
 
 typedef struct {
 	char *name;
@@ -23,17 +25,17 @@ typedef struct {
 void markov(FunctionArgs *fa);
 
 /*
-				// CodeBlock wants a fish...
-				} else if(!strcmp(tok, "fish")) {
-					send(chan, "%s: %s", name, ((rand() % 2) ? "><>" : "<><"));
+// CodeBlock wants a fish...
+} else if(!strcmp(tok, "fish")) {
+	send(chan, "%s: %s", name, ((rand() % 2) ? "><>" : "<><"));
 
-				// CodeBlock wants multiple species of fish
-				} else if(!strcmp(tok, "fishes")) {
-					send(chan, "%s: ><> <>< <><   ><> ><>", name);
+// CodeBlock wants multiple species of fish
+} else if(!strcmp(tok, "fishes")) {
+	send(chan, "%s: ><> <>< <><   ><> ><>", name);
 
-				// WUB WUB WUB WUB WUB
-				} else if(!strcmp(tok, "dubstep")) {
-					send(chan, "%s: WUB WUB WUB", name);
+// WUB WUB WUB WUB WUB
+} else if(!strcmp(tok, "dubstep")) {
+	send(chan, "%s: WUB WUB WUB", name);
 */
 
 /* Declares variables to remember things. */
@@ -48,12 +50,4 @@ void incrementVariable(FunctionArgs *fa);
 /* Decrement a variable and create it if it doesn't exist. */
 void decrementVariable(FunctionArgs *fa);
 
-#define FUNCTION(x) { #x, &x }
-FuncStruct functions[] = {
-	FUNCTION(markov), FUNCTION(declareVariable), FUNCTION(setVariable),
-	FUNCTION(incrementVariable), FUNCTION(decrementVariable),
-	{ NULL, NULL },
-};
-
 #endif // FUNCTIONS_H
-
