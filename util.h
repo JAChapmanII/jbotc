@@ -1,6 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+#include "bmap.h"
 #include <regex.h>
 
 #define BSIZE 4096
@@ -11,6 +12,12 @@
  * production.
  */
 char *getRegError(int errcode, regex_t *compiled);
+
+/* Loads dumped variables from the dat file */
+int readDump(BMap *readTo);
+
+/* Loads dumped variables from the dat file */
+int dumpVars(BMap *dumpFrom);
 
 /* Opens log file for appending to */
 int initLogFile();

@@ -94,6 +94,12 @@ int main(int argc, char **argv) {
 
 	send(owner, "%s", obtainGreeting());
 
+	// try to read old variables in
+	int count = readDump(varsMap);
+	if(count > 0) {
+		send(owner, "Read in %d variables", count);
+	}
+
 	fflush(stdout);
 	lflush();
 
@@ -196,6 +202,15 @@ int main(int argc, char **argv) {
 			lprintf("fgets failed in main jbot loop!\n");
 		}
 	}
+
+	// try to dump variables for reload
+	count = dumpVars(varsMap);
+	if(count > 0) {
+		send(owner, "Dumped %d variables", count);
+	}
+
+	fflush(stdout);
+	lflush();
 
 	// close stdin/stdout just to make sure conbot knows we stopped
 	close(0);
