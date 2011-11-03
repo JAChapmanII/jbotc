@@ -13,48 +13,14 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "bmap.h"
-#include "defines.h"
+#include "functions.h"
+#include "util.h"
 
 #define BSIZE 4096
 #define PBSIZE 256
 
-FILE *logFile = NULL;
-
 // Container for all of the variables.
 BMap *variableMap = NULL;
-
-/* Returns a random greeting from greetings array */
-const char *obtainGreeting() {
-	return greetings[rand() % GREETING_COUNT];
-}
-
-/* Returns a pointer to the string representation of a regular expression
- * error. Since this should be tested, this function should never be called in
- * production.
- */
-char *getRegError(int errcode, regex_t *compiled) { // {{{
-	size_t l = regerror(errcode, compiled, NULL, 0);
-	char *buffer = malloc(l + 1);
-	if(!buffer)
-		return "Couldn't malloc space for regex errror!";
-	regerror(errcode, compiled, buffer, l);
-	return buffer;
-} // }}}
-
-/* Small wrapper to allow printing to a logFile and stdout at the same time */
-void send(const char *target, char *format, ...) { // {{{
-	va_list args;
-	char buf[BSIZE];
-
-	va_start(args, format);
-	vsnprintf(buf, BSIZE, format, args);
-
-	printf("PRIVMSG %s :%s\n", target, buf);
-	fprintf(logFile, " -> @%s :%s\n", target, buf);
-
-	va_end(args);
-} // }}}
 
 /* markov will eventually print markov chains generated from previous input. */
 void markov(const char *name, char *tok) { // {{{
@@ -157,7 +123,6 @@ void decrementVariable(const char *name, char *tok) {
 		send(chan, "%s: \"%s\" is %d", name, tok, tmp);
 	}
 }
-
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
@@ -201,11 +166,8 @@ int main(int argc, char **argv) {
 	}
 
 	// If we fail to open the logFile in append mode, abort
-	logFile = fopen(lfname, "a");
-	if(!logFile) {
-		fprintf(stderr, "Could not open logFile file!\n");
+	if(!initLogFile())
 		return 1;
-	}
 
 	// print separator to logFile
 	fprintf(logFile, "------------------------------------\n");
