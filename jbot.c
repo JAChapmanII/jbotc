@@ -21,8 +21,10 @@ BMap *confMap = NULL;
 
 #define FUNCTION(x) { #x, &x }
 FuncStruct functions[] = {
-	FUNCTION(markov), FUNCTION(declareVariable), FUNCTION(setVariable),
-	FUNCTION(incrementVariable), FUNCTION(decrementVariable),
+	FUNCTION(markov), FUNCTION(fish), FUNCTION(fishes), FUNCTION(dubstep),
+	FUNCTION(declare), FUNCTION(set),
+	FUNCTION(increment), { "++", &increment },
+	FUNCTION(decrement), { "--", &decrement },
 	{ NULL, NULL },
 };
 
