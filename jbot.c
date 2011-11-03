@@ -5,8 +5,6 @@
  * Since jbotc reads from stdin and writes to stdout, it can be run in a
  * terminal and fed made up input for testing purposes
  */
-#include "bmap.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -15,6 +13,7 @@
 #include <unistd.h>
 #include <time.h>
 
+#include "bmap.h"
 #include "defines.h"
 
 #define BSIZE 4096
@@ -22,7 +21,7 @@
 
 FILE *logFile = NULL;
 
-/* Container for all of the variables. */
+// Container for all of the variables.
 BMap *variableMap = NULL;
 
 /* Returns a random greeting from greetings array */
@@ -34,17 +33,17 @@ char *obtainGreeting() {
  * error. Since this should be tested, this function should never be called in
  * production.
  */
-char *getRegError(int errcode, regex_t *compiled) { /*{{{*/
+char *getRegError(int errcode, regex_t *compiled) { // {{{
 	size_t l = regerror(errcode, compiled, NULL, 0);
 	char *buffer = malloc(l + 1);
 	if(!buffer)
 		return "Couldn't malloc space for regex errror!";
 	regerror(errcode, compiled, buffer, l);
 	return buffer;
-} /*}}}*/
+} // }}}
 
-/* Small wrapper to allow printing to a logFile and stdout at the same time {{{ */
-void send(const char *target, char *format, ...) {
+/* Small wrapper to allow printing to a logFile and stdout at the same time */
+void send(const char *target, char *format, ...) { // {{{
 	va_list args;
 	char buf[BSIZE];
 
@@ -55,22 +54,21 @@ void send(const char *target, char *format, ...) {
 	fprintf(logFile, " -> @%s :%s\n", target, buf);
 
 	va_end(args);
-} /*}}}*/
+} // }}}
 
-/* markov will eventually print markov chains generated from
- * previous input. TODO: implement */
-void markov(const char* name, char* tok) { 
-    tok = strtok(NULL, " ");
+/* markov will eventually print markov chains generated from previous input. */
+void markov(const char *name, char *tok) { // {{{
+	tok = strtok(NULL, " ");
 	if(tok == NULL) {
-	    /* if we didn't recieve an argument, print usage */
+		// if we didn't recieve an argument, print usage
 		send(chan, "%s: Usage: markov <word>", name);
-	} 
-    else {
-	    /* we recieved an argument, print it back to them for
-		 * now. TODO: implement properly */
+	}
+	else {
+		// we recieved an argument, print it back to them for now.
+		// TODO: implement properly
 		send(chan, "%s: %s", name, tok);
 	}
-}
+} // }}}
 
 /* Declares variables to remember things. */
 void declareVariable(const char* name, char* tok) {
