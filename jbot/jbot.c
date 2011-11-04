@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 	send(owner, "%s", obtainGreeting());
 
 	// try to read old variables in
-	int count = readDump(varsMap);
+	int count = bmap_read(varsMap, dumpFileName);
 	if(count > 0) {
 		send(owner, "Read in %d variables", count);
 	}
@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 	}
 
 	// try to dump variables for reload
-	count = dumpVars(varsMap);
+	count = bmap_dump(varsMap, dumpFileName);
 	if(count > 0) {
 		send(owner, "Dumped %d variables", count);
 	}

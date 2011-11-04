@@ -10,12 +10,6 @@
  */
 char *getRegError(int errcode, regex_t *compiled);
 
-/* Loads dumped variables from the dat file */
-int readDump(BMap *readTo);
-
-/* Loads dumped variables from the dat file */
-int dumpVars(BMap *dumpFrom);
-
 /* Opens log file for appending to */
 int initLogFile();
 

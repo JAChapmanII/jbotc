@@ -1,7 +1,10 @@
+#include "bmap.h"
+
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-#include "bmap.h"
+#define PBSIZE 256
 
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
 BMap_Node *bmapn_rightRotation(BMap_Node *n);
@@ -174,6 +177,58 @@ int bmapn_size(BMap_Node *bmn) { /* {{{ */
 	/* NULL childrne are handled above */
 	return bmapn_size(bmn->left) + bmapn_size(bmn->right) + 1;
 } /* }}} */
+
+// TODO: the way this works, there is no way to remove variables but to stop
+// conbot and then remove them from the .dat file. This should be corrected,
+// probably.
+// TODO: Allow deletion from a bmap
+int bmap_read(BMap *bmap, char *fileName) {
+	if(!bmap || !fileName)
+		return 0;
+
+	FILE *dumpFile = fopen(fileName, "r");
+	if(!dumpFile)
+		return 0;
+
+	int count = 0;
+	while(!feof(dumpFile)) {
+		char key[PBSIZE], val[PBSIZE];
+		if(!fscanf(dumpFile, "%s ", key))
+			break;
+		if(!fscanf(dumpFile, "%s ", val))
+			break;
+		bmap_add(bmap, key, val);
+		count++;
+	}
+	fclose(dumpFile);
+	return count;
+}
+
+// TODO: somehow we dump the same variable multiple times...
+int bmapn_dump(BMap_Node *bmn, FILE *dumpFile) {
+	if(!bmn)
+		return 0;
+
+	// TODO: not space when keys/values can have spaces?
+	fprintf(dumpFile, "%s %s\n", bmn->key, bmn->val);
+	int count = 1;
+	count += bmapn_dump(bmn->left, dumpFile);
+	count += bmapn_dump(bmn->right, dumpFile);
+	return count;
+}
+
+int bmap_dump(BMap *bmap, char *fileName) {
+	if(!bmap || !fileName)
+		return 0;
+
+	FILE *dumpFile = fopen(fileName, "w");
+	if(!dumpFile)
+		return 0;
+
+	int count = bmapn_dump(bmap->root, dumpFile);
+	fclose(dumpFile);
+	return count;
+}
 
 
 /* TODO: scrap?

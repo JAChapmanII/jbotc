@@ -30,4 +30,7 @@ BMap_Node *bmap_find(BMap *bmap, char *k);
 int bmap_depth(BMap *bmap);
 int bmap_size(BMap *bmap);
 
+int bmap_dump(BMap *bmap, char *fileName);
+int bmap_read(BMap *bmap, char *fileName);
+
 #endif /* BMAP_H */

@@ -17,6 +17,8 @@
 #define port 6697
 
 // the name of the log file we should write to
-#define lfname "jbotc.log"
+#define logFileName "jbotc.log"
+// the name of the file to read/dump vars
+#define dumpFileName "jbotc.dat"
 
 #endif // DEFINES_H
