@@ -1,0 +1,4 @@
+:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement
+:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
+:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
+:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
