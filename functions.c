@@ -1,4 +1,6 @@
 #include "functions.h"
+#include "defines.h"
+#include "util.h"
 
 #include <stdio.h>
 #include <string.h>

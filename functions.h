@@ -1,8 +1,7 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#include "bmap.h"
-#include "util.h"
+#include "lib/bmap.h"
 #include <stdlib.h>
 
 typedef struct {

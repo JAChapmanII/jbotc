@@ -1,11 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "bmap.h"
+#include "lib/bmap.h"
 #include <regex.h>
-
-#define BSIZE 4096
-#define PBSIZE 256
 
 /* Returns a pointer to the string representation of a regular expression
  * error. Since this should be tested, this function should never be called in

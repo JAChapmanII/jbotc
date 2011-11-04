@@ -13,7 +13,9 @@
 #include <time.h>
 
 #include "functions.h"
+#include "greetings.h"
 #include "defines.h"
+#include "util.h"
 
 // Container for all of the variables and configuration settings
 BMap *varsMap = NULL;
@@ -33,6 +35,13 @@ FuncStruct functions[] = {
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
+	if(argc > 1) {
+		printf("Usage: %s", argv[0]);
+		printf("Usually, this is run by conbot. If you want to run it manually,");
+		printf(" you must type standard IRC broadcast messages\n");
+		return 0;
+	}
+
 	char str[BSIZE], *tok, *tmsg, *cstart;
 	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
 

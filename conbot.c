@@ -14,8 +14,10 @@
 #include <pthread.h>
 #include <regex.h>
 #include <unistd.h>
+
 #include "ircsock.h"
-#include "cbuffer.h"
+#include "lib/cbuffer.h"
+#include "defines.h"
 
 /* size of character buffers */
 #define BSIZE 4096
@@ -163,18 +165,8 @@ char *getRegError(int errcode, regex_t *compiled) {
 }
 
 int main(int argc, char **argv) {
-	/* nick: the nick that this bot should identify as
-	 * chan: the channel this bot should get on
-	 * owner: the nick of the owner of this bot
-	 * TODO: read in from config/default to these values
-	 */
-	char *nick = "Octet", *chan = "#uakroncs", *owner = "Nybbles";
-	/* prefix: prefix to SERVER we should try to sign on to
-	 * port: port on the server we should connect to
-	 * TODO: read in from config/default to these values
-	 */
+	// prefix: prefix to SERVER we should try to sign on to
 	char *prefix = "irc";
-	int port = 6667;
 
 	char *str, *sname, *tok, *cstart;
 	pthread_t readThread, transferThread;

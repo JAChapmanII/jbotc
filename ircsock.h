@@ -2,7 +2,7 @@
 #define IRCSOCK_H
 
 #include <sys/types.h>
-#include "cbuffer.h"
+#include "lib/cbuffer.h"
 
 #define IRCSOCK_MERROR -2
 
