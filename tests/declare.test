@@ -1,0 +1,3 @@
+:n!user@hmask PRIVMSG #uakroncs :jbotc: declare
+:n!user@hmask PRIVMSG #uakroncs :jbotc: declare a_var
+:n!user@hmask PRIVMSG #uakroncs :jbotc: declare a_var
