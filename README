@@ -1,0 +1,30 @@
+jbotc is a simple IRC bot written in C.
+
+Building:
+	If it's your first time,
+		cp defines.h{.def,}
+	and then change things such as username and server/room to connect to.
+
+	Then issue:
+		make
+	This builds conbot and jbot binaries.
+
+Running:
+	You can simply run
+		./bin/conbot
+	to have your bot loaded and connected to your defined IRC channel. conbot
+	is a wrapper around jbot which connects to IRC and handles pinging. jbot is
+	what actually handles all the functionality.
+
+	If you want to test out jbot's functionality:
+		./bin/jbot
+	It will first print a PRIVMSG to its OWNER as a greeting. It then accepts
+	standard IRC broadcast messages and responds to them. For instance if you
+	type:
+		:nick!user@hostmask PRIVMSG #CHANNEL_NAME :NICK: o/
+	it should respond with
+		PRIVMSG #CHANNEL_NAME :nick: \o
+	or
+		PRIVMSG #CHANNEL_NAME :nick: o/
+	which would appear as a wave back in an IRC client.
+
