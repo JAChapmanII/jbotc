@@ -21,15 +21,38 @@
 BMap *varsMap = NULL;
 BMap *confMap = NULL;
 
-#define FUNCTION(x) { #x, &x }
+#define FUNCREGX(x, y) { #x, #y, 1, 0, NULL, &x }
+#define FUNCTION(x)    FUNCREGX(x, ^x (.*)$)
 FuncStruct functions[] = {
 	FUNCTION(markov), FUNCTION(fish), FUNCTION(fishes), FUNCTION(dubstep),
 	FUNCTION(sl), FUNCTION(declare), FUNCTION(set),
-	FUNCTION(increment), { "++", &increment },
-	FUNCTION(decrement), { "--", &decrement },
-	FUNCTION(wave), { "o/", &wave }, { "\\o", &wave },
-	{ NULL, NULL },
+	FUNCTION(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
+	FUNCTION(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },
+	FUNCTION(wave),
+	{ "wave",    "^o/ (.*)$", 1, 0, NULL, &wave },
+	{ "wave", "^\\\\o (.*)$", 1, 0, NULL, &wave },
+	{ NULL, NULL, 0, 0, NULL, NULL },
 };
+
+int setupFunctions() {
+	for(int i = 0; functions[i].name && functions[i].f; ++i) {
+		functions[i].r = malloc(sizeof(regex_t));
+		if(!functions[i].r) {
+			fprintf(stderr, "Could not malloc space for %s regex!\n",
+					functions[i].name);
+			return 0;
+		}
+		//fprintf(stderr, "%s: \"%s\"\n", functions[i].name, functions[i].regx);
+		// If we fail to compile the function regex, abort
+		int fail = regcomp(functions[i].r, functions[i].regx, REG_EXTENDED);
+		if(fail) {
+			fprintf(stderr, "Could not compile %s regex!\n", functions[i].name);
+			fprintf(stderr, "erromsg: %s\n", getRegError(fail, functions[i].r));
+			return 0;
+		}
+	}
+	return 1;
+}
 
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
@@ -47,7 +70,6 @@ int main(int argc, char **argv) {
 
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
-	int res, done = 0, toUs;
 
 	// TODO: abuse macros? stringification/concatenation?
 	const char *privmsgRegexExp =
@@ -59,20 +81,24 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	// If we fail to compile the PRIVMSG regex, abort
-	res = regcomp(&pmsgRegex, privmsgRegexExp, REG_EXTENDED);
-	if(res) {
+	int fail = regcomp(&pmsgRegex, privmsgRegexExp, REG_EXTENDED);
+	if(fail) {
 		fprintf(stderr, "Could not compile privmsg regex!\n");
-		fprintf(stderr, "erromsg: %s\n", getRegError(res, &pmsgRegex));
+		fprintf(stderr, "erromsg: %s\n", getRegError(fail, &pmsgRegex));
 		return 1;
 	}
 
 	// If we fail to compile the JOIN regex, abort
-	res = regcomp(&joinRegex, joinRegexExp, REG_EXTENDED);
-	if(res) {
+	fail = regcomp(&joinRegex, joinRegexExp, REG_EXTENDED);
+	if(fail) {
 		fprintf(stderr, "Could not compile join regex!\n");
-		fprintf(stderr, "erromsg: %s\n", getRegError(res, &joinRegex));
+		fprintf(stderr, "erromsg: %s\n", getRegError(fail, &joinRegex));
 		return 1;
 	}
+
+	// If we can't malloc/compile the function regex's, abort
+	if(!setupFunctions())
+		return 1;
 
 	// If we fail to create a basic map, abort
 	if((varsMap = bmap_create()) == NULL) {
@@ -113,6 +139,7 @@ int main(int argc, char **argv) {
 	lflush();
 
 	// main loop, go until we say we are done or parent is dead/closes us off
+	int done = 0;
 	while(!feof(stdin) && !done) {
 		if(fgets(str, BSIZE - 1, stdin) == str) {
 			// replace newline with null
@@ -121,9 +148,9 @@ int main(int argc, char **argv) {
 			// log all incoming data
 			lprintf(" <- %s\n", str);
 
-			res = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
+			fail = regexec(&pmsgRegex, str, pmsgRegex.re_nsub + 1, mptr, 0);
 			// if a PRIVMSG was broadcast to us
-			if(res == 0) {
+			if(!fail) {
 				// copy nick of sender into name
 				strncpy(name, str + mptr[1].rm_so, mptr[1].rm_eo - mptr[1].rm_so);
 				name[mptr[1].rm_eo - mptr[1].rm_so] = '\0';
@@ -140,28 +167,33 @@ int main(int argc, char **argv) {
 				strcpy(msg, str + mptr[4].rm_so);
 				// setup tmsg to point to the msg in str
 				tmsg = str + mptr[4].rm_so;
+				char *msgp = msg;
 
 				lprintf("PRIVMSG from %s to %s: %s\n", name, cname, msg);
 				tok = strtok(tmsg, " ");
 
-				toUs = 0;
+				int toUs = 0;
 				// if this is targeted at us
 				if(!strcmp(tok, cstart)) {
 					// ignore it
 					tok = strtok(NULL, " ");
 					toUs = 1;
+					msgp += strlen(cstart) + 1;
 				}
-				if(!strcmp(cname ,nick))
+				if(!strcmp(cname, nick))
 					toUs = 1;
 
 				FunctionArgs fargs = {
-					name, hmask, ((!strcmp(cname, nick)) ? name : chan), tok,
-					toUs, varsMap, confMap
+					name, hmask, ((!strcmp(cname, nick)) ? name : chan),
+					toUs, msgp, mptr, varsMap, confMap
 				};
 
 				int matched = 0;
-				for(int i = 0; functions[i].name && functions[i].f; ++i) {
-					if(!strcmp(tok, functions[i].name)) {
+				//fprintf(stderr, "Matching on \"%s\"\n", msgp);
+				for(int i = 0; !matched && functions[i].f; ++i) {
+					fail = regexec(functions[i].r,
+							msgp, functions[i].r->re_nsub + 1, mptr, 0);
+					if(!fail) {
 						matched = 1;
 						functions[i].f(&fargs);
 					}
@@ -182,9 +214,9 @@ int main(int argc, char **argv) {
 					}
 				}
 			}
-			res = regexec(&joinRegex, str, joinRegex.re_nsub + 1, mptr, 0);
+			fail = regexec(&joinRegex, str, joinRegex.re_nsub + 1, mptr, 0);
 			// if a JOIN was broadcast to us
-			if(res == 0) {
+			if(!fail) {
 				// copy nick of sender into name
 				strncpy(name, str + mptr[1].rm_so, mptr[1].rm_eo - mptr[1].rm_so);
 				name[mptr[1].rm_eo - mptr[1].rm_so] = '\0';

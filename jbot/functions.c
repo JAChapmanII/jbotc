@@ -8,7 +8,7 @@
 
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa) { // {{{
-	char *tok = strtok(fa->args, " ");
+	char *tok = strtok(fa->matchedOn, " ");
 	if(tok == NULL) {
 		// if we didn't recieve an argument, print usage
 		send(fa->target, "%s: Usage: markov <word>", fa->name);
@@ -94,7 +94,7 @@ void declare(FunctionArgs *fa) { // {{{
 	// TODO: this can only declare "declare" and will return its value...
 	BMap_Node *tmpn = NULL;
 
-	char *tok = strtok(fa->args, " ");
+	char *tok = strtok(fa->matchedOn, " ");
 	tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {

@@ -3,13 +3,16 @@
 
 #include "bmap.h"
 #include <stdlib.h>
+#include <regex.h>
 
 typedef struct {
 	char *name;
 	char *hmask;
 	char *target;
-	char *args;
 	int toUs;
+
+	char *matchedOn;
+	regmatch_t *matches;
 
 	BMap *vars;
 	BMap *conf;
@@ -18,6 +21,10 @@ typedef struct {
 typedef void (*Function)(FunctionArgs *fa);
 typedef struct {
 	char *name;
+	char *regx;
+	int matchCount;
+	int caseSensitive;
+	regex_t *r;
 	Function f;
 } FuncStruct;
 
