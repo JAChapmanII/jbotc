@@ -16,4 +16,7 @@
 // default port to connect to
 #define port 6697
 
+// the name of the log file we should write to
+#define lfname "jbotc.log"
+
 #endif // DEFINES_H

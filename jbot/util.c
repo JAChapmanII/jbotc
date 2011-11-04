@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-// the name of the log file we should write to
-const char *lfname = "jbotc.log";
 FILE *logFile = NULL;
 
 // the name of the file to dump/read variables from
