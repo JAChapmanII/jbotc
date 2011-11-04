@@ -55,6 +55,8 @@ fi
 
 if [[ $fail == 1 ]]; then
 	echo "Test failed!"
+	cat "$DATFILE"
+	echo ""
 	cat "$LOGFILE"
 	echo ""
 else
