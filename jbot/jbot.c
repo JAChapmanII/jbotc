@@ -24,7 +24,8 @@ BMap *confMap = NULL;
 #define FUNCREGX(x, y) { #x, #y, 1, 0, NULL, &x }
 #define FUNCTION(x)    FUNCREGX(x, ^x (.*)$)
 FuncStruct functions[] = {
-	FUNCTION(markov), FUNCTION(fish), FUNCTION(fishes), FUNCTION(dubstep),
+	{ "markov", "markov.*", 1, 0, NULL, &markov },
+	FUNCTION(fish), FUNCTION(fishes), FUNCTION(dubstep),
 	FUNCTION(sl), FUNCTION(declare), FUNCTION(set),
 	FUNCTION(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
 	FUNCTION(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },

@@ -37,16 +37,19 @@ tail -n +$((SKIPSTART + 1)) $OUTF | head -n -$SKIPATEND | sponge $OUTF
 
 fail=0
 if !  diff "$OUTF" "$RFILE" &>/dev/null; then
+	fail=1
+	echo "Actual output:"
+	cat "$OUTF"
+	echo ""
 	echo "Diff between actual and expected output:"
 	diff -u "$OUTF" "$RFILE" | tail -n +4
-	fail=1
 	echo ""
 fi
 
 if [[ $(cat $ERRF | wc -l) > 0 ]]; then
+	fail=1
 	echo "Contents of stderr stream:"
 	cat "$ERRF"
-	fail=1
 	echo ""
 fi
 
