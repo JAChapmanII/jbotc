@@ -5,7 +5,7 @@
 #define PBSIZE 256
 
 // the nick of the bot we are running as
-#define nick "jbotc"
+#define nick "jbot"
 // the channel we should be in and handling input from
 #define chan "#zebra"
 // the nick of our owner, may be used for special commands/output
@@ -14,11 +14,11 @@
 // default server to connect to
 #define server "irc.slashnet.org"
 // default port to connect to
-#define port 6697
+#define port 6667
 
 // the name of the log file we should write to
-#define logFileName "jbotc.log"
+#define logFileName "jbot.log"
 // the name of the file to read/dump vars
-#define dumpFileName "jbotc.dat"
+#define dumpFileName "jbot.dat"
 
 #endif // DEFINES_H
