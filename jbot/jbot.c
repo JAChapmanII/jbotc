@@ -178,6 +178,10 @@ int main(int argc, char **argv) {
 					// ignore it
 					tok = strtok(NULL, " ");
 					toUs = 1;
+					if(strlen(msgp) <= strlen(cstart) + 1) {
+						// then there is nothing to do a command on
+						continue;
+					}
 					msgp += strlen(cstart) + 1;
 				}
 				if(!strcmp(cname, nick))
@@ -238,9 +242,11 @@ int main(int argc, char **argv) {
 			fflush(stdout);
 			lflush();
 		} else {
-			// fgets failed, handle printing error message
-			fprintf(stderr, "fgets failed in main jbot loop!\n");
-			lprintf("fgets failed in main jbot loop!\n");
+			if(!feof(stdin)) {
+				// fgets failed, handle printing error message
+				fprintf(stderr, "fgets failed in main jbot loop!\n");
+				lprintf("fgets failed in main jbot loop!\n");
+			}
 		}
 	}
 
