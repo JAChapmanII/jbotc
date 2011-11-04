@@ -10,6 +10,7 @@ typedef struct {
 	char *hmask;
 	char *target;
 	char *args;
+	int toUs;
 
 	BMap *vars;
 	BMap *conf;

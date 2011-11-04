@@ -59,10 +59,15 @@ void sl(FunctionArgs *fa) { // {{{
 
 /* Wave if we haven't recently */
 void wave(FunctionArgs *fa) { // {{{
-	BMap_Node *tmpn = NULL;
+	if(fa->toUs) {
+		send(fa->target, "%s: %s", fa->name, ((rand() % 2) ? "o/" : "\\o"));
+		return;
+	}
 
 	int doWave = 0;
 	long curTime = time(NULL);
+
+	BMap_Node *tmpn = NULL;
 	tmpn = bmap_find(fa->vars, "__last_wave_time");
 	if(tmpn == NULL) {
 		doWave = 1;

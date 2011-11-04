@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
 				FunctionArgs fargs = {
 					name, hmask, ((!strcmp(cname, nick)) ? name : chan), tok,
-					varsMap, confMap
+					toUs, varsMap, confMap
 				};
 
 				int matched = 0;
