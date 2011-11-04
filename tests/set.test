@@ -1,0 +1,6 @@
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set_invalid
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set thing
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set two 2
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set three 3
+:n!user@hmask PRIVMSG #uakroncs :jbotc: set four SCE

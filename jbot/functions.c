@@ -118,21 +118,26 @@ void declare(FunctionArgs *fa) { // {{{
 
 /* Set a variable to remember things. */
 void set(FunctionArgs *fa) { // {{{
-	BMap_Node *tmpn = NULL;
-	char *tmpsp;
+	char *tok = strtok(fa->matchedOn, " ");
+	// initially tok should be "set", if it isn't bail
+	if(strcmp(tok, "set"))
+		return;
 
-	char *tok = strtok(NULL, " ");
-	tmpsp = tok;
-	tok = strtok(NULL, " ");
-	if(!tok || !tmpsp) {
+	// we're now at the variable name
+	char *var = strtok(NULL, " ");
+	// next we want to move on to the value
+	// TODO: if var is null, what happens here?
+	char *val = strtok(NULL, " ");
+
+	if(!var || !val) {
 		send(fa->target, "%s: You must specify a variable and value", fa->name);
 	} else {
-		bmap_add(fa->vars, tmpsp, tok);
-		tmpn = bmap_find(fa->vars, tmpsp);
+		bmap_add(fa->vars, var, val);
+		BMap_Node *tmpn = bmap_find(fa->vars, var);
 		if(!tmpn) {
-			send(fa->target, "%s: \"%s\" was not found!?", fa->name, tmpsp);
+			send(fa->target, "%s: %s was not found!?", fa->name, var);
 		} else {
-			send(fa->target, "%s: \"%s\" is %s", fa->name, tmpsp, tmpn->val);
+			send(fa->target, "%s: %s set to %s", fa->name, var, tmpn->val);
 		}
 	}
 } // }}}
