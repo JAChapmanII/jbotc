@@ -21,17 +21,36 @@
 BMap *varsMap = NULL;
 BMap *confMap = NULL;
 
+// FUNCREG should not be used directly
 #define FUNCREGX(x, y) { #x, #y, 1, 0, NULL, &x }
-#define FUNCTION(x)    FUNCREGX(x, ^x (.*)$)
+/* There are two types of functions:
+ * 	A: Has to have some sort of argument after it
+ * 	B: May or may not have argumens after it
+ * 		the function must make sure that the first token is what it expects
+ * 	C: Either the function name is by itself, or it is type A
+ */
+#define FUNCTIONA(x)    FUNCREGX(x, ^x (.*)$)
+#define FUNCTIONB(x)    FUNCREGX(x, ^x.*$)
+#define FUNCTIONC(x)    FUNCREGX(x, ^x ## $), FUNCTIONA(x)
+
 FuncStruct functions[] = {
-	{ "markov", "markov.*", 1, 0, NULL, &markov },
-	FUNCTION(fish), FUNCTION(fishes), FUNCTION(dubstep),
-	FUNCTION(sl), FUNCTION(declare), FUNCTION(set),
-	FUNCTION(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
-	FUNCTION(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },
-	FUNCTION(wave),
-	{ "wave",    "^o/ (.*)$", 1, 0, NULL, &wave },
-	{ "wave", "^\\\\o (.*)$", 1, 0, NULL, &wave },
+	// Type A functions
+	FUNCTIONA(set), FUNCTIONA(declare),
+	FUNCTIONA(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
+	FUNCTIONA(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },
+
+	// Type B functions
+	FUNCTIONB(markov),
+
+	// Type C functions
+	FUNCTIONC(wave),
+	{ "wave",    "^o/$", 1, 0, NULL, &wave },
+	{ "wave", "^o/ .*$", 1, 0, NULL, &wave },
+	{ "wave",    "^\\\\o$", 1, 0, NULL, &wave },
+	{ "wave", "^\\\\o .*$", 1, 0, NULL, &wave },
+	FUNCTIONC(fish), FUNCTIONC(fishes), FUNCTIONC(sl), FUNCTIONC(dubstep),
+
+	// End of functions marker
 	{ NULL, NULL, 0, 0, NULL, NULL },
 };
 
