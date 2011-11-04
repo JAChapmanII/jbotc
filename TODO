@@ -1,0 +1,6 @@
+The testing framework cannot test multiple functions due to their random
+output. Not sure what to do here, standard "random" seed? Perhaps a temprorary
+sed for time(NULL) only during testing.
+
+The testing framework should use the defines/config file instead of having
+these things hardcoded into the tests if possible.
