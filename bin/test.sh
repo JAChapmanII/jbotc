@@ -62,4 +62,5 @@ else
 fi
 
 cleanup
+exit $fail
 
