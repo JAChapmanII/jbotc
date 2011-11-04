@@ -1,0 +1,4 @@
+:n!user@hmask PRIVMSG #uakroncs :jbotc: increment
+:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var
+:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var
+:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var

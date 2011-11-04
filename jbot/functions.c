@@ -100,6 +100,7 @@ void declare(FunctionArgs *fa) { // {{{
 	char *tok = strtok(fa->matchedOn, " ");
 	// so we immediately strtok again
 	tok = strtok(NULL, " ");
+
 	BMap_Node *tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
@@ -141,26 +142,34 @@ void set(FunctionArgs *fa) { // {{{
 
 /* Increment a variable and create it if it doesn't exist. */
 void increment(FunctionArgs *fa) { // {{{
-	BMap_Node *tmpn = NULL;
+	// initially tok will be "increment"...
+	char *tok = strtok(fa->matchedOn, " ");
+	// so we immediately strtok again
+	tok = strtok(NULL, " ");
 
-	char *tok = strtok(NULL, " ");
-	tmpn = bmap_find(fa->vars, tok);
+	BMap_Node *tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
 			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
 			bmap_add(fa->vars, tok, "0");
-			send(fa->target, "%s: set \"%s\" to 0", fa->name, tok);
+			send(fa->target, "%s: declared %s as 0", fa->name, tok);
 		}
 	} else {
-		int tmp;
-		char tmps[PBSIZE];
+		char buf[PBSIZE];
+		int val;
 
-		tmp = atoi(tmpn->val);
-		++tmp;
-		snprintf(tmps, PBSIZE, "%d", tmp);
-		bmap_add(fa->vars, tok, tmps);
-		send(fa->target, "%s: \"%s\" is %d", fa->name, tok, tmp);
+		// retrieve value, increment it
+		val = atoi(tmpn->val);
+		++val;
+
+		// write the integer to the buffer
+		snprintf(buf, PBSIZE, "%d", val);
+
+		// save it back into the variable map
+		bmap_add(fa->vars, tok, buf);
+
+		send(fa->target, "%s: %s incremented to %d", fa->name, tok, val);
 	}
 } // }}}
 
