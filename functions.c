@@ -78,7 +78,7 @@ void wave(FunctionArgs *fa) { // {{{
 
 		snprintf(buf, PBSIZE, "%ld", curTime);
 		bmap_add(fa->vars, "__last_wave_time", buf);
-		send(fa->target, "%s: %s", fa->name, ((rand() % 2) ? "o/" : "\\o"));
+		send(fa->target, "%s", ((rand() % 2) ? "o/" : "\\o"));
 	}
 } // }}}
 
