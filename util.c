@@ -42,6 +42,7 @@ int readDump(BMap *readTo) {
 	return count;
 }
 
+// TODO: somehow we dump the same variable multiple times...
 int dumpVars_(BMap_Node *bmn, FILE *dumpFile) {
 	if(!bmn)
 		return 0;
