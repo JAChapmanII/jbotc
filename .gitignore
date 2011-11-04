@@ -1,5 +1,6 @@
 *.o
-jbot
-conbot
+bin/jbot
+bin/conbot
+lib/libj.a
 
 defines.h
