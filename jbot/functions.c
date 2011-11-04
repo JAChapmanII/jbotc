@@ -96,14 +96,11 @@ void wave(FunctionArgs *fa) { // {{{
 
 /* Declares variables to remember things. */
 void declare(FunctionArgs *fa) { // {{{
-	// TODO: this can only declare "declare" and will return its value...
-	BMap_Node *tmpn = NULL;
-
 	// initially tok will be "declare"...
 	char *tok = strtok(fa->matchedOn, " ");
 	// so we immediately strtok again
 	tok = strtok(NULL, " ");
-	tmpn = bmap_find(fa->vars, tok);
+	BMap_Node *tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
 			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
