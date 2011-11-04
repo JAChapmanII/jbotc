@@ -5,7 +5,7 @@ LOGFILE="jbotc.log"
 BIN="bin/jbot"
 TESTDIR="tests"
 SKIPSTART=1
-SKIPATEND=1
+SKIPATEND=0
 
 OUTF="test.stdout"
 ERRF="test.stderr"
