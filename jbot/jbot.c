@@ -35,12 +35,12 @@ BMap *confMap = NULL;
 
 FuncStruct functions[] = {
 	// Type A functions
-	FUNCTIONA(set), FUNCTIONA(declare),
+	FUNCTIONA(declare),
 	FUNCTIONA(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
 	FUNCTIONA(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },
 
 	// Type B functions
-	FUNCTIONB(markov),
+	FUNCTIONB(markov), FUNCTIONB(set),
 
 	// Type C functions
 	FUNCTIONC(wave),
