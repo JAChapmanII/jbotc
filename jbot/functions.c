@@ -94,17 +94,20 @@ void declare(FunctionArgs *fa) { // {{{
 	// TODO: this can only declare "declare" and will return its value...
 	BMap_Node *tmpn = NULL;
 
+	// initially tok will be "declare"...
 	char *tok = strtok(fa->matchedOn, " ");
+	// so we immediately strtok again
+	tok = strtok(NULL, " ");
 	tmpn = bmap_find(fa->vars, tok);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
 			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
 			bmap_add(fa->vars, tok, "0");
-			send(fa->target, "%s: set \"%s\" to 0", fa->name, tok);
+			send(fa->target, "%s: declared %s as 0", fa->name, tok);
 		}
 	} else {
-		send(fa->target, "%s: \"%s\" is %s", fa->name, tok, tmpn->val);
+		send(fa->target, "%s: %s is %s", fa->name, tok, tmpn->val);
 	}
 } // }}}
 
