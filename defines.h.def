@@ -1,21 +1,19 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define GREETING_COUNT 5
-char *greetings[GREETING_COUNT] = {
-	"Ahoy!", "Howdy!", "Goodday!", "Hello!", "Kill all humans."
-};
-
-/* Returns a random greeting from greetings array */
-const char *obtainGreeting() { // {{{
-	return greetings[rand() % GREETING_COUNT];
-} // }}}
+#define BSIZE 4096
+#define PBSIZE 256
 
 // the nick of the bot we are running as
-const char *nick = "jbotc"; 
+#define nick "jbotc"
 // the channel we should be in and handling input from
-const char *chan = "#zebra";
+#define chan "#zebra"
 // the nick of our owner, may be used for special commands/output
-const char *owner = "jac"; 
+#define owner "jac"
+
+// default server to connect to
+#define server "irc.slashnet.org"
+// default port to connect to
+#define port 6697
 
 #endif // DEFINES_H
