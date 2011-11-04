@@ -1,5 +1,5 @@
 LDFLAGS=-pthread
-CFLAGS=-std=gnu99 -pedantic -Wall -Wextra
+CFLAGS=-std=gnu99 -pedantic -Wall -Wextra -Ilib -I.
 
 ifndef RELEASE
 CFLAGS+=-g
@@ -10,14 +10,16 @@ endif
 all: libj conbot jbot
 
 libj: libj.a
-libj.a: lib/bmap.o lib/cbuffer.o
-	$(AR) rcs libj.a $^
+lib/libj.a: lib/bmap.o lib/cbuffer.o
+	$(AR) rcs $@ $^
 
-conbot: conbot.o libj.a ircsock.o
+conbot: bin/conbot
+bin/conbot: conbot/conbot.o conbot/ircsock.o lib/libj.a
 	$(CC) -o $@ $^ $(LDFLAGS)
-jbot: jbot.o libj.a util.o functions.o greetings.o
+jbot: bin/jbot
+bin/jbot: jbot/jbot.o jbot/util.o jbot/functions.o jbot/greetings.o lib/libj.a
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f lib/*.o libj.a
-	rm -f *.o conbot jbot
+	rm -f lib/*.o conbot/*.o jbot/*.o
+	rm -f lib/libj.a bin/conbot bin/jbot

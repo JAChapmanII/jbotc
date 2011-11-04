@@ -16,7 +16,7 @@
 #include <unistd.h>
 
 #include "ircsock.h"
-#include "lib/cbuffer.h"
+#include "cbuffer.h"
 #include "defines.h"
 
 /* size of character buffers */

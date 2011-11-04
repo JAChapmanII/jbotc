@@ -1,7 +1,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "lib/bmap.h"
+#include "bmap.h"
 #include <regex.h>
 
 /* Returns a pointer to the string representation of a regular expression
