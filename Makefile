@@ -9,7 +9,7 @@ endif
 
 all: libj conbot jbot
 
-libj: libj.a
+libj: lib/libj.a
 lib/libj.a: lib/bmap.o lib/cbuffer.o
 	$(AR) rcs $@ $^
 
