@@ -74,16 +74,16 @@ int bmap_add(BMap *bmap, char *k, char *v) {
 	return 0;
 }
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
-	int cmp, ld, rd;
 	BMap_Node **child;
 	if(!bmn || !k || !v) return bmn; /* TODO: this was just return; .... */
-	cmp = strcmp(bmn->key, k);
+	int cmp = strcmp(bmn->key, k);
 	if(!cmp) {
 		if(strcmp(bmn->val, v)) {
 			free(bmn->val);
 			bmn->val = malloc(strlen(k) + 1);
 			strcpy(bmn->val, v);
 		}
+		return bmn;
 	}
 
 	if(cmp < 0)
@@ -96,8 +96,7 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 	else
 		*child = bmapn_add(*child, k, v);
 
-	ld = bmapn_depth(bmn->left);
-	rd = bmapn_depth(bmn->right);
+	int ld = bmapn_depth(bmn->left), rd = bmapn_depth(bmn->right);
 	if(rd - ld > 1) {
 		int r_ld = bmapn_depth(bmn->right->left), r_rd = bmapn_depth(bmn->right->right);
 		if(r_ld > r_rd)
