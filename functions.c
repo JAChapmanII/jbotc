@@ -84,6 +84,7 @@ void wave(FunctionArgs *fa) { // {{{
 
 /* Declares variables to remember things. */
 void declare(FunctionArgs *fa) { // {{{
+	// TODO: this can only declare "declare" and will return its value...
 	BMap_Node *tmpn = NULL;
 
 	char *tok = strtok(fa->args, " ");
