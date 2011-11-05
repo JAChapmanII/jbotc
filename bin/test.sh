@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DATFILE="jbotc.dat"
-LOGFILE="jbotc.log"
+DATFILE="jbot.dat"
+LOGFILE="jbot.log"
 BIN="bin/jbot"
 TESTDIR="tests"
 SKIPSTART=1
