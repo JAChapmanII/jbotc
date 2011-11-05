@@ -142,18 +142,25 @@ void set(FunctionArgs *fa) { // {{{
 
 /* Increment a variable and create it if it doesn't exist. */
 void increment(FunctionArgs *fa) { // {{{
-	// initially tok will be "increment" or "++"...
-	char *tok = strtok(fa->matchedOn, " ");
-	// so we immediately strtok again
-	tok = strtok(NULL, " ");
+	char *var = NULL;
+	// we matched a variable name in the regex, use it
+	if(fa->matchCount == 1)
+		var = fa->matchedOn + fa->matches[1].rm_so;
+	else
+		return; // something bad happened
 
-	BMap_Node *tmpn = bmap_find(fa->vars, tok);
+	// If there is no variable or it is zero bytes long
+	if(!var | !strlen(var)) {
+		return;
+	}
+
+	BMap_Node *tmpn = bmap_find(fa->vars, var);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
 			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
-			bmap_add(fa->vars, tok, "0");
-			send(fa->target, "%s: declared %s as 0", fa->name, tok);
+			bmap_add(fa->vars, var, "0");
+			send(fa->target, "%s: declared %s as 0", fa->name, var);
 		}
 	} else {
 		char buf[PBSIZE];
@@ -167,26 +174,33 @@ void increment(FunctionArgs *fa) { // {{{
 		snprintf(buf, PBSIZE, "%d", val);
 
 		// save it back into the variable map
-		bmap_add(fa->vars, tok, buf);
+		bmap_add(fa->vars, var, buf);
 
-		send(fa->target, "%s: %s incremented to %d", fa->name, tok, val);
+		send(fa->target, "%s: %s incremented to %d", fa->name, var, val);
 	}
 } // }}}
 
 /* Decrement a variable and create it if it doesn't exist. */
 void decrement(FunctionArgs *fa) { // {{{
-	// initially tok will be "decrement" or "--"...
-	char *tok = strtok(fa->matchedOn, " ");
-	// so we immediately strtok again
-	tok = strtok(NULL, " ");
+	char *var = NULL;
+	// we matched a variable name in the regex, use it
+	if(fa->matchCount == 1)
+		var = fa->matchedOn + fa->matches[1].rm_so;
+	else
+		return; // something bad happened
 
-	BMap_Node *tmpn = bmap_find(fa->vars, tok);
+	// If there is no variable or it is zero bytes long
+	if(!var | !strlen(var)) {
+		return;
+	}
+
+	BMap_Node *tmpn = bmap_find(fa->vars, var);
 	if(tmpn == NULL) {
 		if(bmap_size(fa->vars) >= 256) {
 			send(fa->target, "%s: 256 variables exist already, sorry!", fa->name);
 		} else {
-			bmap_add(fa->vars, tok, "0");
-			send(fa->target, "%s: declared %s as 0", fa->name, tok);
+			bmap_add(fa->vars, var, "0");
+			send(fa->target, "%s: declared %s as 0", fa->name, var);
 		}
 	} else {
 		char buf[PBSIZE];
@@ -200,9 +214,9 @@ void decrement(FunctionArgs *fa) { // {{{
 		snprintf(buf, PBSIZE, "%d", val);
 
 		// save it back into the variable map
-		bmap_add(fa->vars, tok, buf);
+		bmap_add(fa->vars, var, buf);
 
-		send(fa->target, "%s: %s decremented to %d", fa->name, tok, val);
+		send(fa->target, "%s: %s decremented to %d", fa->name, var, val);
 	}
 } // }}}
 
