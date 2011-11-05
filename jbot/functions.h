@@ -12,6 +12,7 @@ typedef struct {
 	int toUs;
 
 	char *matchedOn;
+	int matchCount;
 	regmatch_t *matches;
 
 	BMap *vars;
