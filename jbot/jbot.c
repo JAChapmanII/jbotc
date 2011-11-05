@@ -36,8 +36,8 @@ BMap *confMap = NULL;
 FuncStruct functions[] = {
 	// Type A functions
 	FUNCTIONA(declare),
-	FUNCTIONA(increment), { "++", "^\\+\\+ (.*)$", 1, 0, NULL, &increment },
-	FUNCTIONA(decrement), { "--",     "^-- (.*)$", 1, 0, NULL, &decrement },
+	FUNCTIONA(increment), { "++", "^\\+\\+ *(.*)$", 1, 0, NULL, &increment },
+	FUNCTIONA(decrement), { "--",     "^-- *(.*)$", 1, 0, NULL, &decrement },
 
 	// Type B functions
 	FUNCTIONB(markov), FUNCTIONB(set),
@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
 
 				FunctionArgs fargs = {
 					name, hmask, ((!strcmp(cname, nick)) ? name : chan),
-					toUs, msgp, mptr, varsMap, confMap
+					toUs, msgp, 0, mptr, varsMap, confMap
 				};
 
 				int matched = 0;
@@ -219,6 +219,7 @@ int main(int argc, char **argv) {
 							msgp, functions[i].r->re_nsub + 1, mptr, 0);
 					if(!fail) {
 						matched = 1;
+						fargs.matchCount = functions[i].matchCount;
 						functions[i].f(&fargs);
 					}
 				}
@@ -231,6 +232,7 @@ int main(int argc, char **argv) {
 						done = 1;
 					// token after cstart does not match any command
 					} else {
+						//fprintf(stderr, "Could not match!\n");
 						// msg ends with question mark, guess an answer
 						if(toUs && (strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
 							send(chan, "%s: %s", name, ((rand() % 2) ? "Yes" : "No"));
