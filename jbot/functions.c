@@ -234,3 +234,22 @@ void eitherOr(FunctionArgs *fa) { // {{{
 				fa->matchedOn + fa->matches[2].rm_so);
 } // }}}
 
+void bmapn_inorder(BMap_Node *bmn, char *buf) {
+	if(!bmn || !buf)
+		return;
+	bmapn_inorder(bmn->left, buf);
+	strcat(buf, bmn->key);
+	strcat(buf, ", ");
+	bmapn_inorder(bmn->right, buf);
+}
+
+/* List variables currently tracked */
+void list(FunctionArgs *fa) { // {{{
+	// TODO: constant here?
+	char buf[PBSIZE * 256] = { 0 };
+	bmapn_inorder(fa->vars->root, buf);
+	// remove the trailing ", "
+	buf[strlen(buf) - 2] = '\0';
+	send(fa->target, "%s: %s", fa->name, buf);
+} // }}}
+

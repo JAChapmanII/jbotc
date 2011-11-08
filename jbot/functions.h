@@ -62,4 +62,7 @@ void decrement(FunctionArgs *fa);
 /* Answers an either/or question */
 void eitherOr(FunctionArgs *fa);
 
+/* List variables currently tracked */
+void list(FunctionArgs *fa);
+
 #endif // FUNCTIONS_H
