@@ -222,6 +222,8 @@ void decrement(FunctionArgs *fa) { // {{{
 
 /* Answers an either/or question */
 void eitherOr(FunctionArgs *fa) { // {{{
+	if(!fa->toUs)
+		return;
 	if(rand() % 2)
 		send(fa->target, "%s: %.*s", fa->name,
 				fa->matches[1].rm_eo - fa->matches[1].rm_so,
@@ -245,8 +247,6 @@ void bmapn_inorder(BMap_Node *bmn, char *buf) {
 
 /* List variables currently tracked */
 void list(FunctionArgs *fa) { // {{{
-	if(!fa->toUs)
-		return;
 	// TODO: constant here?
 	char buf[PBSIZE * 256] = { 0 };
 	bmapn_inorder(fa->vars->root, buf);
