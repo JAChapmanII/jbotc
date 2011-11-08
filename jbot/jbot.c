@@ -50,6 +50,9 @@ FuncStruct functions[] = {
 	{ "wave", "^\\\\o .*$", 1, 0, NULL, &wave },
 	FUNCTIONC(fish), FUNCTIONC(fishes), FUNCTIONC(sl), FUNCTIONC(dubstep),
 
+	// Entirely special type functions
+	{ "or", "^(.*) or (.*)$", 2, 0, NULL, &eitherOr },
+
 	// End of functions marker
 	{ NULL, NULL, 0, 0, NULL, NULL },
 };

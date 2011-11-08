@@ -220,3 +220,17 @@ void decrement(FunctionArgs *fa) { // {{{
 	}
 } // }}}
 
+/* Answers an either/or question */
+void eitherOr(FunctionArgs *fa) { // {{{
+	if(rand() % 2)
+		send(fa->target, "%s: %.*s", fa->name,
+				fa->matches[1].rm_eo - fa->matches[1].rm_so,
+				fa->matchedOn + fa->matches[1].rm_so);
+	else
+		send(fa->target, "%s: %.*s", fa->name,
+				fa->matches[2].rm_eo - fa->matches[2].rm_so +
+				// TODO: take care of this in regex?
+				((fa->matchedOn[fa->matches[2].rm_eo - 1] == '?') ? -1 : 0),
+				fa->matchedOn + fa->matches[2].rm_so);
+} // }}}
+

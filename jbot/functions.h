@@ -59,4 +59,7 @@ void increment(FunctionArgs *fa);
 /* Decrement a variable and create it if it doesn't exist. */
 void decrement(FunctionArgs *fa);
 
+/* Answers an either/or question */
+void eitherOr(FunctionArgs *fa);
+
 #endif // FUNCTIONS_H
