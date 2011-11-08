@@ -245,6 +245,8 @@ void bmapn_inorder(BMap_Node *bmn, char *buf) {
 
 /* List variables currently tracked */
 void list(FunctionArgs *fa) { // {{{
+	if(!fa->toUs)
+		return;
 	// TODO: constant here?
 	char buf[PBSIZE * 256] = { 0 };
 	bmapn_inorder(fa->vars->root, buf);
