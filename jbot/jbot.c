@@ -38,6 +38,7 @@ FuncStruct functions[] = {
 	FUNCTIONA(declare),
 	FUNCTIONA(increment), { "++", "^ *\\+\\+ *(.*)$", 1, 0, NULL, &increment },
 	FUNCTIONA(decrement), { "--",     "^ *-- *(.*)$", 1, 0, NULL, &decrement },
+	{ "delete", "^ *delete *(.*)$", 1, 0, NULL, &deleteVariable },
 
 	// Type B functions
 	FUNCTIONB(markov), FUNCTIONB(set),

@@ -53,6 +53,9 @@ void declare(FunctionArgs *fa);
 /* Set a variable to remember things. */
 void set(FunctionArgs *fa);
 
+/* Removes a variable entirely */
+void deleteVariable(FunctionArgs *fa);
+
 /* Increment a variable and create it if it doesn't exist. */
 void increment(FunctionArgs *fa);
 

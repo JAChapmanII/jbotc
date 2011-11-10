@@ -110,6 +110,107 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 /* TODO: implement */
 int bmap_set(BMap *bmap, char *k, char *v);
 
+int bmap_erase(BMap *bmap, char *k) { // {{{
+	if(!bmap || !k)
+		return 1;
+
+	int cmp = strcmp(bmap->root->key, k);
+	if(!cmp) {
+		// the root node is what we want to delete...
+		bmap->root = bmapn_eraseRoot(bmap->root);
+		return 0;
+	}
+
+	// we need to worry about the parent of the node we delete >_>
+	return bmapn_erase(bmap->root, k);
+} // }}}
+int bmapn_erase(BMap_Node *bmn, char *k) { // {{{
+	int cmp = strcmp(bmn->key, k);
+	if(!cmp) {
+		// something went wrong...
+		return 5;
+	}
+
+	BMap_Node **child;
+	if(cmp > 0)
+		child = &bmn->left;
+	else
+		child = &bmn->right;
+	
+	if(!*child)
+		// no node to delete?
+		return 6;
+
+	cmp = strcmp((*child)->key, k);
+	if(!cmp) {
+		// node to delete is our child
+		*child = bmapn_eraseRoot(*child);
+		return 0;
+	} else {
+		// we have to go deeper
+		return bmapn_erase(*child, k);
+	}
+} // }}}
+
+BMap_Node *bmapn_eraseRoot(BMap_Node *bmn) { // {{{
+	if(!bmn)
+		return NULL;
+	if(!bmn->left && !bmn->right) {
+		bmapn_free(bmn);
+		return NULL;
+	}
+	if(bmn->left && !bmn->right) {
+		BMap_Node *root = bmn->left;
+		bmn->left = NULL;
+		bmapn_free(bmn);
+		return root;
+	}
+	if(!bmn->left && bmn->right) {
+		BMap_Node *root = bmn->right;
+		bmn->right = NULL;
+		bmapn_free(bmn);
+		return root;
+	}
+
+	// if bmn->right is min
+	if(bmn->right->left) {
+		BMap_Node *root = bmn->right;
+		bmn->right->left = bmn->left;
+		bmn->right = NULL;
+		bmn->left = NULL;
+		bmapn_free(bmn);
+		return root;
+	}
+
+	BMap_Node *root = bmapn_popMin(bmn->right);
+	root->left = bmn->left;
+	root->right = bmn->right;
+	bmn->left = bmn->right = NULL;
+	bmapn_free(bmn);
+	return root;
+} // }}}
+
+BMap_Node *bmapn_popMin_r(BMap_Node *bmn, BMap_Node *parent) { // {{{
+	if(bmn->left) {
+		BMap_Node *min = bmapn_popMin_r(bmn->left, bmn);
+		bmapn_balance(bmn);
+		return min;
+	}
+	parent->left = bmn->right;
+	bmn->right = NULL;
+	return bmn;
+} // }}}
+BMap_Node *bmapn_popMin(BMap_Node *bmn) { // {{{
+	return bmapn_popMin_r(bmn->left, bmn);
+	/*
+	while(bmn->left)
+		bmn = bmn->left;
+	BMap_Node *min = bmn->left;
+	bmn->left = min->right;
+	return min;
+	*/
+} // }}}
+
 BMap_Node *bmapn_balance(BMap_Node *bmn) { // {{{
 	int ld = bmapn_depth(bmn->left), rd = bmapn_depth(bmn->right);
 	if(rd - ld > 1) {
