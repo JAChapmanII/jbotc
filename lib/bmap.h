@@ -24,6 +24,7 @@ void bmapn_free(BMap_Node *bmn);
 
 int bmap_add(BMap *bmap, char *k, char *v);
 int bmap_set(BMap *bmap, char *k, char *v);
+int bmap_erase(BMap *bmap, char *k);
 
 BMap_Node *bmap_find(BMap *bmap, char *k);
 
@@ -32,5 +33,7 @@ int bmap_size(BMap *bmap);
 
 int bmap_dump(BMap *bmap, char *fileName);
 int bmap_read(BMap *bmap, char *fileName);
+
+int bmap_writeDot(BMap *bmap, char *outputName);
 
 #endif /* BMAP_H */

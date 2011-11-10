@@ -7,9 +7,17 @@
 #define PBSIZE 256
 
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
+BMap_Node *bmapn_find(BMap_Node *bmn, char *k);
+
+int bmapn_erase(BMap_Node *bmn, char *k);
+BMap_Node *bmapn_eraseRoot(BMap_Node *bmn);
+
+// this fails when min is bmn...
+BMap_Node *bmapn_popMin(BMap_Node *bmn);
+
+BMap_Node *bmapn_balance(BMap_Node *bmn);
 BMap_Node *bmapn_rightRotation(BMap_Node *n);
 BMap_Node *bmapn_leftRotation(BMap_Node *n);
-BMap_Node *bmapn_find(BMap_Node *bmn, char *k);
 
 int bmapn_depth(BMap_Node *bmn);
 int bmapn_size(BMap_Node *bmn);
@@ -74,8 +82,7 @@ int bmap_add(BMap *bmap, char *k, char *v) {
 	return 0;
 }
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
-	BMap_Node **child;
-	if(!bmn || !k || !v) return bmn; /* TODO: this was just return; .... */
+	if(!bmn || !k || !v) return bmn; // TODO: this was just return; ....
 	int cmp = strcmp(bmn->key, k);
 	if(!cmp) {
 		if(strcmp(bmn->val, v)) {
@@ -86,7 +93,8 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 		return bmn;
 	}
 
-	if(cmp < 0)
+	BMap_Node **child;
+	if(cmp > 0)
 		child = &bmn->left;
 	else
 		child = &bmn->right;
@@ -96,24 +104,29 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 	else
 		*child = bmapn_add(*child, k, v);
 
-	int ld = bmapn_depth(bmn->left), rd = bmapn_depth(bmn->right);
-	if(rd - ld > 1) {
-		int r_ld = bmapn_depth(bmn->right->left), r_rd = bmapn_depth(bmn->right->right);
-		if(r_ld > r_rd)
-			bmn->right = bmapn_rightRotation(bmn->right);
-		bmn = bmapn_leftRotation(bmn);
-	} else if(ld - rd > 1) {
-		int l_ld = bmapn_depth(bmn->left->left), l_rd = bmapn_depth(bmn->left->right);
-		if(l_rd > l_ld)
-			bmn->left = bmapn_leftRotation(bmn->left);
-		bmn = bmapn_rightRotation(bmn);
-	}
-
-	return bmn;
+	return bmapn_balance(bmn);
 } /* }}} */
 
 /* TODO: implement */
 int bmap_set(BMap *bmap, char *k, char *v);
+
+BMap_Node *bmapn_balance(BMap_Node *bmn) { // {{{
+	int ld = bmapn_depth(bmn->left), rd = bmapn_depth(bmn->right);
+	if(rd - ld > 1) {
+		int r_ld = bmapn_depth(bmn->right->left),
+			r_rd = bmapn_depth(bmn->right->right);
+		if(r_ld > r_rd)
+			bmn->right = bmapn_rightRotation(bmn->right);
+		bmn = bmapn_leftRotation(bmn);
+	} else if(ld - rd > 1) {
+		int l_ld = bmapn_depth(bmn->left->left),
+			l_rd = bmapn_depth(bmn->left->right);
+		if(l_rd > l_ld)
+			bmn->left = bmapn_leftRotation(bmn->left);
+		bmn = bmapn_rightRotation(bmn);
+	}
+	return bmn;
+} // }}}
 
 BMap_Node *bmapn_rightRotation(BMap_Node *n) { /* {{{ */
 	BMap_Node *nr = n->left, *c = n->left->right;
@@ -143,7 +156,7 @@ BMap_Node *bmapn_find(BMap_Node *bmn, char *k) { /* {{{ */
 	cmp = strcmp(bmn->key, k);
 	if(!cmp)
 		return bmn;
-	if(cmp < 0)
+	if(cmp > 0)
 		return bmapn_find(bmn->left, k);
 	return bmapn_find(bmn->right, k);
 } /* }}} */
@@ -229,6 +242,49 @@ int bmap_dump(BMap *bmap, char *fileName) {
 	return count;
 }
 
+int bmapn_writeDot(BMap_Node *bmn, FILE *of, int nullCount) {
+	if(!of || !bmn)
+		return 0;
+	fprintf(of, "\t\"%s = %s\";\n", bmn->key, bmn->val);
+	if(bmn->left) {
+		fprintf(of, "\t\"%s = %s\" -> \"%s = %s\";\n",
+				bmn->key, bmn->val, bmn->left->key, bmn->left->val);
+		nullCount += bmapn_writeDot(bmn->left, of, nullCount);
+	} else {
+		fprintf(of, "null%d [shape=point]\n", nullCount);
+		fprintf(of, "\t\"%s = %s\" -> null%d\n",
+				bmn->key, bmn->val, nullCount);
+		nullCount++;
+	}
+	if(bmn->right) {
+		fprintf(of, "\t\"%s = %s\" -> \"%s = %s\";\n",
+				bmn->key, bmn->val, bmn->right->key, bmn->right->val);
+		nullCount += bmapn_writeDot(bmn->right, of, nullCount);
+	} else {
+		fprintf(of, "null%d [shape=point]\n", nullCount);
+		fprintf(of, "\t\"%s = %s\" -> null%d\n",
+				bmn->key, bmn->val, nullCount);
+		nullCount++;
+	}
+	return nullCount;
+}
+
+int bmap_writeDot(BMap *bmap, char *outputName) {
+	if(!bmap || !outputName)
+		return 1;
+
+	FILE *of = fopen(outputName, "w");
+	if(!of)
+		return 2;
+
+	fprintf(of, "digraph BST {\n");
+	fprintf(of, "\tnode [fontname=\"Arial\"];\n");
+	bmapn_writeDot(bmap->root, of, 0);
+	fprintf(of, "}\n");
+
+	fclose(of);
+	return 0;
+}
 
 /* TODO: scrap?
 bMap *addNodes(bMap *bm, entry nodes[]) {
