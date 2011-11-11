@@ -6,6 +6,11 @@
 #include <string.h>
 #include <time.h>
 
+/* Dislay the help  */
+void help(FunctionArgs *fa) {
+	send(fa->target, "%s: You're on your own.", fa->name);
+}
+
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa) { // {{{
 	char *tok = strtok(fa->matchedOn, " ");
@@ -243,6 +248,11 @@ void bmapn_inorder(BMap_Node *bmn, char *buf) {
 	strcat(buf, bmn->key);
 	strcat(buf, ", ");
 	bmapn_inorder(bmn->right, buf);
+}
+
+/* <3 */
+void lessThanThree(FunctionArgs *fa) {
+	send(fa->target, "%s: <3", fa->name);
 }
 
 /* List variables currently tracked */
