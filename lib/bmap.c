@@ -23,8 +23,7 @@ int bmapn_depth(BMap_Node *bmn);
 int bmapn_size(BMap_Node *bmn);
 
 BMap *bmap_create(void) { /* {{{ */
-	BMap *bmap;
-	bmap = malloc(sizeof(BMap));
+	BMap *bmap = malloc(sizeof(BMap));
 	if(!bmap)
 		return NULL;
 	bmap->root = NULL;
@@ -39,13 +38,13 @@ void bmap_free(BMap *bmap) { /* {{{ */
 } /* }}} */
 
 BMap_Node *bmapn_create(char *key, char *val) { /* {{{ */
-	BMap_Node *bmn;
 	if(!key || !val)
 		return NULL;
-	bmn = malloc(sizeof(BMap_Node));
+	BMap_Node *bmn = malloc(sizeof(BMap_Node));
 	if(!bmn)
 		return NULL;
 	bmn->left = bmn->right = NULL;
+	bmn->height = 1;
 	bmn->key = malloc(strlen(key) + 1);
 	bmn->val = malloc(strlen(val) + 1);
 	if(!bmn->key || !bmn->val) {
@@ -262,23 +261,6 @@ BMap_Node *bmapn_find(BMap_Node *bmn, char *k) { /* {{{ */
 	return bmapn_find(bmn->right, k);
 } /* }}} */
 
-int bmap_depth(BMap *bmap) { /* {{{ */
-	if(!bmap->root)
-		return 0;
-	return bmapn_depth(bmap->root);
-} /* }}} */
-int bmapn_depth(BMap_Node *bmn) { /* {{{ */
-	int ld, rd;
-	if(!bmn)
-		return 0;
-
-	/* if children are NULL, above check handles it */
-	ld = bmapn_depth(bmn->left);
-	rd = bmapn_depth(bmn->right);
-
-	return ((ld > rd) ? ld : rd) + 1;
-} /* }}} */
-
 int bmap_size(BMap *bmap) { /* {{{ */
 	if(!bmap->root)
 		return 0;
@@ -318,6 +300,7 @@ int bmap_read(BMap *bmap, char *fileName) {
 }
 
 // TODO: somehow we dump the same variable multiple times...
+// TODO: wasn't this fixed somewhere? >_>
 int bmapn_dump(BMap_Node *bmn, FILE *dumpFile) {
 	if(!bmn)
 		return 0;
@@ -343,7 +326,7 @@ int bmap_dump(BMap *bmap, char *fileName) {
 	return count;
 }
 
-int bmapn_writeDot(BMap_Node *bmn, FILE *of, int nullCount) {
+int bmapn_writeDot(BMap_Node *bmn, FILE *of, int nullCount) { // {{{
 	if(!of || !bmn)
 		return 0;
 	fprintf(of, "\t\"%s = %s\";\n", bmn->key, bmn->val);
@@ -368,9 +351,8 @@ int bmapn_writeDot(BMap_Node *bmn, FILE *of, int nullCount) {
 		nullCount++;
 	}
 	return nullCount;
-}
-
-int bmap_writeDot(BMap *bmap, char *outputName) {
+} // }}}
+int bmap_writeDot(BMap *bmap, char *outputName) { // {{{
 	if(!bmap || !outputName)
 		return 1;
 
@@ -385,5 +367,5 @@ int bmap_writeDot(BMap *bmap, char *outputName) {
 
 	fclose(of);
 	return 0;
-}
+} // }}}
 
