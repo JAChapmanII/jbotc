@@ -10,12 +10,9 @@ void bmapn_fixHeight(BMap_Node *bmn);
 
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
 BMap_Node *bmapn_find(BMap_Node *bmn, char *k);
+BMap_Node *bmapn_min(BMap_Node *bmn);
 
-int bmapn_erase(BMap_Node *bmn, char *k);
-BMap_Node *bmapn_eraseRoot(BMap_Node *bmn);
-
-// this fails when min is bmn...
-BMap_Node *bmapn_popMin(BMap_Node *bmn);
+BMap_Node *bmapn_erase(BMap_Node *bmn, char *k);
 
 BMap_Node *bmapn_balance(BMap_Node *bmn);
 BMap_Node *bmapn_rightRotation(BMap_Node *n);
@@ -110,116 +107,89 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { // {{{
 	return bmapn_balance(bmn);
 } // }}}
 
-uint8_t bmapn_height(BMap_Node *bmn) {
+uint8_t bmapn_height(BMap_Node *bmn) { // {{{
 	if(!bmn)
 		return 0;
 	return bmn->height;
-}
+} // }}}
 
 // TODO: implement
 int bmap_set(BMap *bmap, char *k, char *v);
 
-/*
+BMap_Node *bmap_min(BMap *bmap) { // {{{
+	if(!bmap || !bmap->root)
+		return NULL;
+	return bmapn_min(bmap->root);
+} // }}}
+BMap_Node *bmapn_min(BMap_Node *bmn) { // {{{
+	if(!bmn)
+		return NULL;
+	if(bmn->left)
+		return bmapn_min(bmn->left);
+	return bmn;
+} // }}}
+
 int bmap_erase(BMap *bmap, char *k) { // {{{
 	if(!bmap || !k)
 		return 1;
-
-	int cmp = strcmp(bmap->root->key, k);
-	if(!cmp) {
-		// the root node is what we want to delete...
-		bmap->root = bmapn_eraseRoot(bmap->root);
-		return 0;
-	}
-
-	// we need to worry about the parent of the node we delete >_>
-	return bmapn_erase(bmap->root, k);
+	bmap->root = bmapn_erase(bmap->root, k);
+	return 0;
 } // }}}
-int bmapn_erase(BMap_Node *bmn, char *k) { // {{{
+BMap_Node *bmapn_erase(BMap_Node *bmn, char *k) { // {{{
+	if(!bmn || !k)
+		return NULL;
 	int cmp = strcmp(bmn->key, k);
 	if(!cmp) {
-		// something went wrong...
-		return 5;
+		if(!bmn->left && !bmn->right) {
+			bmapn_free(bmn);
+			return NULL;
+		}
+		if(bmn->left && !bmn->right) {
+			BMap_Node *l = bmn->left;
+			bmn->left = NULL;
+			bmapn_free(bmn);
+			return l;
+		}
+		if(!bmn->left && bmn->right) {
+			BMap_Node *r = bmn->right;
+			bmn->right = NULL;
+			bmapn_free(bmn);
+			return r;
+		}
+		// replace with min from right tree
+		BMap_Node *min = bmapn_min(bmn->right);
+		if(!min) {
+			; // TODO: panic
+		}
+		BMap_Node *m = bmapn_create(min->key, min->val);
+		if(!m) {
+			; // TODO: panic
+		}
+		// this should be one of the simple cases above
+		bmn->right = bmapn_erase(bmn->right, min->key);
+
+		m->left = bmn->left;
+		m->right = bmn->right;
+		m->height = bmn->height;
+
+		bmn->left = bmn->right = NULL;
+		bmapn_free(bmn);
+
+		bmapn_fixHeight(m);
+		return bmapn_balance(m);
 	}
-
-	BMap_Node **child;
-	if(cmp > 0)
-		child = &bmn->left;
-	else
-		child = &bmn->right;
-	
-	if(!*child)
-		// no node to delete?
-		return 6;
-
-	cmp = strcmp((*child)->key, k);
-	if(!cmp) {
-		// node to delete is our child
-		*child = bmapn_eraseRoot(*child);
-		return 0;
+	if(cmp > 0) {
+		if(!bmn->left)
+			return bmn;
+		bmn->left = bmapn_erase(bmn->left, k);
 	} else {
-		// we have to go deeper
-		return bmapn_erase(*child, k);
+		if(!bmn->right)
+			return bmn;
+		bmn->right = bmapn_erase(bmn->right, k);
 	}
+	bmapn_fixHeight(bmn);
+	return bmapn_balance(bmn);
 } // }}}
-
-BMap_Node *bmapn_eraseRoot(BMap_Node *bmn) { // {{{
-	if(!bmn)
-		return NULL;
-	if(!bmn->left && !bmn->right) {
-		bmapn_free(bmn);
-		return NULL;
-	}
-	if(bmn->left && !bmn->right) {
-		BMap_Node *root = bmn->left;
-		bmn->left = NULL;
-		bmapn_free(bmn);
-		return root;
-	}
-	if(!bmn->left && bmn->right) {
-		BMap_Node *root = bmn->right;
-		bmn->right = NULL;
-		bmapn_free(bmn);
-		return root;
-	}
-
-	// if bmn->right is min
-	if(bmn->right->left) {
-		BMap_Node *root = bmn->right;
-		bmn->right->left = bmn->left;
-		bmn->right = NULL;
-		bmn->left = NULL;
-		bmapn_free(bmn);
-		return root;
-	}
-
-	BMap_Node *root = bmapn_popMin(bmn->right);
-	root->left = bmn->left;
-	root->right = bmn->right;
-	bmn->left = bmn->right = NULL;
-	bmapn_free(bmn);
-	return root;
-} // }}}
-
-BMap_Node *bmapn_popMin_r(BMap_Node *bmn, BMap_Node *parent) { // {{{
-	if(bmn->left) {
-		BMap_Node *min = bmapn_popMin_r(bmn->left, bmn);
-		bmapn_balance(bmn);
-		return min;
-	}
-	parent->left = bmn->right;
-	bmn->right = NULL;
-	return bmn;
-} // }}}
-BMap_Node *bmapn_popMin(BMap_Node *bmn) { // {{{
-	return bmapn_popMin_r(bmn->left, bmn);
-	/*
-	while(bmn->left)
-		bmn = bmn->left;
-	BMap_Node *min = bmn->left;
-	bmn->left = min->right;
-	return min;
-} // }}}
-*/
 
 void bmapn_fixHeight(BMap_Node *bmn) { // {{{
 	if(!bmn)

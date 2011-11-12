@@ -37,6 +37,9 @@ int bmap_erase(BMap *bmap, char *k);
 /* Search BMap for a specific node */
 BMap_Node *bmap_find(BMap *bmap, char *k);
 
+/* Search a BMap for the minimum element */
+BMap_Node *bmap_min(BMap *bmap);
+
 /* Recursively compute the total nodes in a BMap */
 int bmap_size(BMap *bmap);
 
