@@ -8,3 +8,5 @@ these things hardcoded into the tests if possible.
 With the new regex thing, variables/keys can have spaces in them depending on
 various things. When we output them, they are assumed to be space free. There
 is already a TODO in the source about this.
+
+Add special variables to the "is" function output.
