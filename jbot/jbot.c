@@ -41,7 +41,7 @@ FuncStruct functions[] = {
 	{ "delete", "^ *delete *(.*)$", 1, 0, NULL, &deleteVariable },
 
 	// Type B functions
-	FUNCTIONB(markov), FUNCTIONB(set),
+	FUNCTIONB(markov), FUNCTIONB(set), FUNCTIONB(help),
 
 	// Type C functions
 	FUNCTIONC(wave),
@@ -49,6 +49,7 @@ FuncStruct functions[] = {
 	{ "wave", "^o/ .*$", 0, 0, NULL, &wave },
 	{ "wave",    "^\\\\o$", 0, 0, NULL, &wave },
 	{ "wave", "^\\\\o .*$", 0, 0, NULL, &wave },
+	{ "<3", "^<3$", 0, 0, NULL, &lessThanThree },
 	FUNCTIONC(fish), FUNCTIONC(fishes), FUNCTIONC(sl), FUNCTIONC(dubstep),
 	FUNCTIONC(list),
 

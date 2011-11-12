@@ -29,6 +29,9 @@ typedef struct {
 	Function f;
 } FuncStruct;
 
+/* Displays the help */
+void help(FunctionArgs *fa);
+
 /* markov will eventually print markov chains generated from previous input. */
 void markov(FunctionArgs *fa);
 
@@ -64,6 +67,9 @@ void decrement(FunctionArgs *fa);
 
 /* Answers an either/or question */
 void eitherOr(FunctionArgs *fa);
+
+/* <3 */
+void lessThanThree(FunctionArgs *fa);
 
 /* List variables currently tracked */
 void list(FunctionArgs *fa);
