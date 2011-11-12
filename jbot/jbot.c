@@ -16,10 +16,25 @@
 #include "greetings.h"
 #include "defines.h"
 #include "util.h"
+#include "rlist.h"
 
 // Container for all of the variables and configuration settings
 BMap *varsMap = NULL;
 BMap *confMap = NULL;
+
+// Container for regex based "is" function
+RList *regexList = NULL;
+
+/* Add a regex to the regexList for later matching */
+void addRegex(FunctionArgs *fa) { // {{{
+	if(!fa->toUs)
+		return;
+	fa->matchedOn[fa->matches[1].rm_eo] = '\0';
+	fa->matchedOn[fa->matches[2].rm_eo] = '\0';
+	send(fa->target, "%s: %s", fa->name, rlist_add(regexList,
+				fa->matchedOn + fa->matches[1].rm_so,
+				fa->matchedOn + fa->matches[2].rm_so));
+} // }}}
 
 // FUNCREG should not be used directly
 #define FUNCREGX(x, y) { #x, #y, 1, 0, NULL, &x }
@@ -55,6 +70,7 @@ FuncStruct functions[] = {
 
 	// Entirely special type functions
 	{ "or", "^(.*) or (.*)$", 2, 0, NULL, &eitherOr },
+	{ "is", "^(.*) is (.*)$", 2, 0, NULL, &addRegex },
 
 	// End of functions marker
 	{ NULL, NULL, 0, 0, NULL, NULL },
@@ -134,6 +150,12 @@ int main(int argc, char **argv) {
 	// If we fail to create a basic map, abort
 	if((confMap = bmap_create()) == NULL) {
 		fprintf(stderr, "Could not create configuration map!\n");
+		return 1;
+	}
+
+	// if we fial to create an RList head, abort
+	if((regexList = rlist_create()) == NULL) {
+		fprintf(stderr, "Could not create regex list!\n");
 		return 1;
 	}
 
@@ -249,10 +271,17 @@ int main(int argc, char **argv) {
 						}
 					// token after cstart does not match any command
 					} else {
-						//fprintf(stderr, "Could not match!\n");
-						// msg ends with question mark, guess an answer
-						if(toUs && (strlen(msg) > 0) && (msg[strlen(msg) - 1] == '?')) {
-							send(chan, "%s: %s", name, ((rand() % 2) ? "Yes" : "No"));
+						char *is = rlist_match(regexList, msg);
+						if(is) {
+							send(fargs.target, "%s", is);
+						} else {
+							//fprintf(stderr, "Could not match!\n");
+							// msg ends with question mark, guess an answer
+							if(toUs && (strlen(msg) > 0) &&
+								(msg[strlen(msg) - 1] == '?')) {
+								send(fargs.target, "%s: %s", name,
+										((rand() % 2) ? "Yes" : "No"));
+							}
 						}
 					}
 				}
