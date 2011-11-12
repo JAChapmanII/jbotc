@@ -20,5 +20,7 @@
 #define logFileName "jbot.log"
 // the name of the file to read/dump vars
 #define dumpFileName "jbot.dat"
+// the name of the file to read/dump regex
+#define regexDumpFileName "jbot.is"
 
 #endif // DEFINES_H

@@ -13,7 +13,14 @@ typedef struct RList_Element {
 RList *rlist_create(void);
 void rlist_free(RList *rlst);
 
+int rlist_size(RList *rlst);
+
 char *rlist_add(RList *rlst, char *regex, char *data);
 char *rlist_match(RList *rlst, char *msg);
+
+/* Dump the RList to a file */
+int rlist_dump(RList *rlst, char *fileName);
+/* Read a RList from a file */
+int rlist_read(RList *rlst, char *fileName);
 
 #endif // RLIST_H
