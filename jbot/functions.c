@@ -145,6 +145,23 @@ void set(FunctionArgs *fa) { // {{{
 	}
 } // }}}
 
+/* Removes a variable entirely */
+void deleteVariable(FunctionArgs *fa) { // {{{
+	// TODO: this was copied from declare... We should go back through and
+	// switch thing to using regex instead TODO
+
+	// initially tok will be "delete"...
+	char *tok = strtok(fa->matchedOn, " ");
+	// so we immediately strtok again
+	tok = strtok(NULL, " ");
+
+	int res = bmap_erase(fa->vars, tok);
+	if(res)
+		send(fa->target, "%s: There was some error (%d)", fa->name, res);
+	else
+		send(fa->target, "%s: Deleted %s", fa->name, tok);
+} // }}}
+
 /* Increment a variable and create it if it doesn't exist. */
 void increment(FunctionArgs *fa) { // {{{
 	char *var = NULL;

@@ -36,18 +36,19 @@ BMap *confMap = NULL;
 FuncStruct functions[] = {
 	// Type A functions
 	FUNCTIONA(declare),
-	FUNCTIONA(increment), { "++", "^\\+\\+ *(.*)$", 1, 0, NULL, &increment },
-	FUNCTIONA(decrement), { "--",     "^-- *(.*)$", 1, 0, NULL, &decrement },
+	FUNCTIONA(increment), { "++", "^ *\\+\\+ *(.*)$", 1, 0, NULL, &increment },
+	FUNCTIONA(decrement), { "--",     "^ *-- *(.*)$", 1, 0, NULL, &decrement },
+	{ "delete", "^ *delete *(.*)$", 1, 0, NULL, &deleteVariable },
 
 	// Type B functions
 	FUNCTIONB(markov), FUNCTIONB(set), FUNCTIONB(help),
 
 	// Type C functions
 	FUNCTIONC(wave),
-	{ "wave",    "^o/$", 1, 0, NULL, &wave },
-	{ "wave", "^o/ .*$", 1, 0, NULL, &wave },
-	{ "wave",    "^\\\\o$", 1, 0, NULL, &wave },
-	{ "wave", "^\\\\o .*$", 1, 0, NULL, &wave },
+	{ "wave",    "^o/$", 0, 0, NULL, &wave },
+	{ "wave", "^o/ .*$", 0, 0, NULL, &wave },
+	{ "wave",    "^\\\\o$", 0, 0, NULL, &wave },
+	{ "wave", "^\\\\o .*$", 0, 0, NULL, &wave },
 	{ "<3", "^<3$", 0, 0, NULL, &lessThanThree },
 	FUNCTIONC(fish), FUNCTIONC(fishes), FUNCTIONC(sl), FUNCTIONC(dubstep),
 	FUNCTIONC(list),
@@ -235,6 +236,17 @@ int main(int argc, char **argv) {
 					if(!strcmp(tok, "reload") && !strcmp(name, owner) && toUs) {
 						lprintf("Got message to restart...\n");
 						done = 1;
+					// we should write out the var map to a file
+					} else if(!strcmp(tok, "wvar") && !strcmp(name, owner) && toUs) {
+						tok = strtok(NULL, " ");
+						if(!tok) {
+							send(fargs.target, "%s: Must specify a file name!\n",
+									fargs.name);
+						} else {
+							int res = bmap_writeDot(varsMap, tok);
+							send(fargs.target, "%s: Wrote var map to %s (%d)\n",
+									fargs.name, tok, res);
+						}
 					// token after cstart does not match any command
 					} else {
 						//fprintf(stderr, "Could not match!\n");
