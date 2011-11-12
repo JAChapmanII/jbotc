@@ -29,6 +29,10 @@ RList *regexList = NULL;
 void addRegex(FunctionArgs *fa) { // {{{
 	if(!fa->toUs)
 		return;
+	if(rlist_size(regexList) >= 256) {
+		send(fa->target, "%s: We already have 256 \"is\" clauses!", fa->name);
+		return;
+	}
 	fa->matchedOn[fa->matches[1].rm_eo] = '\0';
 	fa->matchedOn[fa->matches[2].rm_eo] = '\0';
 	char *msg = rlist_add(regexList,
