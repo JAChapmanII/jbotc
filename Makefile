@@ -10,7 +10,7 @@ endif
 all: libj conbot jbot
 
 libj: lib/libj.a
-lib/libj.a: lib/bmap.o lib/cbuffer.o defines.h
+lib/libj.a: lib/rlist.o lib/bmap.o lib/cbuffer.o defines.h
 	$(AR) rcs $@ $^
 
 conbot: bin/conbot
