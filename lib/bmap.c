@@ -387,11 +387,3 @@ int bmap_writeDot(BMap *bmap, char *outputName) {
 	return 0;
 }
 
-/* TODO: scrap?
-bMap *addNodes(bMap *bm, entry nodes[]) {
-	while(nodes->k)
-		bm = addNode(bm, nodes->k, nodes->v), ++nodes;
-	return bm;
-}
-*/
-
