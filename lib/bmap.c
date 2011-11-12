@@ -106,12 +106,20 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { // {{{
 	else
 		*child = bmapn_add(*child, k, v);
 
+	bmapn_fixHeight(bmn);
 	return bmapn_balance(bmn);
-} /* }}} */
+} // }}}
 
-/* TODO: implement */
+uint8_t bmapn_height(BMap_Node *bmn) {
+	if(!bmn)
+		return 0;
+	return bmn->height;
+}
+
+// TODO: implement
 int bmap_set(BMap *bmap, char *k, char *v);
 
+/*
 int bmap_erase(BMap *bmap, char *k) { // {{{
 	if(!bmap || !k)
 		return 1;
@@ -210,43 +218,53 @@ BMap_Node *bmapn_popMin(BMap_Node *bmn) { // {{{
 	BMap_Node *min = bmn->left;
 	bmn->left = min->right;
 	return min;
-	*/
+} // }}}
+*/
+
+void bmapn_fixHeight(BMap_Node *bmn) { // {{{
+	if(!bmn)
+		return;
+	int lh = bmapn_height(bmn->left),
+		rh = bmapn_height(bmn->right);
+	bmn->height = ((lh > rh) ? lh : rh) + 1;
 } // }}}
 
 BMap_Node *bmapn_balance(BMap_Node *bmn) { // {{{
-	int ld = bmapn_depth(bmn->left), rd = bmapn_depth(bmn->right);
-	if(rd - ld > 1) {
-		int r_ld = bmapn_depth(bmn->right->left),
-			r_rd = bmapn_depth(bmn->right->right);
-		if(r_ld > r_rd)
+	int lh = bmapn_height(bmn->left), rh = bmapn_height(bmn->right);
+	if(rh - lh > 1) {
+		lh = bmapn_height(bmn->right->left);
+		rh = bmapn_height(bmn->right->right);
+		if(lh > rh)
 			bmn->right = bmapn_rightRotation(bmn->right);
 		bmn = bmapn_leftRotation(bmn);
-	} else if(ld - rd > 1) {
-		int l_ld = bmapn_depth(bmn->left->left),
-			l_rd = bmapn_depth(bmn->left->right);
-		if(l_rd > l_ld)
+	} else if(lh - rh > 1) {
+		lh = bmapn_height(bmn->left->left);
+		rh = bmapn_height(bmn->left->right);
+		if(rh > lh)
 			bmn->left = bmapn_leftRotation(bmn->left);
 		bmn = bmapn_rightRotation(bmn);
 	}
 	return bmn;
 } // }}}
 
-BMap_Node *bmapn_rightRotation(BMap_Node *n) { /* {{{ */
+BMap_Node *bmapn_rightRotation(BMap_Node *n) { // {{{
 	BMap_Node *nr = n->left, *c = n->left->right;
-
 	nr->right = n;
 	n->left = c;
 
+	bmapn_fixHeight(n);
+	bmapn_fixHeight(nr);
 	return nr;
-} /* }}} */
-BMap_Node *bmapn_leftRotation(BMap_Node *n) { /* {{{ */
+} // }}}
+BMap_Node *bmapn_leftRotation(BMap_Node *n) { // {{{
 	BMap_Node *nr = n->right, *b = n->right->left;
-
 	nr->left = n;
 	n->right = b;
 
+	bmapn_fixHeight(n);
+	bmapn_fixHeight(nr);
 	return nr;
-} /* }}} */
+} // }}}
 
 BMap_Node *bmap_find(BMap *bmap, char *k) { /* {{{ */
 	if(!bmap->root || !k)
