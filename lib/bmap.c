@@ -95,16 +95,16 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { // {{{
 		return bmn;
 	}
 
-	BMap_Node *child;
+	BMap_Node **child;
 	if(cmp > 0)
-		child = bmn->left;
+		child = &bmn->left;
 	else
-		child = bmn->right;
+		child = &bmn->right;
 
-	if(!child)
-		child = bmapn_create(k, v);
+	if(!*child)
+		*child = bmapn_create(k, v);
 	else
-		child = bmapn_add(child, k, v);
+		*child = bmapn_add(*child, k, v);
 
 	return bmapn_balance(bmn);
 } /* }}} */
