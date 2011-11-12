@@ -31,9 +31,10 @@ void addRegex(FunctionArgs *fa) { // {{{
 		return;
 	fa->matchedOn[fa->matches[1].rm_eo] = '\0';
 	fa->matchedOn[fa->matches[2].rm_eo] = '\0';
-	send(fa->target, "%s: %s", fa->name, rlist_add(regexList,
+	char *msg = rlist_add(regexList,
 				fa->matchedOn + fa->matches[1].rm_so,
-				fa->matchedOn + fa->matches[2].rm_so));
+				fa->matchedOn + fa->matches[2].rm_so);
+	send(fa->target, "%s: %s", fa->name, (msg ? msg : "Okay!"));
 } // }}}
 
 // FUNCREG should not be used directly
@@ -183,6 +184,12 @@ int main(int argc, char **argv) {
 		send(owner, "Read in %d variables", count);
 	}
 
+	// try to read in old regex
+	count = rlist_read(regexList, regexDumpFileName);
+	if(count > 0) {
+		send(owner, "Read in %d regex", count);
+	}
+
 	fflush(stdout);
 	lflush();
 
@@ -322,6 +329,11 @@ int main(int argc, char **argv) {
 	count = bmap_dump(varsMap, dumpFileName);
 	if(count > 0) {
 		send(owner, "Dumped %d variables", count);
+	}
+	// try to dump out regex for reload
+	count = rlist_dump(regexList, regexDumpFileName);
+	if(count > 0) {
+		send(owner, "Dumped %d regex", count);
 	}
 
 	fflush(stdout);
