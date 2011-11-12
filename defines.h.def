@@ -5,11 +5,11 @@
 #define PBSIZE 256
 
 // the nick of the bot we are running as
-#define nick "Octet"
+#define nick "NICK"
 // the channel we should be in and handling input from
-#define chan "#uakroncs"
+#define chan "#CHANNEL_NAME"
 // the nick of our owner, may be used for special commands/output
-#define owner "Nybbles"
+#define owner "OWNER"
 
 // default server to connect to
 #define server "irc.slashnet.org"
