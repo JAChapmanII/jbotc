@@ -6,6 +6,8 @@
 
 #define PBSIZE 256
 
+void bmapn_fixHeight(BMap_Node *bmn);
+
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
 BMap_Node *bmapn_find(BMap_Node *bmn, char *k);
 
@@ -22,22 +24,22 @@ BMap_Node *bmapn_leftRotation(BMap_Node *n);
 int bmapn_depth(BMap_Node *bmn);
 int bmapn_size(BMap_Node *bmn);
 
-BMap *bmap_create(void) { /* {{{ */
+BMap *bmap_create(void) { // {{{
 	BMap *bmap = malloc(sizeof(BMap));
 	if(!bmap)
 		return NULL;
 	bmap->root = NULL;
 	return bmap;
-} /* }}} */
-void bmap_free(BMap *bmap) { /* {{{ */
+} // }}}
+void bmap_free(BMap *bmap) { // {{{
 	if(!bmap)
 		return;
 	if(bmap->root)
 		bmapn_free(bmap->root);
 	free(bmap);
-} /* }}} */
+} // }}}
 
-BMap_Node *bmapn_create(char *key, char *val) { /* {{{ */
+BMap_Node *bmapn_create(char *key, char *val) { // {{{
 	if(!key || !val)
 		return NULL;
 	BMap_Node *bmn = malloc(sizeof(BMap_Node));
@@ -54,8 +56,8 @@ BMap_Node *bmapn_create(char *key, char *val) { /* {{{ */
 	strcpy(bmn->key, key);
 	strcpy(bmn->val, val);
 	return bmn;
-} /* }}} */
-void bmapn_free(BMap_Node *bmn) { /* {{{ */
+} // }}}
+void bmapn_free(BMap_Node *bmn) { // {{{
 	if(!bmn)
 		return;
 	if(bmn->left)
@@ -65,7 +67,7 @@ void bmapn_free(BMap_Node *bmn) { /* {{{ */
 	free(bmn->key);
 	free(bmn->val);
 	free(bmn);
-} /* }}} */
+} // }}}
 
 /* TODO: error handling */
 int bmap_add(BMap *bmap, char *k, char *v) {
@@ -80,9 +82,10 @@ int bmap_add(BMap *bmap, char *k, char *v) {
 	bmap->root = bmapn_add(bmap->root, k, v);
 	return 0;
 }
-BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
+BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { // {{{
 	if(!bmn || !k || !v) return bmn; // TODO: this was just return; ....
 	int cmp = strcmp(bmn->key, k);
+	// TODO: error on this condition? This makes _set obsolete
 	if(!cmp) {
 		if(strcmp(bmn->val, v)) {
 			free(bmn->val);
@@ -92,16 +95,16 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { /* {{{ */
 		return bmn;
 	}
 
-	BMap_Node **child;
+	BMap_Node *child;
 	if(cmp > 0)
-		child = &bmn->left;
+		child = bmn->left;
 	else
-		child = &bmn->right;
+		child = bmn->right;
 
-	if(!*child)
-		*child = bmapn_create(k, v);
+	if(!child)
+		child = bmapn_create(k, v);
 	else
-		*child = bmapn_add(*child, k, v);
+		child = bmapn_add(child, k, v);
 
 	return bmapn_balance(bmn);
 } /* }}} */
