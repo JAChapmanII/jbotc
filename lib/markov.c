@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#define PBSIZE 256
+#define PBSIZE 512
 #define BSIZE PBSIZE * 16
 
 Markov *markov_create(int order) { // {{{
@@ -310,7 +310,12 @@ int markov_dump_ploc(BMap_Node *bmn, char *directoryName) { // {{{
 
 	BMap *p;
 	sscanf(bmn->val, "%p", (void **)&p);
-	int count = bmap_dump(p, buf);
+	int count;
+	if(!p) {
+		// couldn't read in pointer value
+	} else {
+		count = bmap_dump(p, buf);
+	}
 
 	count += markov_dump_ploc(bmn->left, directoryName);
 	count += markov_dump_ploc(bmn->right, directoryName);
