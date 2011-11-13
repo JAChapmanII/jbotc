@@ -10,3 +10,7 @@ various things. When we output them, they are assumed to be space free. There
 is already a TODO in the source about this.
 
 Add special variables to the "is" function output.
+
+Explore ways to simplify Markov. Most likely we will need custom BMap's
+instead of string->string ones. If we had string->BMap and string->int
+everything would be much simpler.
