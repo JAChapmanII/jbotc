@@ -25,7 +25,8 @@ void rlist_free(RList *rlst) { // {{{
 		rlist_free(rlst->next);
 	free(rlst->data);
 	free(rlst->regex);
-	regfree(rlst->r);
+	if(rlst->r)
+		regfree(rlst->r);
 	free(rlst->r);
 	free(rlst);
 } // }}}
