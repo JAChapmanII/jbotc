@@ -315,7 +315,7 @@ int main(int argc, char **argv) {
 							send(fargs.target, "%s", is);
 						} else {
 							markov_insert(markovGenerator, msg);
-							send(owner, "inserted \"%s\"", msg);
+							//fprintf(stderr, "inserted \"%s\" into mgen", msg);
 							//fprintf(stderr, "Could not match!\n");
 							// msg ends with question mark, guess an answer
 							if(toUs && (strlen(msg) > 0) &&
