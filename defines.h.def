@@ -23,4 +23,9 @@
 // the name of the file to read/dump regex
 #define regexDumpFileName "jbot.is"
 
+// the name of the main markov chain index
+#define markovDumpFileName "jbot.markov"
+// the directory where the rest of the markov files are dumped
+#define markovDumpDirector "jbot_markov"
+
 #endif // DEFINES_H
