@@ -17,6 +17,7 @@
 #include "defines.h"
 #include "util.h"
 #include "rlist.h"
+#include "markov.h"
 
 // Container for all of the variables and configuration settings
 BMap *varsMap = NULL;
@@ -41,6 +42,27 @@ void addRegex(FunctionArgs *fa) { // {{{
 	send(fa->target, "%s: %s", fa->name, (msg ? msg : "Okay!"));
 } // }}}
 
+// Container for information necessary to generate markov chains
+Markov *markovGenerator = NULL;
+
+/* markov will eventually print markov chains generated from previous input. */
+void markov(FunctionArgs *fa) { // {{{
+	if(fa->matchCount == 0) {
+		// if we didn't recieve an argument, print usage
+		send(fa->target, "%s: Usage: markov <word>", fa->name);
+	} else {
+		char *msg = markov_fetch(markovGenerator,
+				fa->matchedOn + fa->matches[1].rm_so, 4096);
+		if(!msg) {
+			send(fa->target, "%s: Did not match! (%s)", fa->name,
+					fa->matchedOn + fa->matches[1].rm_so);
+		} else {
+			send(fa->target, "%s: %s", fa->name, msg + ((msg[0] == ' ') ? 1 : 0));
+			free(msg);
+		}
+	}
+} // }}}
+
 // FUNCREG should not be used directly
 #define FUNCREGX(x, y) { #x, #y, 1, 0, NULL, &x }
 /* There are two types of functions:
@@ -61,7 +83,7 @@ FuncStruct functions[] = {
 	{ "delete", "^ *delete *(.*)$", 1, 0, NULL, &deleteVariable },
 
 	// Type B functions
-	FUNCTIONB(markov), FUNCTIONB(set), FUNCTIONB(help),
+	FUNCTIONB(set), FUNCTIONB(help),
 
 	// Type C functions
 	FUNCTIONC(wave),
@@ -71,7 +93,7 @@ FuncStruct functions[] = {
 	{ "wave", "^\\\\o .*$", 0, 0, NULL, &wave },
 	{ "<3", "^<3$", 0, 0, NULL, &lessThanThree },
 	FUNCTIONC(fish), FUNCTIONC(fishes), FUNCTIONC(sl), FUNCTIONC(dubstep),
-	FUNCTIONC(list),
+	FUNCTIONC(list), FUNCTIONC(markov),
 
 	// Entirely special type functions
 	{ "or", "^(.*) or (.*)$", 2, 0, NULL, &eitherOr },
@@ -158,9 +180,15 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	// if we fial to create an RList head, abort
+	// if we fail to create an RList head, abort
 	if((regexList = rlist_create()) == NULL) {
 		fprintf(stderr, "Could not create regex list!\n");
+		return 1;
+	}
+
+	// if we fail to create a Markov, abort
+	if((markovGenerator = markov_create(2)) == NULL) {
+		fprintf(stderr, "Could not create markov generator!\n");
 		return 1;
 	}
 
@@ -258,7 +286,7 @@ int main(int argc, char **argv) {
 							msgp, functions[i].r->re_nsub + 1, mptr, 0);
 					if(!fail) {
 						matched = 1;
-						fargs.matchCount = functions[i].matchCount;
+						fargs.matchCount = functions[i].r->re_nsub;
 						functions[i].f(&fargs);
 					}
 				}
@@ -286,6 +314,8 @@ int main(int argc, char **argv) {
 						if(is) {
 							send(fargs.target, "%s", is);
 						} else {
+							markov_insert(markovGenerator, msg);
+							send(owner, "inserted \"%s\"", msg);
 							//fprintf(stderr, "Could not match!\n");
 							// msg ends with question mark, guess an answer
 							if(toUs && (strlen(msg) > 0) &&
