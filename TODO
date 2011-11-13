@@ -20,3 +20,9 @@ Allow
 or
 	NICK:
 or some other varieties.
+
+Collapse jbot_markov into one file. This will make things much simpler and we
+don't have to worry about more file names. Currently, on my system, I have
+over 76k of files under 4KiB, which are rounded up to taking up 301M. If they
+were mashed together, they would only take a bit over 816KiB.
+
