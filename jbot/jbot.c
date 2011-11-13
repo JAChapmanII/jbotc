@@ -222,6 +222,12 @@ int main(int argc, char **argv) {
 		send(owner, "Read in %d regex", count);
 	}
 
+	// try to read in old markov chain generator
+	count = markov_read(markovGenerator, markovDumpFileName, markovDumpDirectory);
+	if(count > 0) {
+		send(owner, "Read in %d markov chain entries", count);
+	}
+
 	fflush(stdout);
 	lflush();
 
@@ -368,6 +374,12 @@ int main(int argc, char **argv) {
 	count = rlist_dump(regexList, regexDumpFileName);
 	if(count > 0) {
 		send(owner, "Dumped %d regex", count);
+	}
+
+	// try to dump the markov chain generator to a file/dir
+	count = markov_dump(markovGenerator, markovDumpFileName, markovDumpDirectory);
+	if(count > 0) {
+		send(owner, "Dumped %d markov chain entries", count);
 	}
 
 	fflush(stdout);
