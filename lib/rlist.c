@@ -91,6 +91,23 @@ char *rlist_add(RList *rlst, char *regex, char *data) { // {{{
 	return NULL;
 } // }}}
 
+int rlist_remove(RList *rlst, char *regex) {
+	if(!rlst)
+		return 0;
+	RList *prev = rlst;
+	while(rlst->next) {
+		rlst = rlst->next;
+		if(!strcmp(rlst->regex, regex)) {
+			prev->next = rlst->next;
+			rlst->next = NULL;
+			rlist_free(rlst);
+			return 1;
+		}
+		prev = rlst;
+	}
+	return 0;
+}
+
 char *rlist_match(RList *rlst, char *msg) { // {{{
 	if(!rlst->next)
 		return NULL;

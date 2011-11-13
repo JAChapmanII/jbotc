@@ -16,6 +16,7 @@ void rlist_free(RList *rlst);
 int rlist_size(RList *rlst);
 
 char *rlist_add(RList *rlst, char *regex, char *data);
+int rlist_remove(RList *rlst, char *regex);
 char *rlist_match(RList *rlst, char *msg);
 
 /* Dump the RList to a file */
