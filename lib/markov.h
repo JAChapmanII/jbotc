@@ -26,4 +26,9 @@ char *markov_fetch(Markov *mkv, char *seed, int maxLength);
 /* Fetch one word using some input */
 char *markov_search(Markov *mkv, char *str);
 
+/* Read a markov chain from a file and files in a directory */
+int markov_read(Markov *mkv, char *fileName, char *directoryName);
+/* Dump the markov chain to a file and files in a directory */
+int markov_dump(Markov *mkv, char *fileName, char *directoryName);
+
 #endif // MARKOV_H
