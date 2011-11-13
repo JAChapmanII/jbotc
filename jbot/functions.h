@@ -32,9 +32,6 @@ typedef struct {
 /* Displays the help */
 void help(FunctionArgs *fa);
 
-/* markov will eventually print markov chains generated from previous input. */
-void markov(FunctionArgs *fa);
-
 /* CodeBlock wants a fish... */
 void fish(FunctionArgs *fa);
 

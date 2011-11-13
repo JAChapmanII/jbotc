@@ -11,24 +11,6 @@ void help(FunctionArgs *fa) {
 	send(fa->target, "%s: You're on your own.", fa->name);
 }
 
-/* markov will eventually print markov chains generated from previous input. */
-void markov(FunctionArgs *fa) { // {{{
-	char *tok = strtok(fa->matchedOn, " ");
-	// initially tok should be "markov", if it isn't bail
-	if(strcmp(tok, "markov"))
-		return;
-	// if it is, we immediately strtok again
-	tok = strtok(NULL, " ");
-	if(tok == NULL) {
-		// if we didn't recieve an argument, print usage
-		send(fa->target, "%s: Usage: markov <word>", fa->name);
-	} else {
-		// we recieved an argument, print it back to them for now.
-		// TODO: implement properly
-		send(fa->target, "%s: %s", fa->name, tok);
-	}
-} // }}}
-
 /* CodeBlock wants a fish... */
 void fish(FunctionArgs *fa) { // {{{
 	send(fa->target, "%s: %s", fa->name, ((rand() % 2) ? "><>" : "<><"));
