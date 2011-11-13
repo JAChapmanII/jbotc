@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #define PBSIZE 256
 #define BSIZE PBSIZE * 16
@@ -210,9 +212,9 @@ char *markov_search(Markov *mkv, char *str) { // {{{
 	return bmap_keyAfterValue(wmap, entry);
 } // }}}
 char *markov_fetch(Markov *mkv, char *seed, int maxLength) { // {{{
-	if(!mkv || !seed)
+	if(!mkv || !seed || (maxLength < 1))
 		return NULL;
-	if(strlen(seed) >= maxLength)
+	if(strlen(seed) >= (unsigned)maxLength)
 		return NULL;
 
 	char *buf = malloc(maxLength);
@@ -244,5 +246,90 @@ char *markov_fetch(Markov *mkv, char *seed, int maxLength) { // {{{
 	}
 	buf[length - 1] = '\0';
 	return buf;
+} // }}}
+
+int markov_ensureDirectory(char *dumpDirectory) { // {{{
+	if(!dumpDirectory)
+		return 0;
+	int status = mkdir(dumpDirectory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	if(!status)
+		return 1;
+	if(errno == EEXIST)
+		return 1;
+	return 0;
+} // }}}
+
+int markov_read_ploc(Markov *mkv, BMap_Node *bmn, char *directoryName) {
+	if(!mkv || !bmn || !directoryName)
+		return 0;
+
+	BMap *p = bmap_create();
+	if(!p)
+		return 0;
+
+	char buf[BSIZE];
+	strcpy(buf, directoryName);
+	strcat(buf, "/");
+	strcat(buf, bmn->key);
+
+	bmap_read(p, buf);
+
+	sprintf(buf, "%p", (void *)p);
+	bmap_add(mkv->ploc, bmn->key, buf);
+
+	markov_read_ploc(mkv, bmn->left, directoryName);
+	markov_read_ploc(mkv, bmn->right, directoryName);
+	return 1;
+}
+int markov_read(Markov *mkv, char *fileName, char *directoryName) {
+	if(!mkv || !fileName || !directoryName)
+		return 0;
+
+	if(!markov_ensureDirectory(directoryName)) {
+		fprintf(stderr, "Could not ensure %s exists!\n", directoryName);
+		return 0;
+	}
+
+	int count = bmap_read(mkv->ploc, fileName);
+	printf("read %d entries\n", count);
+	if(!count)
+		return 0;
+
+	markov_read_ploc(mkv, mkv->ploc->root, directoryName);
+	return count;
+}
+
+int markov_dump_ploc(BMap_Node *bmn, char *directoryName) { // {{{
+	if(!bmn)
+		return 0;
+
+	char buf[BSIZE];
+	strcpy(buf, directoryName);
+	strcat(buf, "/");
+	strcat(buf, bmn->key);
+
+	BMap *p;
+	sscanf(bmn->val, "%p", (void **)&p);
+	int count = bmap_dump(p, buf);
+
+	count += markov_dump_ploc(bmn->left, directoryName);
+	count += markov_dump_ploc(bmn->right, directoryName);
+	return count;
+} // }}}
+int markov_dump(Markov *mkv, char *fileName, char *directoryName) { // {{{
+	if(!mkv || !fileName || !directoryName)
+		return 0;
+
+	if(!markov_ensureDirectory(directoryName)) {
+		fprintf(stderr, "Could not ensure %s exists!\n", directoryName);
+		return 0;
+	}
+
+	int count = bmap_dump(mkv->ploc, fileName);
+	printf("dumped %d entries\n", count);
+	if(!count)
+		return 0;
+
+	return markov_dump_ploc(mkv->ploc->root, directoryName);
 } // }}}
 
