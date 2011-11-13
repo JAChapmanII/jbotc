@@ -88,7 +88,6 @@ void markov_push(Markov *mkv, char **words) { // {{{
 		bmap_add(wmap, words[mkv->order], tmps);
 	}
 } // }}}
-
 void markov_insert(Markov *mkv, char *str) { // {{{
 	if(!mkv || !str)
 		return;
@@ -159,20 +158,19 @@ void markov_insert(Markov *mkv, char *str) { // {{{
 	free(words);
 } // }}}
 
-int bmapn_sum(BMap_Node *bmn) {
+int bmapn_sum(BMap_Node *bmn) { // {{{
 	if(!bmn)
 		return 0;
 
 	return atoi(bmn->val) + bmapn_sum(bmn->left) + bmapn_sum(bmn->right);
-}
-
-int bmap_sum(BMap *bmap) {
+} // }}}
+int bmap_sum(BMap *bmap) { // {{{
 	if(!bmap)
 		return 0;
 	return bmapn_sum(bmap->root);
-}
+} // }}}
 
-char *bmapn_keyAfterValue(BMap_Node *bmn, int val) {
+char *bmapn_keyAfterValue(BMap_Node *bmn, int val) { // {{{
 	if(!bmn)
 		return NULL;
 
@@ -185,15 +183,14 @@ char *bmapn_keyAfterValue(BMap_Node *bmn, int val) {
 		return bmn->key;
 
 	return bmapn_keyAfterValue(bmn->right, val);
-}
-
-char *bmap_keyAfterValue(BMap *bmap, int val) {
+} // }}}
+char *bmap_keyAfterValue(BMap *bmap, int val) { // {{{
 	if(!bmap)
 		return NULL;
 	return bmapn_keyAfterValue(bmap->root, val);
-}
+} // }}}
 
-char *markov_search(Markov *mkv, char *str) {
+char *markov_search(Markov *mkv, char *str) { // {{{
 	if(!mkv || !str)
 		return NULL;
 
@@ -211,5 +208,40 @@ char *markov_search(Markov *mkv, char *str) {
 	int entry = rand() % sum;
 
 	return bmap_keyAfterValue(wmap, entry);
-}
+} // }}}
+char *markov_fetch(Markov *mkv, char *seed, int maxLength) { // {{{
+	if(!mkv || !seed)
+		return NULL;
+	if(strlen(seed) >= maxLength)
+		return NULL;
 
+	char *buf = malloc(maxLength);
+	if(!buf)
+		return NULL;
+	memset(buf, '\0', maxLength);
+
+	int length = strlen(seed) + 1;
+	strcpy(buf, seed);
+	strcat(buf, " ");
+
+	char *word = markov_search(mkv, seed);
+	int so = 0;
+	while((length < maxLength) && (word != NULL) && strlen(word)) {
+		int rlen = strlen(word);
+		if(rlen + length >= maxLength)
+			break;
+		strcat(buf, word);
+		length += rlen;
+
+		while(buf[so] != ' ')
+			so++;
+		so++;
+
+		word = markov_search(mkv, buf + so);
+
+		strcat(buf, " ");
+		length++;
+	}
+	buf[length - 1] = '\0';
+	return buf;
+} // }}}
