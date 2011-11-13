@@ -42,6 +42,15 @@ void addRegex(FunctionArgs *fa) { // {{{
 	send(fa->target, "%s: %s", fa->name, (msg ? msg : "Okay!"));
 } // }}}
 
+/* Remove a regex from regexList */
+void removeRegex(FunctionArgs *fa) { // {{{
+	fa->matchedOn[fa->matches[1].rm_eo] = '\0';
+	if(rlist_remove(regexList, fa->matchedOn + fa->matches[1].rm_so))
+		send(fa->target, "%s: Okay!", fa->name);
+	else
+		send(fa->target, "%s: I don't know anything about that", fa->name);
+} // }}}
+
 // Container for information necessary to generate markov chains
 Markov *markovGenerator = NULL;
 
@@ -98,6 +107,7 @@ FuncStruct functions[] = {
 	// Entirely special type functions
 	{ "or", "^(.*) or (.*)$", 2, 0, NULL, &eitherOr },
 	{ "is", "^(.*) is (.*)$", 2, 0, NULL, &addRegex },
+	{ "forget", "^forget (.*)$", 1, 0, NULL, &removeRegex },
 
 	// End of functions marker
 	{ NULL, NULL, 0, 0, NULL, NULL },
