@@ -277,12 +277,26 @@ int bmap_read(BMap *bmap, char *fileName) {
 		return 0;
 
 	int count = 0;
+	size_t read;
 	while(!feof(dumpFile)) {
+		uint8_t klen, vlen;
 		char key[PBSIZE], val[PBSIZE];
-		if(!fscanf(dumpFile, "%s ", key))
+
+		read = fread(&klen, 1, 1, dumpFile);
+		if(read != 1)
 			break;
-		if(!fscanf(dumpFile, "%s ", val))
+		read = fread(key, 1, klen, dumpFile);
+		if(read != klen)
 			break;
+		key[read] = '\0';
+		read = fread(&vlen, 1, 1, dumpFile);
+		if(read != 1)
+			break;
+		read = fread(val, 1, vlen, dumpFile);
+		if(read != vlen)
+			break;
+		val[read] = '\0';
+
 		bmap_add(bmap, key, val);
 		count++;
 	}
@@ -296,8 +310,10 @@ int bmapn_dump(BMap_Node *bmn, FILE *dumpFile) {
 	if(!bmn)
 		return 0;
 
-	// TODO: not space when keys/values can have spaces?
-	fprintf(dumpFile, "%s %s\n", bmn->key, bmn->val);
+	fprintf(dumpFile, "%c%s%c%s",
+			(char)strlen(bmn->key), bmn->key,
+			(char)strlen(bmn->val), bmn->val);
+
 	int count = 1;
 	count += bmapn_dump(bmn->left, dumpFile);
 	count += bmapn_dump(bmn->right, dumpFile);
