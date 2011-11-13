@@ -148,12 +148,14 @@ int rlist_read(RList *rlst, char *fileName) {
 		read = fread(regex, 1, rlen, dumpFile);
 		if(read != rlen)
 			break;
+		regex[read] = '\0';
 		read = fread(&dlen, 1, 1, dumpFile);
 		if(read != 1)
 			break;
 		read = fread(data, 1, dlen, dumpFile);
 		if(read != dlen)
 			break;
+		data[read] = '\0';
 
 		char *msg = rlist_add(rlst, regex, data);
 		if(msg) {
