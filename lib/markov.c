@@ -245,3 +245,4 @@ char *markov_fetch(Markov *mkv, char *seed, int maxLength) { // {{{
 	buf[length - 1] = '\0';
 	return buf;
 } // }}}
+
