@@ -159,10 +159,57 @@ void markov_insert(Markov *mkv, char *str) { // {{{
 	free(words);
 } // }}}
 
+int bmapn_sum(BMap_Node *bmn) {
+	if(!bmn)
+		return 0;
+
+	return atoi(bmn->val) + bmapn_sum(bmn->left) + bmapn_sum(bmn->right);
+}
+
+int bmap_sum(BMap *bmap) {
+	if(!bmap)
+		return 0;
+	return bmapn_sum(bmap->root);
+}
+
+char *bmapn_keyAfterValue(BMap_Node *bmn, int val) {
+	if(!bmn)
+		return NULL;
+
+	char *tmp = bmapn_keyAfterValue(bmn->left, val);
+	if(tmp)
+		return tmp;
+
+	val -= bmapn_sum(bmn->left) + atoi(bmn->val);
+	if(val < 0)
+		return bmn->key;
+
+	return bmapn_keyAfterValue(bmn->right, val);
+}
+
+char *bmap_keyAfterValue(BMap *bmap, int val) {
+	if(!bmap)
+		return NULL;
+	return bmapn_keyAfterValue(bmap->root, val);
+}
+
 char *markov_search(Markov *mkv, char *str) {
 	if(!mkv || !str)
 		return NULL;
 
-	return NULL;
+	BMap *wmap;
+	BMap_Node *m = bmap_find(mkv->ploc, str);
+
+	// if the entry doesn't exist, bail
+	if(!m)
+		return NULL;
+
+	// extract the location of wmap from ploc
+	sscanf(m->val, "%p", (void **)&wmap);
+
+	int sum = bmap_sum(wmap);
+	int entry = rand() % sum;
+
+	return bmap_keyAfterValue(wmap, entry);
 }
 
