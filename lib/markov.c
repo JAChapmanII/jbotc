@@ -259,7 +259,7 @@ int markov_ensureDirectory(char *dumpDirectory) { // {{{
 	return 0;
 } // }}}
 
-int markov_read_ploc(Markov *mkv, BMap_Node *bmn, char *directoryName) {
+int markov_read_ploc(Markov *mkv, BMap_Node *bmn, char *directoryName) { // {{{
 	if(!mkv || !bmn || !directoryName)
 		return 0;
 
@@ -280,8 +280,8 @@ int markov_read_ploc(Markov *mkv, BMap_Node *bmn, char *directoryName) {
 	markov_read_ploc(mkv, bmn->left, directoryName);
 	markov_read_ploc(mkv, bmn->right, directoryName);
 	return 1;
-}
-int markov_read(Markov *mkv, char *fileName, char *directoryName) {
+} // }}}
+int markov_read(Markov *mkv, char *fileName, char *directoryName) { // {{{
 	if(!mkv || !fileName || !directoryName)
 		return 0;
 
@@ -291,13 +291,12 @@ int markov_read(Markov *mkv, char *fileName, char *directoryName) {
 	}
 
 	int count = bmap_read(mkv->ploc, fileName);
-	printf("read %d entries\n", count);
 	if(!count)
 		return 0;
 
 	markov_read_ploc(mkv, mkv->ploc->root, directoryName);
 	return count;
-}
+} // }}}
 
 int markov_dump_ploc(BMap_Node *bmn, char *directoryName) { // {{{
 	if(!bmn)
@@ -331,7 +330,6 @@ int markov_dump(Markov *mkv, char *fileName, char *directoryName) { // {{{
 	}
 
 	int count = bmap_dump(mkv->ploc, fileName);
-	printf("dumped %d entries\n", count);
 	if(!count)
 		return 0;
 
