@@ -370,17 +370,21 @@ int main(int argc, char **argv) {
 	if(count > 0) {
 		send(owner, "Dumped %d variables", count);
 	}
+	bmap_free(varsMap);
+
 	// try to dump out regex for reload
 	count = rlist_dump(regexList, regexDumpFileName);
 	if(count > 0) {
 		send(owner, "Dumped %d regex", count);
 	}
+	rlist_free(regexList);
 
 	// try to dump the markov chain generator to a file/dir
 	count = markov_dump(markovGenerator, markovDumpFileName, markovDumpDirectory);
 	if(count > 0) {
 		send(owner, "Dumped %d markov chain entries", count);
 	}
+	markov_free(markovGenerator);
 
 	fflush(stdout);
 	lflush();
