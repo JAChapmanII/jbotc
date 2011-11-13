@@ -39,39 +39,55 @@ void markov_free(Markov *mkv) { // {{{
 	free(mkv);
 } // }}}
 
-void markov_push(Markov *mkv, char **words) {
+void markov_push(Markov *mkv, char **words) { // {{{
 	if(!mkv || !words)
 		return;
 
+	// concatenate the input together
 	char buf[BSIZE] = { 0 };
 	for(int i = 0; i < mkv->order; ++i) {
 		strcat(buf, words[i]);
+		// only add a space after if it's not the last word
 		if(i != mkv->order - 1)
 			strcat(buf, " ");
 	}
 
 	BMap *wmap;
+	// try to find the input in ploc
 	BMap_Node *m = bmap_find(mkv->ploc, buf);
 
 	if(m == NULL) {
-		printf("\t");
+		// if we didn't find it, create one
 		wmap = bmap_create();
 		if(!wmap) {
+			// if we couldn't, abort
 			fprintf(stderr, "Couldn't create map to push to\n");
-			printf("\n");
 			return;
 		}
 
 		char pbuf[PBSIZE];
-		sprintf(pbuf, "%p", wmap);
+		sprintf(pbuf, "%p", (void *)wmap);
+		// insert the location of wmap into ploc
 		bmap_add(mkv->ploc, buf, pbuf);
 	} else {
+		// extract the location of wmap from ploc
 		sscanf(m->val, "%p", (void **)&wmap);
 	}
 
-	printf("\"%s\" ", buf);
-	printf("-> \"%s\"\n", words[mkv->order]);
-}
+	// try to find the output in wmap
+	BMap_Node *mn = bmap_find(wmap, words[mkv->order]);
+	if(mn == NULL) {
+		// if it's the first time, it has a value of 1
+		bmap_add(wmap, words[mkv->order], "1");
+	} else {
+		// otherwise we should add 1 to the current value...
+		int tmp = atoi(mn->val) + 1;
+		char tmps[PBSIZE] = { 0 };
+		sprintf(tmps, "%d", tmp);
+		// and at it back in
+		bmap_add(wmap, words[mkv->order], tmps);
+	}
+} // }}}
 
 void markov_insert(Markov *mkv, char *str) { // {{{
 	if(!mkv || !str)
