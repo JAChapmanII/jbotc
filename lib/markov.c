@@ -248,91 +248,105 @@ char *markov_fetch(Markov *mkv, char *seed, int maxLength) { // {{{
 	return buf;
 } // }}}
 
-int markov_ensureDirectory(char *dumpDirectory) { // {{{
-	if(!dumpDirectory)
-		return 0;
-	int status = mkdir(dumpDirectory, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	if(!status)
-		return 1;
-	if(errno == EEXIST)
-		return 1;
-	return 0;
-} // }}}
-
-int markov_read_ploc(Markov *mkv, BMap_Node *bmn, char *directoryName) { // {{{
-	if(!mkv || !bmn || !directoryName)
+int markov_read_ploc(Markov *mkv, FILE *inFile) { // {{{
+	if(!mkv || !inFile)
 		return 0;
 
-	BMap *p = bmap_create();
-	if(!p)
-		return 0;
+	while(!feof(inFile)) {
+		BMap *p = bmap_create();
+		if(!p) {
+			fprintf(stderr, "Could not creat bmap during markov_read_ploc\n");
+			return 0;
+		}
 
-	char buf[BSIZE];
-	strcpy(buf, directoryName);
-	strcat(buf, "/");
-	strcat(buf, bmn->key);
+		char key[PBSIZE];
+		uint8_t klen;
+		size_t read = fread(&klen, 1, 1, inFile);
+		if(read != 1) {
+			; // TODO: handle
+		}
+		read = fread(key, 1, klen, inFile);
+		if(read != klen) {
+			; // TODO: handle
+		}
+		key[klen] = '\0';
 
-	bmap_read(p, buf);
+		bmap_load(p, inFile);
+		char buf[PBSIZE];
+		sprintf(buf, "%p", (void *)p);
+		bmap_add(mkv->ploc, key, buf);
+	}
 
-	sprintf(buf, "%p", (void *)p);
-	bmap_add(mkv->ploc, bmn->key, buf);
-
-	markov_read_ploc(mkv, bmn->left, directoryName);
-	markov_read_ploc(mkv, bmn->right, directoryName);
 	return 1;
 } // }}}
-int markov_read(Markov *mkv, char *fileName, char *directoryName) { // {{{
-	if(!mkv || !fileName || !directoryName)
+int markov_read(Markov *mkv, char *fileName) { // {{{
+	if(!mkv || !fileName)
 		return 0;
 
-	if(!markov_ensureDirectory(directoryName)) {
-		fprintf(stderr, "Could not ensure %s exists!\n", directoryName);
+	FILE *inFile = fopen(fileName, "rb");
+	if(!inFile)
 		return 0;
-	}
 
-	int count = bmap_read(mkv->ploc, fileName);
+	int count = bmap_load(mkv->ploc, inFile);
 	if(!count)
 		return 0;
 
-	markov_read_ploc(mkv, mkv->ploc->root, directoryName);
+	markov_read_ploc(mkv, inFile);
 	return count;
 } // }}}
 
-int markov_dump_ploc(BMap_Node *bmn, char *directoryName) { // {{{
-	if(!bmn)
+int markov_dump_ploc(BMap_Node *bmn, FILE *dumpFile) { // {{{
+	if(!bmn || !dumpFile)
 		return 0;
 
-	char buf[BSIZE];
-	strcpy(buf, directoryName);
-	strcat(buf, "/");
-	strcat(buf, bmn->key);
+	int count = 1;
+	size_t keylen = strlen(bmn->key);
+	if(keylen >= (1 << 8))
+		count = 0;
+	if(count) {
+		uint8_t klen = keylen;
+		size_t written;
+		written = fwrite(&klen, 1, 1, dumpFile);
+		if(written != 1) {
+			; // TODO: handling?
+		}
+		written = fwrite(bmn->key, 1, klen, dumpFile);
+		if(written != klen) {
+			; // TODO: handling?
+		}
 
-	BMap *p;
-	sscanf(bmn->val, "%p", (void **)&p);
-	int count;
-	if(!p) {
-		// couldn't read in pointer value
-	} else {
-		count = bmap_dump(p, buf);
+		BMap *p;
+		sscanf(bmn->val, "%p", (void **)&p);
+		if(!p) {
+			count = 0;
+			// TODO: this means we wrote a value we shouldn't have, the // key/klen
+			// couldn't read in pointer value
+		} else {
+			count = bmap_write(p, dumpFile);
+			if(count < 0)
+				count = 0; // TODO: better handling?
+			else
+				count = 1;
+		}
 	}
 
-	count += markov_dump_ploc(bmn->left, directoryName);
-	count += markov_dump_ploc(bmn->right, directoryName);
+	count += markov_dump_ploc(bmn->left, dumpFile);
+	count += markov_dump_ploc(bmn->right, dumpFile);
 	return count;
 } // }}}
-int markov_dump(Markov *mkv, char *fileName, char *directoryName) { // {{{
-	if(!mkv || !fileName || !directoryName)
+int markov_dump(Markov *mkv, char *fileName) { // {{{
+	if(!mkv || !fileName)
 		return 0;
 
-	if(!markov_ensureDirectory(directoryName)) {
-		fprintf(stderr, "Could not ensure %s exists!\n", directoryName);
-		return 0;
-	}
-
-	int count = bmap_dump(mkv->ploc, fileName);
-	if(!count)
+	FILE *dumpFile = fopen(fileName, "wb");
+	if(!dumpFile)
 		return 0;
 
-	return markov_dump_ploc(mkv->ploc->root, directoryName);
+	int count = bmap_write(mkv->ploc, dumpFile);
+	if(count)
+		count = markov_dump_ploc(mkv->ploc->root, dumpFile);
+
+	fclose(dumpFile);
+	return count;
 } // }}}
 
