@@ -281,8 +281,8 @@ size_t readSizeT(FILE *inFile) { // {{{
 		return 0;
 
 	size_t result = 0;
-	for(size_t i = 0; i < sizeof(size_t); ++i)
-		result = (result << 8) + buf[i];
+	for(size_t i = sizeof(size_t); i > 0; --i)
+		result = (result << 8) + buf[i - 1];
 
 	return result;
 } // }}}
