@@ -133,6 +133,15 @@ int setupFunctions() {
 	return 1;
 }
 
+int deinitFunctions() {
+	for(int i = 0; functions[i].name && functions[i].f; ++i) {
+		if(functions[i].r)
+			regfree(functions[i].r);
+		free(functions[i].r);
+	}
+	return 0;
+}
+
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
@@ -220,6 +229,7 @@ int main(int argc, char **argv) {
 	lprintf("------------------------------------\n");
 
 	// Setup the command start string, abort on failure
+	// TODO: regex-ify this thing
 	cstart = malloc(strlen(nick) + 2);
 	if(!cstart) {
 		fprintf(stderr, "Could not malloc space for command start string!\n");
@@ -395,6 +405,10 @@ int main(int argc, char **argv) {
 	}
 	bmap_free(varsMap);
 
+	// free conf map
+	// TODO: use this
+	bmap_free(confMap);
+
 	// try to dump out regex for reload
 	count = rlist_dump(regexList, regexDumpFileName);
 	if(count > 0) {
@@ -409,8 +423,21 @@ int main(int argc, char **argv) {
 	}
 	markov_free(markovGenerator);
 
+	// free regex objects used in main
+	regfree(&pmsgRegex);
+	regfree(&joinRegex);
+
+	// free function regex objects
+	deinitFunctions();
+
+	// free cstart string
+	free(cstart);
+
 	fflush(stdout);
 	lflush();
+
+	// de initialize log file
+	deinitLogFile();
 
 	// close stdin/stdout just to make sure conbot knows we stopped
 	close(0);
