@@ -19,7 +19,7 @@ BMap_Node *bmapn_rightRotation(BMap_Node *n);
 BMap_Node *bmapn_leftRotation(BMap_Node *n);
 
 int bmapn_depth(BMap_Node *bmn);
-int bmapn_size(BMap_Node *bmn);
+size_t bmapn_size(BMap_Node *bmn);
 
 BMap *bmap_create(void) { // {{{
 	BMap *bmap = malloc(sizeof(BMap));
@@ -252,23 +252,83 @@ BMap_Node *bmapn_find(BMap_Node *bmn, char *k) { /* {{{ */
 	return bmapn_find(bmn->right, k);
 } /* }}} */
 
-int bmap_size(BMap *bmap) { /* {{{ */
+size_t bmap_size(BMap *bmap) { /* {{{ */
 	if(!bmap->root)
 		return 0;
 	return bmapn_size(bmap->root);
 } /* }}} */
-int bmapn_size(BMap_Node *bmn) { /* {{{ */
+size_t bmapn_size(BMap_Node *bmn) { /* {{{ */
 	if(!bmn)
 		return 0;
 	/* NULL childrne are handled above */
 	return bmapn_size(bmn->left) + bmapn_size(bmn->right) + 1;
 } /* }}} */
 
-// TODO: the way this works, there is no way to remove variables but to stop
-// conbot and then remove them from the .dat file. This should be corrected,
-// probably.
-// TODO: Allow deletion from a bmap
-int bmap_read(BMap *bmap, char *fileName) {
+size_t writeSizeT(FILE *outFile, size_t toWrite) { // {{{
+	if(!outFile)
+		return 0;
+
+	uint8_t buf[sizeof(size_t)] = { 0 };
+	for(size_t i = 0; i < sizeof(size_t); ++i)
+		buf[i] = (toWrite >> (8*i)) & 0xff;
+
+	return fwrite(buf, 1, sizeof(size_t), outFile);
+} // }}}
+size_t readSizeT(FILE *inFile) { // {{{
+	uint8_t buf[sizeof(size_t)] = { 0 };
+	size_t read = fread(buf, 1, sizeof(size_t), inFile);
+	if(read != sizeof(size_t))
+		return 0;
+
+	size_t result = 0;
+	for(size_t i = 0; i < sizeof(size_t); ++i)
+		result = (result << 8) + buf[i];
+
+	return result;
+} // }}}
+
+int bmap_load(BMap *bmap, FILE *inFile) { // {{{
+	if(!bmap || !inFile)
+		return -1;
+
+	size_t size = readSizeT(inFile);
+	if(size == 0)
+		return -2;
+
+	size_t rnodes;
+	for(rnodes = 0; rnodes < size; ++rnodes) {
+		char key[PBSIZE], val[PBSIZE];
+		uint8_t klen, vlen;
+		size_t read;
+
+		// attemp to read lengths and key/val
+		read = fread(&klen, 1, 1, inFile);
+		if(read != 1)
+			break;
+		read = fread(key, 1, klen, inFile);
+		if(read != klen)
+			break;
+		read = fread(&vlen, 1, 1, inFile);
+		if(read != 1)
+			break;
+		read = fread(val, 1, vlen, inFile);
+		if(read != vlen)
+			break;
+
+		// null terminate strings
+		key[klen] = '\0';
+		val[vlen] = '\0';
+
+		// add the node to the bmap
+		bmap_add(bmap, key, val);
+	}
+
+	if(rnodes != size - 1)
+		return -3;
+	return rnodes;
+} // }}}
+
+int bmap_read(BMap *bmap, char *fileName) { // {{{
 	if(!bmap || !fileName)
 		return 0;
 
@@ -276,33 +336,11 @@ int bmap_read(BMap *bmap, char *fileName) {
 	if(!dumpFile)
 		return 0;
 
-	int count = 0;
-	size_t read;
-	while(!feof(dumpFile)) {
-		uint8_t klen, vlen;
-		char key[PBSIZE], val[PBSIZE];
-
-		read = fread(&klen, 1, 1, dumpFile);
-		if(read != 1)
-			break;
-		read = fread(key, 1, klen, dumpFile);
-		if(read != klen)
-			break;
-		key[read] = '\0';
-		read = fread(&vlen, 1, 1, dumpFile);
-		if(read != 1)
-			break;
-		read = fread(val, 1, vlen, dumpFile);
-		if(read != vlen)
-			break;
-		val[read] = '\0';
-
-		bmap_add(bmap, key, val);
-		count++;
-	}
+	int res = bmap_load(bmap, dumpFile);
 	fclose(dumpFile);
-	return count;
-}
+
+	return res;
+} // }}}
 
 // TODO: somehow we dump the same variable multiple times...
 // TODO: wasn't this fixed somewhere? >_>
