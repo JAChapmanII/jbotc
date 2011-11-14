@@ -323,11 +323,12 @@ int bmap_load(BMap *bmap, FILE *inFile) { // {{{
 		bmap_add(bmap, key, val);
 	}
 
-	if(rnodes != size - 1)
+	if(rnodes != size) {
+		fprintf(stderr, "rn: %lu, s: %lu\n", rnodes, size);
 		return -3;
+	}
 	return rnodes;
 } // }}}
-
 int bmap_read(BMap *bmap, char *fileName) { // {{{
 	if(!bmap || !fileName)
 		return 0;
@@ -344,32 +345,66 @@ int bmap_read(BMap *bmap, char *fileName) { // {{{
 
 // TODO: somehow we dump the same variable multiple times...
 // TODO: wasn't this fixed somewhere? >_>
-int bmapn_dump(BMap_Node *bmn, FILE *dumpFile) {
-	if(!bmn)
+int bmapn_dump(BMap_Node *bmn, FILE *dumpFile) { // {{{
+	if(!bmn || !dumpFile)
 		return 0;
 
-	fprintf(dumpFile, "%c%s%c%s",
-			(char)strlen(bmn->key), bmn->key,
-			(char)strlen(bmn->val), bmn->val);
-
 	int count = 1;
+	size_t keylength = strlen(bmn->key), vallength = strlen(bmn->val);
+	if((keylength >= (2 << 8)) || (vallength >= (2 << 8)))
+		count = 0;
+
+	if(count) {
+		size_t written;
+		uint8_t klen = keylength, vlen = vallength;
+		written = fwrite(&klen, 1, 1, dumpFile);
+		if(written != 1) {
+			; // TODO: any way to recover? seek backward?
+		}
+		written = fwrite(bmn->key, 1, klen, dumpFile);
+		if(written != klen) {
+			; // TODO: see above
+		}
+		written = fwrite(&vlen, 1, 1, dumpFile);
+		if(written != 1) {
+			; // TODO: see above
+		}
+		written = fwrite(bmn->val, 1, vlen, dumpFile);
+		if(written != vlen) {
+			; // TODO: see above
+		}
+	}
+
 	count += bmapn_dump(bmn->left, dumpFile);
 	count += bmapn_dump(bmn->right, dumpFile);
 	return count;
-}
+} // }}}
+int bmap_write(BMap *bmap, FILE *outFile) { // {{{
+	if(!bmap || !outFile)
+		return -1;
 
-int bmap_dump(BMap *bmap, char *fileName) {
+	size_t size = bmap_size(bmap);
+	if(size < 1)
+		return 0;
+
+	if(writeSizeT(outFile, size) != sizeof(size_t))
+		return -128;
+
+	int count = bmapn_dump(bmap->root, outFile);
+	return count;
+} // }}}
+int bmap_dump(BMap *bmap, char *fileName) { // {{{
 	if(!bmap || !fileName)
 		return 0;
 
-	FILE *dumpFile = fopen(fileName, "w");
+	FILE *dumpFile = fopen(fileName, "wb");
 	if(!dumpFile)
 		return 0;
 
-	int count = bmapn_dump(bmap->root, dumpFile);
+	int count = bmap_write(bmap, dumpFile);
 	fclose(dumpFile);
 	return count;
-}
+} // }}}
 
 int bmapn_writeDot(BMap_Node *bmn, FILE *of, int nullCount) { // {{{
 	if(!of || !bmn)
