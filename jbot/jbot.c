@@ -137,11 +137,19 @@ int setupFunctions() {
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
+	int markovMode = 0;
 	if(argc > 1) {
-		printf("Usage: %s", argv[0]);
-		printf("Usually, this is run by conbot. If you want to run it manually,");
-		printf(" you must type standard IRC broadcast messages\n");
-		return 0;
+		if(!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) {
+			printf("Usage: %s", argv[0]);
+			printf("Usually, this is run by conbot. If you want to run it");
+			printf(" manually, you must type standard IRC broadcast messages\n");
+			printf("If the second argument is anything it will be used as a");
+			printf(" random seed and markov mode will be entered\n");
+			return 0;
+		} else {
+			markovMode = 1;
+			fprintf(stderr, "Entering markov mode\n");
+		}
 	}
 
 	char str[BSIZE], *tok, *tmsg, *cstart;
@@ -158,6 +166,8 @@ int main(int argc, char **argv) {
 
 	// seed random number generator with current time
 	srand(time(NULL));
+	if(argc > 1)
+		srand(atoi(argv[1]));
 
 	// If we fail to compile the PRIVMSG regex, abort
 	int fail = regcomp(&pmsgRegex, privmsgRegexExp, REG_EXTENDED);
@@ -233,10 +243,11 @@ int main(int argc, char **argv) {
 	}
 
 	// try to read in old markov chain generator
-	count = markov_read(markovGenerator, markovDumpFileName, markovDumpDirectory);
-	if(count > 0) {
+	count = markov_read(markovGenerator, markovDumpFileName);
+	if(count > 0)
 		send(owner, "Read in %d markov chain entries", count);
-	}
+	else if(count)
+		send(owner, "Error code reading markov chain: %d", count);
 
 	fflush(stdout);
 	lflush();
@@ -296,14 +307,16 @@ int main(int argc, char **argv) {
 				};
 
 				int matched = 0;
-				//fprintf(stderr, "Matching on \"%s\"\n", msgp);
-				for(int i = 0; !matched && functions[i].f; ++i) {
-					fail = regexec(functions[i].r,
-							msgp, functions[i].r->re_nsub + 1, mptr, 0);
-					if(!fail) {
-						matched = 1;
-						fargs.matchCount = functions[i].r->re_nsub;
-						functions[i].f(&fargs);
+				if(!markovMode) {
+					//fprintf(stderr, "Matching on \"%s\"\n", msgp);
+					for(int i = 0; !matched && functions[i].f; ++i) {
+						fail = regexec(functions[i].r,
+								msgp, functions[i].r->re_nsub + 1, mptr, 0);
+						if(!fail) {
+							matched = 1;
+							fargs.matchCount = functions[i].r->re_nsub;
+							functions[i].f(&fargs);
+						}
 					}
 				}
 
@@ -390,7 +403,7 @@ int main(int argc, char **argv) {
 	rlist_free(regexList);
 
 	// try to dump the markov chain generator to a file/dir
-	count = markov_dump(markovGenerator, markovDumpFileName, markovDumpDirectory);
+	count = markov_dump(markovGenerator, markovDumpFileName);
 	if(count > 0) {
 		send(owner, "Dumped %d markov chain entries", count);
 	}
