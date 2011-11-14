@@ -2,6 +2,8 @@
 #define BMAP_H
 
 #include <stdint.h>
+#include <string.h>
+#include <stdio.h>
 
 /* BMap_Node, a node in an AVL tree */
 typedef struct BMap_Node {
@@ -41,11 +43,16 @@ BMap_Node *bmap_find(BMap *bmap, char *k);
 BMap_Node *bmap_min(BMap *bmap);
 
 /* Recursively compute the total nodes in a BMap */
-int bmap_size(BMap *bmap);
+size_t bmap_size(BMap *bmap);
 
-/* Dump the BMap to a file */
+/* Write a bmap to a file */
+int bmap_write(BMap *bmap, FILE *outFile);
+/* Try to open a file and write the BMap to it */
 int bmap_dump(BMap *bmap, char *fileName);
+
 /* Read a BMap from a file */
+int bmap_load(BMap *bmap, FILE *inFile);
+/* Try to open a file and load the BMap from it */
 int bmap_read(BMap *bmap, char *fileName);
 
 /* Write this BMap out as a graphviz .dot file */
