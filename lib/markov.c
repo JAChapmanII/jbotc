@@ -292,6 +292,7 @@ int markov_read(Markov *mkv, char *fileName) { // {{{
 		return 0;
 
 	markov_read_ploc(mkv, inFile);
+	fclose(inFile);
 	return count;
 } // }}}
 
