@@ -12,6 +12,8 @@ char *getRegError(int errcode, regex_t *compiled);
 
 /* Opens log file for appending to */
 int initLogFile();
+/* Closes log file */
+int deinitLogFile();
 
 /* Small wrapper to allow printing to a logFile and stdout at the same time */
 void send(const char *target, char *format, ...);

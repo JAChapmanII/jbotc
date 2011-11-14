@@ -25,6 +25,15 @@ int initLogFile() {
 	return 1;
 }
 
+int deinitLogFile() {
+	if(logFile) {
+		fclose(logFile);
+		logFile = NULL;
+		return 1;
+	}
+	return 0;
+}
+
 void send(const char *target, char *format, ...) {
 	va_list args;
 	va_start(args, format);
