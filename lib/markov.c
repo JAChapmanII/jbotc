@@ -20,6 +20,11 @@ Markov *markov_create(int order) { // {{{
 		markov_free(mkv);
 		return NULL;
 	}
+	mkv->dict = imap_create();
+	if(!mkv->dict) {
+		markov_free(mkv);
+		return NULL;
+	}
 	return mkv;
 } // }}}
 
@@ -38,6 +43,8 @@ void markov_free(Markov *mkv) { // {{{
 	if(mkv->ploc)
 		markov_free_ploc(mkv->ploc->root);
 	bmap_free(mkv->ploc);
+	if(mkv->dict)
+		imap_free(mkv->dict);
 	free(mkv);
 } // }}}
 
@@ -271,7 +278,9 @@ int markov_read_ploc(Markov *mkv, FILE *inFile) { // {{{
 		}
 		key[klen] = '\0';
 
-		bmap_load(p, inFile);
+		int res = bmap_load(p, inFile);
+		if(res < 1)
+			return res;
 		char buf[PBSIZE];
 		sprintf(buf, "%p", (void *)p);
 		bmap_add(mkv->ploc, key, buf);
@@ -291,7 +300,7 @@ int markov_read(Markov *mkv, char *fileName) { // {{{
 	if(!count)
 		return 0;
 
-	markov_read_ploc(mkv, inFile);
+	count = markov_read_ploc(mkv, inFile);
 	fclose(inFile);
 	return count;
 } // }}}
