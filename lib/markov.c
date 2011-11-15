@@ -20,7 +20,7 @@ Markov *markov_create(int order) { // {{{
 		markov_free(mkv);
 		return NULL;
 	}
-	mkv->dict = imap_create();
+	mkv->dict = dictionary_create();
 	if(!mkv->dict) {
 		markov_free(mkv);
 		return NULL;
@@ -44,7 +44,7 @@ void markov_free(Markov *mkv) { // {{{
 		markov_free_ploc(mkv->ploc->root);
 	bmap_free(mkv->ploc);
 	if(mkv->dict)
-		imap_free(mkv->dict);
+		dictionary_free(mkv->dict);
 	free(mkv);
 } // }}}
 

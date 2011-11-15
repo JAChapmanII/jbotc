@@ -2,11 +2,11 @@
 #define MARKOV_H
 
 #include "bmap.h"
-#include "imap.h"
+#include "dictionary.h"
 
 typedef struct {
 	int order;
-	IMap *dict;
+	Dictionary *dict;
 	BMap *ploc;
 } Markov;
 
