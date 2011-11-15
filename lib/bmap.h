@@ -29,7 +29,9 @@ BMap_Node *bmapn_create(char *key, char *val);
 /* Free space associated with a BMap_Node */
 void bmapn_free(BMap_Node *bmn);
 
-/* Add a new key/value pair to the tree */
+/* Add a new key/value pair to the tree
+ * 	returns 1 on failure, 0 otherwise
+ */
 int bmap_add(BMap *bmap, char *k, char *v);
 /* Update the value in an already existing node */
 int bmap_set(BMap *bmap, char *k, char *v);
