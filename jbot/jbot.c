@@ -113,7 +113,8 @@ FuncStruct functions[] = {
 	{ NULL, NULL, 0, 0, NULL, NULL },
 };
 
-int setupFunctions() {
+/* Allocate memory for function regex and compile them */
+int setupFunctions() { // {{{
 	for(int i = 0; functions[i].name && functions[i].f; ++i) {
 		functions[i].r = malloc(sizeof(regex_t));
 		if(!functions[i].r) {
@@ -131,33 +132,37 @@ int setupFunctions() {
 		}
 	}
 	return 1;
-}
+} // }}}
 
-int deinitFunctions() {
+/* Free memory associated with functions and their regex */
+int deinitFunctions() { // {{{
 	for(int i = 0; functions[i].name && functions[i].f; ++i) {
 		if(functions[i].r)
 			regfree(functions[i].r);
 		free(functions[i].r);
 	}
 	return 0;
-}
+} // }}}
 
 /* main runs through a loop getting input and sending output. We logFile
  * everything to a file name *lfname. See internals for commands recognized
  */
 int main(int argc, char **argv) {
-	int markovMode = 0;
+	int markovMode = 0, seed = 0;
 	if(argc > 1) {
 		if(!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) {
 			printf("Usage: %s", argv[0]);
 			printf("Usually, this is run by conbot. If you want to run it");
 			printf(" manually, you must type standard IRC broadcast messages\n");
-			printf("If the second argument is anything it will be used as a");
-			printf(" random seed and markov mode will be entered\n");
+			printf("If the second argument is an integer, it is used as a random");
+			printf(" seed. If it is anything else, markov mode will be entered\n");
 			return 0;
 		} else {
-			markovMode = 1;
-			fprintf(stderr, "Entering markov mode\n");
+			seed = atoi(argv[0]);
+			if(!seed) {
+				markovMode = 1;
+				fprintf(stderr, "Entering markov mode\n");
+			}
 		}
 	}
 
@@ -175,7 +180,7 @@ int main(int argc, char **argv) {
 
 	// seed random number generator with current time
 	srand(time(NULL));
-	if(argc > 1)
+	if(seed)
 		srand(atoi(argv[1]));
 
 	// If we fail to compile the PRIVMSG regex, abort
