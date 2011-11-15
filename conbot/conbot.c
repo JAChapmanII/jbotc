@@ -34,8 +34,6 @@
 IRCSock *ircSocket = NULL;
 CBuffer *cbuf = NULL;
 
-/* name of binary to be invoked as subprocess */
-char *jbotBinary = "jbot";
 /* true if we can write to output pipe, false otherwise */
 int childReady = 0;
 /* oPipe is used in the pipe() call to create the pipe going out of conbot,

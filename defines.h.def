@@ -4,6 +4,9 @@
 #define BSIZE 4096
 #define PBSIZE 256
 
+// name of binary to be invoked as subprocess
+#define jbotBinary "jbot"
+
 // the nick of the bot we are running as
 #define nick "NICK"
 // the channel we should be in and handling input from
