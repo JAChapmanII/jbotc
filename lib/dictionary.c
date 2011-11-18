@@ -64,6 +64,8 @@ char *dictionary_lookup(Dictionary *dict, DTYPE w) { // {{{
 		return NULL;
 	if(w > dict->size)
 		return NULL;
+	if(w == 0)
+		return " ";
 
 	char buf[MAX_KLEN + 1];
 	if(snprintf(buf, MAX_KLEN + 1, DTYPE_SSTR, w) < 0)
