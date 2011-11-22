@@ -15,6 +15,7 @@ Markov *markov_create(int order) { // {{{
 	if(!mkv)
 		return NULL;
 	mkv->order = order;
+	mkv->ploc = NULL;
 	mkv->ploc = bmap_create();
 	if(!mkv->ploc) {
 		markov_free(mkv);
@@ -48,13 +49,13 @@ void markov_free(Markov *mkv) { // {{{
 	free(mkv);
 } // }}}
 
-void markov_push(Markov *mkv, char **words) { // {{{
+void markov_push(Markov *mkv, char **words, int order) { // {{{
 	if(!mkv || !words)
 		return;
 
 	// concatenate the input together
 	char buf[BSIZE] = { 0 };
-	for(int i = 0; i < mkv->order; ++i) {
+	for(int i = (mkv->order - order); i < mkv->order; ++i) {
 		strcat(buf, words[i]);
 		// only add a space after if it's not the last word
 		if(i != mkv->order - 1)
@@ -141,9 +142,11 @@ void markov_insert(Markov *mkv, char *str) { // {{{
 		strncpy(words[mkv->order], str + so, eo - so);
 		words[mkv->order][eo - so] = '\0';
 
-		if(wcnt >= mkv->order)
-			// push current set of words
-			markov_push(mkv, words);
+		for(int o = 1; o <= mkv->order; ++o) {
+			if(wcnt >= o)
+				// push current set of words
+				markov_push(mkv, words, o);
+		}
 
 		// no more words
 		if(str[eo] == '\0')
@@ -154,12 +157,15 @@ void markov_insert(Markov *mkv, char *str) { // {{{
 		eo++;
 	}
 
-	if(wcnt >= mkv->order) {
-		// copy words one backward
-		for(int i = 0; i < mkv->order; ++i)
-			strcpy(words[i], words[i + 1]);
-		words[mkv->order][0] = '\0';
-		markov_push(mkv, words);
+	// copy words one backward
+	for(int i = 0; i < mkv->order; ++i)
+		strcpy(words[i], words[i + 1]);
+	words[mkv->order][0] = '\0';
+
+	for(int o = 1; o <= mkv->order; ++o) {
+		if(wcnt >= mkv->order)
+			// push last set of words
+			markov_push(mkv, words, o);
 	}
 
 	for(int j = 0; j < mkv->order + 1; ++j)

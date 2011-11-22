@@ -6,6 +6,27 @@
 
 #define PBSIZE 256
 
+/* _stringCopy wraps strcpy and handles simple cases so that valgrind doesn't
+ * bitch about invalid read/write sizes in dest/src */
+char *_stringCopy(char *dest, char *src) {
+	// TODO: what sorts of things does strcpy handle w.r.t errors? We don't
+	// know the size of dest or src, so...? TODO
+	size_t slen = strlen(src);
+	
+	size_t dlen = strlen(dest);
+	printf("dlen: %lu, slen: %lu\n", dlen, slen);
+	if(slen == 0) {
+		dest[0] = '\0';
+	} else if(slen == 1) {
+		dest[0] = src[0];
+		dest[1] = '\0';
+	} else {
+		return strcpy(dest, src);
+	}
+	return dest;
+}
+#define strcpy(dest, src) _stringCopy(dest, src)
+
 void bmapn_fixHeight(BMap_Node *bmn);
 
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
@@ -44,8 +65,13 @@ BMap_Node *bmapn_create(char *key, char *val) { // {{{
 		return NULL;
 	bmn->left = bmn->right = NULL;
 	bmn->height = 1;
-	bmn->key = malloc(strlen(key) + 1);
-	bmn->val = malloc(strlen(val) + 1);
+	bmn->key = bmn->val = NULL;
+	// round sizes to multiples of 8, so we don't get strange valgrind errors
+	// inside of sscanf. I suppose it isn't a problem (at least most of the
+	// time), but at max we're using up an extra 7 bytes per key/val which
+	// probably isn't that much... I hope XD TODO: look into that
+	bmn->key = malloc(((strlen(key) + 1) + 7) / 8);
+	bmn->val = malloc(((strlen(val) + 1) + 7) / 8);
 	if(!bmn->key || !bmn->val) {
 		bmapn_free(bmn);
 		return NULL;
@@ -85,8 +111,16 @@ BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v) { // {{{
 	// TODO: error on this condition? This makes _set obsolete
 	if(!cmp) {
 		if(strcmp(bmn->val, v)) {
-			free(bmn->val);
-			bmn->val = malloc(strlen(k) + 1);
+			// TODO: is this really a good way to do this?
+			size_t vlen = strlen(v);
+			// if we need more space, realloc
+			if(strlen(bmn->val) < vlen) {
+				// TODO: actually realloc not free/malloc?
+				free(bmn->val);
+				// TODO: again, round to 8 bytes. See _create's notes
+				bmn->val = malloc(((vlen + 1) + 7) / 8);
+			}
+			// copy over new value
 			strcpy(bmn->val, v);
 		}
 		return bmn;
@@ -297,9 +331,9 @@ int bmap_load(BMap *bmap, FILE *inFile) { // {{{
 
 	size_t rnodes;
 	for(rnodes = 0; rnodes < size; ++rnodes) {
-		char key[PBSIZE], val[PBSIZE];
-		uint8_t klen, vlen;
-		size_t read;
+		char key[PBSIZE] = { 0 }, val[PBSIZE] = { 0 };
+		uint8_t klen = 0, vlen = 0;
+		size_t read = 0;
 
 		// attemp to read lengths and key/val
 		read = fread(&klen, 1, 1, inFile);

@@ -18,7 +18,7 @@ void markov_insert(Markov *mkv, char *str);
 /* Internal helper function, inserts one specific element
  * 	words is a markov->order + 1 char*'s which are the input and output
  */
-void markov_push(Markov *mkv, char **words);
+void markov_push(Markov *mkv, char **words, int order);
 
 /* Use this to fetch some variable length output from a seed
  * 	note: seed must be either
