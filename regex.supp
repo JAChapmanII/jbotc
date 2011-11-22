@@ -1,0 +1,36 @@
+{
+	regexc suppresion
+	Memcheck:Cond
+	obj:/lib/libc-2.14.1.so
+	...
+	fun:regexc
+	...
+	fun:main
+}
+
+{
+	regexec suppresion
+	Memcheck:Cond
+	...
+	fun:regexec
+	...
+	fun:main
+}
+
+{
+	__isoc99_sscanf
+	Memcheck:Cond
+	...
+	fun:__isoc99_sscanf
+	...
+	fun:main
+}
+{
+	__isoc99_sscanf
+	Memcheck:Cond
+	...
+	fun:__isoc99_sscanf
+	...
+	fun:main
+}
+
