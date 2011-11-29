@@ -6,27 +6,6 @@
 
 #define PBSIZE 256
 
-/* _stringCopy wraps strcpy and handles simple cases so that valgrind doesn't
- * bitch about invalid read/write sizes in dest/src */
-char *_stringCopy(char *dest, char *src) {
-	// TODO: what sorts of things does strcpy handle w.r.t errors? We don't
-	// know the size of dest or src, so...? TODO
-	size_t slen = strlen(src);
-	
-	size_t dlen = strlen(dest);
-	printf("dlen: %lu, slen: %lu\n", dlen, slen);
-	if(slen == 0) {
-		dest[0] = '\0';
-	} else if(slen == 1) {
-		dest[0] = src[0];
-		dest[1] = '\0';
-	} else {
-		return strcpy(dest, src);
-	}
-	return dest;
-}
-#define strcpy(dest, src) _stringCopy(dest, src)
-
 void bmapn_fixHeight(BMap_Node *bmn);
 
 BMap_Node *bmapn_add(BMap_Node *bmn, char *k, char *v);
