@@ -1,3 +1,3 @@
-PRIVMSG #uakroncs :n: Usage: markov <word>
-PRIVMSG #uakroncs :n: thing
-PRIVMSG #uakroncs :n: two
+PRIVMSG #CHANNEL_NAME :OWNER: Usage: markov <word>
+PRIVMSG #CHANNEL_NAME :OWNER: thing
+PRIVMSG #CHANNEL_NAME :OWNER: two

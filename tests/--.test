@@ -1,6 +1,6 @@
-:n!user@hmask PRIVMSG #uakroncs :jbotc: --
-:n!user@hmask PRIVMSG #uakroncs :jbotc: -- a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: -- a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: -- a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: --a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: --a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: --
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: -- a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: -- a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: -- a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: --a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: --a_var

@@ -1,1 +1,1 @@
-:n!user@hmask PRIVMSG #uakroncs :jbotc:
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK:

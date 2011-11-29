@@ -1,5 +1,5 @@
-:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement
-:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: decrement a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: decrementa_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: decrement
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: decrement a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: decrement a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: decrement a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: decrementa_var

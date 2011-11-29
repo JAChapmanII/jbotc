@@ -1,3 +1,3 @@
-PRIVMSG #uakroncs :n: declared a_var as 0
-PRIVMSG #uakroncs :n: a_var is 0
-PRIVMSG jac :Dumped 1 variables
+PRIVMSG #CHANNEL_NAME :OWNER: declared a_var as 0
+PRIVMSG #CHANNEL_NAME :OWNER: a_var is 0
+PRIVMSG OWNER :Dumped 1 variables

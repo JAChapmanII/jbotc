@@ -1,5 +1,5 @@
-:n!user@hmask PRIVMSG #uakroncs :jbotc: increment
-:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: increment a_var
-:n!user@hmask PRIVMSG #uakroncs :jbotc: incrementa_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: increment
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: increment a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: increment a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: increment a_var
+:OWNER!OWNER@HMASK PRIVMSG #CHANNEL_NAME :NICK: incrementa_var
