@@ -66,12 +66,16 @@ BMap_Node *bmapn_create(char *key, char *val) { // {{{
 	bmn->left = bmn->right = NULL;
 	bmn->height = 1;
 	bmn->key = bmn->val = NULL;
+
 	// round sizes to multiples of 8, so we don't get strange valgrind errors
 	// inside of sscanf. I suppose it isn't a problem (at least most of the
 	// time), but at max we're using up an extra 7 bytes per key/val which
 	// probably isn't that much... I hope XD TODO: look into that
-	bmn->key = malloc(((strlen(key) + 1) + 7) / 8);
-	bmn->val = malloc(((strlen(val) + 1) + 7) / 8);
+	// Why do we calloc when we're going to strcpy to it immediately? You
+	// guessed it, so valgrind doesn't bitch!
+	bmn->key = calloc(((strlen(key) + 1) + 7) / 8 * 8, 1);
+	bmn->val = calloc(((strlen(val) + 1) + 7) / 8 * 8, 1);
+
 	if(!bmn->key || !bmn->val) {
 		bmapn_free(bmn);
 		return NULL;
