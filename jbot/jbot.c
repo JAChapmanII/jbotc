@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 			printf(" seed. If it is anything else, markov mode will be entered\n");
 			return 0;
 		} else {
-			seed = atoi(argv[0]);
+			seed = atoi(argv[1]);
 			if(!seed) {
 				markovMode = 1;
 				fprintf(stderr, "Entering markov mode\n");
