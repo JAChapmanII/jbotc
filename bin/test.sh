@@ -55,6 +55,7 @@ sed -i "s/NICK/$nick/g" "$tmpTFILE" "$tmpRFILE"
 sed -i "s/OWNER/$owner/g" "$tmpTFILE" "$tmpRFILE"
 sed -i "s/#CHANNEL_NAME/$chan/g" "$tmpTFILE" "$tmpRFILE"
 
+cleanup
 
 cat "$tmpTFILE" | segfind "$BIN" $SEED 1> $OUTF 2> $ERRF
 tail -n +$((SKIPSTART + 1)) $OUTF | head -n -$SKIPATEND | sponge $OUTF
