@@ -28,3 +28,14 @@ Running:
 		PRIVMSG #CHANNEL_NAME :nick: o/
 	which would appear as a wave back in an IRC client.
 
+Debugging:
+	I've recently done a lot of work with valgrind, trying to figure out its
+	mysterious ways. I believe I've failed. In any case, you can use
+		valgrind ./bin/jbot
+	to see if there is anything funky going on according to it.
+	
+	I made a suppressions file for regex functions and some internal sscanf
+	things, but I believe that was all stemming from setting a pointer the
+	result of malloc not initializing the pointer according to valgrind. So, my
+	suggestion is don't use it.
+
