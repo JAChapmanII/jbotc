@@ -166,8 +166,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	char str[BSIZE], *tok, *tmsg, *cstart;
-	char name[PBSIZE], hmask[PBSIZE], cname[PBSIZE], msg[BSIZE];
+	char str[BSIZE] = { 0 }, *tok = NULL, *tmsg = NULL, *cstart = NULL;
+	char name[PBSIZE] = { 0 }, hmask[PBSIZE] = { 0 }, cname[PBSIZE] = { 0 }, msg[BSIZE] = { 0 };
 
 	regex_t pmsgRegex, joinRegex;
 	regmatch_t mptr[16];
