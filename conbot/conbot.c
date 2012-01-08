@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <regex.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "ircsock.h"
 #include "cbuffer.h"
@@ -72,6 +73,9 @@ void *transferLoop(void *args) { /*{{{*/
 	 * it, or aborts early and tries again if there was a problem in setting up
 	 * the required pipes/subprocess.
 	 */
+
+	int waitLevel = 0;
+	time_t startTime = 0;
 	while(1) {
 		childReady = 0;
 		/* If oPipe needs setup, attempt to create it. If we fail, print error
@@ -90,6 +94,11 @@ void *transferLoop(void *args) { /*{{{*/
 			continue;
 		} /*}}}*/
 
+		/* If we started the subprocess and it abrorted immediately */
+		if((startTime != 0) && (startTime - time(NULL) < 5)) {
+			printf("Waiting 10 seconds before trying to restart child\n");
+			sleep(10);
+		}
 		printf("Forking subprocess...\n");
 		/* Fork so that we can exec the subprocess, if we fail, try again in 15
 		 * seconds */
@@ -122,6 +131,8 @@ void *transferLoop(void *args) { /*{{{*/
 		} /*}}}*/
 
 		/* If we are still a thread in the main process... */
+		startTime = time(NULL);
+		waitLevel = 0;
 
 		/* Close not-needed ends of {o,i}Pipe */
 		close(oPipe[0]);
