@@ -188,6 +188,7 @@ int ircsock_join(IRCSock *ircsock) { /*{{{*/
 	ircsock_send(ircsock, userc);
 	usleep(100000);
 
+	ircsock_send(ircsock, joinc);
 	while(!foundPing) {
 		ircsock_read(ircsock);
 		while((str = cbuffer_pop(ircsock->cbuf)) != NULL) {
@@ -209,7 +210,6 @@ int ircsock_join(IRCSock *ircsock) { /*{{{*/
 		}
 	}
 
-	ircsock_send(ircsock, joinc);
 	return 0;
 } /*}}}*/
 
